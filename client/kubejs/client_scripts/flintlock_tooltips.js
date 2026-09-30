@@ -149,7 +149,7 @@ ItemEvents.tooltip(event => {
     })
 
     // Military Logistics Crates Tooltips
-    tooltip.add('kubejs:crate_muskets', [
+    event.add('kubejs:crate_muskets', [
         Text.of('§6📦 Ladă Militară de Muschete (8 Arme)'),
         Text.of('§7Ladă blindată din stejar și alamă pentru transport logistic.'),
         Text.of('§a✔ Conține: §f8 Muschete FK15 cu țeavă lisă.'),
@@ -157,7 +157,7 @@ ItemEvents.tooltip(event => {
         Text.of('§bUtilizare: §7Pune în masa de lucru sau Shift+Click-Dreapta pe sol pentru a desigila.')
     ])
 
-    tooltip.add('kubejs:crate_pistols', [
+    event.add('kubejs:crate_pistols', [
         Text.of('§6📦 Ladă Militară de Pistoale (8 Arme)'),
         Text.of('§7Cufăr întărit pentru armamentul ofițerilor de cavalerie.'),
         Text.of('§a✔ Conține: §f8 Pistoale FK15-P de dragon.'),
@@ -165,7 +165,7 @@ ItemEvents.tooltip(event => {
         Text.of('§bUtilizare: §7Pune în masa de lucru sau Shift+Click-Dreapta pe sol pentru a desigila.')
     ])
 
-    tooltip.add('kubejs:ammunition_crate', [
+    event.add('kubejs:ammunition_crate', [
         Text.of('§6📦 Ladă Grea de Muniție (256 Cartușe)'),
         Text.of('§7Cutie etanșă militară pentru protecția pulberii și gloanțelor la umezeală.'),
         Text.of('§a✔ Conține: §f4 pachete de 64 cartușe standard (256 gloanțe).'),
