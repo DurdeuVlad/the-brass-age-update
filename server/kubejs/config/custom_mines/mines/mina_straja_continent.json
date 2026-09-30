@@ -201,9 +201,9 @@
 					"veinSize": 10
 				},
 				{
-					"block": "minecraft:copper_ore",
-					"count": 350,
-					"veinSize": 12
+					"block": "vampirism:silver_ore",
+					"count": 120,
+					"veinSize": 4
 				}
 			],
 			"protectRespawnPositions": false,
@@ -234,11 +234,6 @@
 					"block": "butchery:sulfur_ore",
 					"count": 200,
 					"veinSize": 8
-				},
-				{
-					"block": "vampirism:silver_ore",
-					"count": 120,
-					"veinSize": 4
 				}
 			],
 			"protectRespawnPositions": false,
