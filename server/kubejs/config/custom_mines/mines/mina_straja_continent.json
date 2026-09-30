@@ -157,8 +157,13 @@
 			"ores": [
 				{
 					"block": "butchery:sulfur_ore",
-					"count": 600,
-					"veinSize": 18
+					"count": 900,
+					"veinSize": 22
+				},
+				{
+					"block": "minecraft:iron_ore",
+					"count": 700,
+					"veinSize": 20
 				},
 				{
 					"block": "minecraft:coal_ore",
@@ -189,6 +194,16 @@
 					"block": "minecraft:pointed_dripstone",
 					"count": 800,
 					"veinSize": 16
+				},
+				{
+					"block": "butchery:sulfur_ore",
+					"count": 250,
+					"veinSize": 10
+				},
+				{
+					"block": "minecraft:copper_ore",
+					"count": 350,
+					"veinSize": 12
 				}
 			],
 			"protectRespawnPositions": false,
@@ -214,6 +229,16 @@
 					"block": "create:zinc_ore",
 					"count": 600,
 					"veinSize": 18
+				},
+				{
+					"block": "butchery:sulfur_ore",
+					"count": 200,
+					"veinSize": 8
+				},
+				{
+					"block": "vampirism:silver_ore",
+					"count": 120,
+					"veinSize": 4
 				}
 			],
 			"protectRespawnPositions": false,
@@ -231,19 +256,29 @@
 			],
 			"ores": [
 				{
-					"block": "minecraft:dripstone_block",
-					"count": 600,
-					"veinSize": 20
+					"block": "minecraft:gold_ore",
+					"count": 80,
+					"veinSize": 3
+				},
+				{
+					"block": "minecraft:deepslate_lapis_ore",
+					"count": 60,
+					"veinSize": 3
+				},
+				{
+					"block": "minecraft:deepslate_diamond_ore",
+					"count": 15,
+					"veinSize": 2
+				},
+				{
+					"block": "minecraft:calcite",
+					"count": 500,
+					"veinSize": 18
 				},
 				{
 					"block": "butchery:sulfur_ore",
-					"count": 300,
-					"veinSize": 15
-				},
-				{
-					"block": "minecraft:coal_ore",
-					"count": 600,
-					"veinSize": 20
+					"count": 150,
+					"veinSize": 6
 				}
 			],
 			"protectRespawnPositions": false,
