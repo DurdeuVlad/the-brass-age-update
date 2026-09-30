@@ -7,6 +7,7 @@ StartupEvents.registry('item', event => {
         ['barrel_blank', 'Barrel Blank'],
         ['pistol_barrel', 'Finished Pistol Barrel'],
         ['rifle_barrel', 'Reinforced Long Barrel'],
+        ['rifled_barrel', 'Spiral Rifled Barrel'],
         ['mainspring_blank', 'Mainspring Blank'],
         ['tempered_mainspring', 'Tempered Mainspring'],
         ['flintlock_hammer', 'Flintlock Hammer'],
@@ -17,7 +18,38 @@ StartupEvents.registry('item', event => {
         ['pistol_stock', 'Bound Pistol Stock'],
         ['rifle_stock', 'Reinforced Rifle Stock'],
         ['barrel_band', 'Brass Barrel Band'],
-        ['ramrod', 'Steel Ramrod']
+        ['ramrod', 'Steel Ramrod'],
+
+        // Chemical, Nitrate & Powder Intermediates
+        ['saltpeter', 'Purified Saltpeter'],
+        ['crushed_dripstone', 'Crushed Dripstone'],
+        ['crude_gunpowder_cake', 'Crude Gunpowder Cake'],
+        ['wet_powder_mass', 'Wet Powder Mass'],
+
+        // Legal Tooling
+        ['permit_blank', 'Firearm Permit Blank'],
+
+        // Civilian Commodities
+        ['fumigation_strip', 'Sulfur Cask Fumigation Strip'],
+        ['royal_fumigation_strip', 'Royal Vintage Fumigation Strip'],
+        ['miracle_fertilizer', 'Miracle Super-Phosphate Fertilizer'],
+        ['medicated_soap', 'Antiseptic Medicated Sulfur Soap'],
+        ['sulfur_matches', 'Crude Sulfur Matches'],
+        ['safety_matches', 'Safety Matchbox'],
+        ['vitriol_leather', 'Vitriol Heavy Leather']
     ]
-    parts.forEach(part => event.create(part[0]).displayName(part[1]).texture('kubejs:item/' + part[0]))
+
+    parts.forEach(part => {
+        event.create(part[0])
+            .displayName(part[1])
+            .texture('kubejs:item/' + part[0])
+    })
+
+    // Imperial Proof Stamp: indestructible master guild inspection tool.
+    // Stamped on firearms to establish legal provenance (#RC-15-XXXX).
+    // Note: unstackable() without maxDamage(0) to avoid 1.21.1 NeoForge zero-durability exception.
+    event.create('proof_stamp')
+        .displayName('Imperial Proof Stamp')
+        .unstackable()
+        .texture('kubejs:item/proof_stamp')
 })
