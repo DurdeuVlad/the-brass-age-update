@@ -19,7 +19,7 @@ Current source files are preserved, including these missing settings:
 5. Furniture coffers eject guns when opened or carried, not during unattended
    insertion. Existing backpack/belt contents are not automatically migrated.
 
-Book command (run as a player): /function kubejs:give_gunsmith_manual
+Book command (admin/operator): /gunsmith or /function kubejs:give_gunsmith_manual
 reference/docs contains optional manuals, including the PDF.
 MANIFEST.csv contains SHA-256 checksums for all bundled files.
 Archive verified; in-game/server integration still needs testing.

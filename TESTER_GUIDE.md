@@ -62,9 +62,11 @@ Pentru a testa rapid fără a mina resursele manual, deschide chat-ul și folose
 
 ### Manual & Ghiduri
 - `/flintlock` sau `/arma`  
-  *Afișează cartonașul ghid complet de tragere, ochire și reîncărcare.*
+  *Afișează cartonașul ghid complet de tragere, ochire și reîncărcare (disponibil tuturor jucătorilor).*
+- `/gunsmith` sau `/gunsmith book [jucător]` (sau `/manual_armurier`)  
+  *§c[ADMIN ONLY, OP Level 2] §aÎnmânează "Manualul Oficial al Armurierului" (The Rustic Gunsmith). Rețetele de asamblare a armelor sunt secrete de stat ascunse din EMI/JEI și necesită Create Mechanical Crafters.*
 - `/function kubejs:give_gunsmith_manual`  
-  *Îți oferă direct în inventar cartea oficială Patchouli "Manualul Armurierului" (The Rustic Gunsmith).*
+  *Comandă alternativă prin funcție datapack pentru obținerea manualului.*
 
 ### Comenzi Vampirism (pentru testul de argint)
 - `/vampire add <jucător>`  

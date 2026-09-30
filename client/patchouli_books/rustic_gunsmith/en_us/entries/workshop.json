@@ -10,11 +10,11 @@
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Read the plates$()$(br2)Each square takes one named item. Leave empty squares empty. Every component recipe gives one item, including Gun Screws.$(br2)The crafting table serves most work. Steel and springs need a blast furnace. Final ammunition needs nine Mechanical Crafters."
+      "text": "$(bold)Read the plates$()$(br2)Each square takes one named item. Leave empty squares empty. Component forge recipes yield one item, including Gun Screws.$(br2)$(c)Firearms require Create Mechanical Crafters.$() Standard crafting tables serve only for individual parts. Finished weapons and ammunition require kinetic power."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)A word on discovery$()$(br2)The custom recipes remain craftable but are hidden from EMI/JEI for everyone. Read their patterns here.$(br2)No crafting recipe, starting gift or loot entry is provided for this handbook. An administrator must issue it."
+      "text": "$(bold)A word on state secrecy$()$(br2)All firearm assembly recipes are classified state secrets and hidden from EMI/JEI. Only authorized holders of this handbook know the exact patterns.$(br2)No starting gift or loot provides this book. An Imperial Administrator must issue it via state authority."
     },
     {
       "type": "patchouli:text",

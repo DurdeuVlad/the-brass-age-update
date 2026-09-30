@@ -1,17 +1,20 @@
 {
-  "name": "FK15P Flintlock Pistol",
+  "name": "FK15-P Flintlock Pistol",
   "category": "patchouli:assembly",
   "icon": "kubejs:pistol_stock",
   "sortnum": 22,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Bring the barrel, complete lock, ramrod and bound stock to the bench. Place the band, screw, tempered piece and leather precisely as shown. The work yields one FK15P pistol, unloaded and ready for its Minecraft ammunition."
+      "text": "$(bold)Cavalry Officer's Pistol$()$(br2)A compact 16.5mm sidearm designed for fast engagement. While it has higher dispersion than a long musket, a cavalryman can carry up to two pistols at the hip.$(br2)$(c)Requires powered Create Mechanical Crafters.$() Standard crafting benches lack the precision to fit lock, barrel, and stock."
     },
     {
-      "type": "patchouli:crafting",
-      "recipe": "kubejs:flintlocks/pistol",
-      "text": "One finished gun, unloaded. Supply qkl:16mm ammunition and use your TaCZ Reload key."
+      "type": "patchouli:text",
+      "text": "$(bold)Mechanical Crafter Grid (3x3)$()$(br2)B M R$(br)S W T$(br)  I L$(br2)$(bold)Legend:$()$(br)B: Pistol Barrel$(br)M: Flintlock Mechanism$(br)R: Ramrod$(br)S: Gun Screws$(br)W: Pistol Stock$(br)T: Barrel Band$(br)I: Tempered Gun Steel$(br)L: Leather"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Assembly Instructions$()$(br2)1. Place 8 Mechanical Crafters matching the grid (bottom-left empty).$(br)2. Connect rotational kinetic power (min 16 RPM).$(br)3. Wrench crafter arrows converging on the output.$(br)4. Insert ingredients and collect the finished, unloaded FK15-P."
     }
   ]
 }

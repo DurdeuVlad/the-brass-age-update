@@ -6,15 +6,15 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "$(bold)Precision Spiral Rifling$()$(br2)Standard smoothbore barrels exhibit broad conical dispersion past thirty paces. To overcome this limitation, master armorers use Create mechanical drills to cut spiral rifling grooves into finished rifle barrels."
+      "text": "$(bold)Master Marksman Rifle$()$(br2)The elite marksman variant of the FK15. Combines a spiral-rifled precision barrel with calibrated lock tolerances, reducing shot dispersion by $(a)65%$().$(br2)$(c)Requires powered Create Mechanical Crafters.$() This state-level firearm cannot be made on a crafting table."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Crafting the Rifled Barrel$()$(br2)Combine a reinforced long barrel with a Create Mechanical Drill and Precision Mechanism in a crafting bench to produce a $(6)Spiral Rifled Barrel$().$(br2)Assembling this barrel into a musket produces the prestigious $(6)FK15-R Jaeger Musket$()."
+      "text": "$(bold)Mechanical Crafter Grid (3x3)$()$(br2)B B R$(br)M W S$(br)T I P$(br2)$(bold)Legend:$()$(br)B: Barrel Band$(br)R: $(6)Rifled Barrel (Spiral Cut)$()$(br)M: Flintlock Mechanism$(br)W: Rifle Stock$(br)S: Gun Screws$(br)T: Ramrod$(br)I: Tempered Gun Steel$(br)P: Precision Mechanism"
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Ballistic Performance$()$(br2)The Jaeger musket imparts high spin stabilization to round balls, reducing dispersion by $(a)65%$().$(br2)While it demands disciplined loading, a marksman kneeling (Sneak) can reliably pick off commanders and officers across great distances."
+      "text": "$(bold)Precision Rifling Lathe$()$(br2)The Rifled Barrel is bored on a Create mechanical drill bench:$(br)$(bold)Pattern:$() Drill + Rifle Barrel + Precision Mechanism.$(br2)Assembled in Mechanical Crafters, it produces the prestigious gold-trimmed FK15-R Jaeger Musket."
     }
   ]
 }

@@ -1,17 +1,20 @@
 {
-  "name": "FK15 Flintlock Rifle",
+  "name": "FK15 Flintlock Musket",
   "category": "patchouli:assembly",
   "icon": "kubejs:rifle_stock",
   "sortnum": 23,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Bring the reinforced barrel and shoulder stock together with the common lock and ramrod. Two further bands, a screw, a tempered piece and a precision mechanism complete the pattern. The rifle is assembled from parts, not from a finished pistol."
+      "text": "$(bold)Line Infantry Musket$()$(br2)The standard military long arm of the realm. Features a reinforced barrel and full shoulder stock, dealing devastating kinetic trauma (40–55 damage).$(br2)$(c)Requires powered Create Mechanical Crafters.$() Standard crafting benches cannot withstand the assembly forces."
     },
     {
-      "type": "patchouli:crafting",
-      "recipe": "kubejs:flintlocks/rifle",
-      "text": "One finished gun, unloaded. Supply qkl:16mm ammunition and use your TaCZ Reload key."
+      "type": "patchouli:text",
+      "text": "$(bold)Mechanical Crafter Grid (3x3)$()$(br2)B B R$(br)M W S$(br)T I P$(br2)$(bold)Legend:$()$(br)B: Barrel Band$(br)R: Rifle Barrel$(br)M: Flintlock Mechanism$(br)W: Rifle Stock$(br)S: Gun Screws$(br)T: Ramrod$(br)I: Tempered Gun Steel$(br)P: Precision Mechanism"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Assembly Instructions$()$(br2)1. Mount a full 3x3 array (9 Crafters).$(br)2. Connect rotational kinetic power (min 16 RPM).$(br)3. Wrench crafter arrows converging on the output.$(br)4. Insert all 9 precision parts.$(br2)Yields one finished FK15 Musket ready for 16.5mm ammunition."
     }
   ]
 }

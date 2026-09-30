@@ -1,0 +1,20 @@
+{
+  "name": "Tactical Ordnance",
+  "category": "patchouli:ammo",
+  "icon": "minecraft:fire_charge",
+  "sortnum": 26,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Specialized Muzzleloading Ordnance$()$(br2)For close-quarters crowd dispersal and subterranean warfare, the arsenal produces Canister Scattershot and Incendiary Sulfur rounds.$(br2)Both require a powered 3x3 array of Create Mechanical Crafters to assemble."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Canister Scattershot (3x3)$()$(br2)N N N$(br)N W N$(br)N G N$(br2)$(bold)Legend:$()$(br)N: Iron Nugget (8 total)$()$(br)W: Wad (1)$()$(br)G: Gunpowder Charge (1)$(br2)Yields 4 Canister Cartridges. Deals wide-cone spread and massive knockback."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Incendiary Sulfur Round (3x3)$()$(br2)  S  $(br)C G C$(br)  W  $(br2)$(bold)Legend:$()$(br)S: Karst Sulfur (1)$()$(br)C: Large Bullet Core (2)$()$(br)G: Gunpowder Charge (1)$()$(br)W: Wad (1)$(br2)Yields 4 Incendiary Cartridges. Deals 35 kinetic damage and 8 seconds of fire."
+    }
+  ]
+}
