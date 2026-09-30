@@ -1,6 +1,39 @@
 // Legal Provenance, Royal Proofing & Black Market State Machine Engine
 // Implements serialization (#RC-15-XXXX), anvil proofing rituals, grindstone defacing, and anti-forgery.
 
+var $FP_BuiltInRegistries = Java.loadClass('net.minecraft.core.registries.BuiltInRegistries')
+var $FP_DataComponents = Java.loadClass('net.minecraft.core.component.DataComponents')
+var $FP_CustomData = Java.loadClass('net.minecraft.world.item.component.CustomData')
+var $FP_ItemLore = Java.loadClass('net.minecraft.world.item.component.ItemLore')
+var $FP_Component = Java.loadClass('net.minecraft.network.chat.Component')
+var $FP_ItemStack = Java.loadClass('net.minecraft.world.item.ItemStack')
+var $FP_ArrayList = Java.loadClass('java.util.ArrayList')
+
+function fpGetStackId(stack) {
+    if (!stack || stack.isEmpty()) return ''
+    try {
+        var k = $FP_BuiltInRegistries.ITEM.getKey(stack.getItem())
+        if (k) return String(k).toLowerCase()
+    } catch (e) {}
+    try {
+        if (stack.id) return String(stack.id).toLowerCase()
+    } catch (e) {}
+    return ''
+}
+
+function fpGetGunCustomTag(stack) {
+    if (!stack || stack.isEmpty()) return null
+    try {
+        var data = stack.get($FP_DataComponents.CUSTOM_DATA)
+        if (data) return data.copyTag()
+    } catch (e) {}
+    try {
+        var c = stack.get('minecraft:custom_data')
+        if (c && typeof c.copyTag === 'function') return c.copyTag()
+    } catch (e) {}
+    return null
+}
+
 // 1. Tooling & Permit Recipes
 ServerEvents.recipes(event => {
     // Imperial Proof Stamp (Indestructible Master Tool)
@@ -47,24 +80,31 @@ if ($AnvilUpdateEvent && typeof NativeEvents !== 'undefined') {
     NativeEvents.onEvent($AnvilUpdateEvent, function(event) {
         var left = event.getLeft()
         var right = event.getRight()
-        if (left.isEmpty() || right.isEmpty()) return
-        if (String(left.id) !== 'tacz:modern_kinetic_gun' || String(right.id) !== 'kubejs:proof_stamp') return
+        console.info('[AnvilUpdate] event received: left=' + left + ', right=' + right)
+        if (!left || left.isEmpty() || !right || right.isEmpty()) return
+        
+        var leftId = fpGetStackId(left)
+        var rightId = fpGetStackId(right)
+        console.info('[AnvilUpdate] leftId=' + leftId + ', rightId=' + rightId)
+        if (leftId !== 'tacz:modern_kinetic_gun' || rightId !== 'kubejs:proof_stamp') return
 
-        var customData = left.get('minecraft:custom_data')
-        if (!customData) return
+        var tag = fpGetGunCustomTag(left)
+        console.info('[AnvilUpdate] tag=' + tag)
+        if (!tag) return
 
-        var gunId = String(customData.GunId || '')
+        var gunId = String(tag.getString('GunId'))
+        console.info('[AnvilUpdate] gunId=' + gunId)
         if (gunId !== 'qkl:fk15' && gunId !== 'qkl:fk15p') return
 
         // Cannot re-proof an already legal gun
-        if (customData.Proofed) {
-            event.setOutput(ItemStack.EMPTY)
+        if (tag.getBoolean('Proofed')) {
+            event.setOutput($FP_ItemStack.EMPTY)
             return
         }
 
         // Cannot casually re-stamp a defaced black market gun
-        if (customData.Defaced) {
-            event.setOutput(ItemStack.EMPTY)
+        if (tag.getBoolean('Defaced')) {
+            event.setOutput($FP_ItemStack.EMPTY)
             return
         }
 
@@ -75,16 +115,17 @@ if ($AnvilUpdateEvent && typeof NativeEvents !== 'undefined') {
         if (!server) return
         var serial = getNextStrajaSerial(server)
 
-        var tag = output.getOrCreateTag()
-        tag.putBoolean('Proofed', true)
-        tag.putString('Serial', serial)
-        tag.remove('Defaced')
+        var newTag = tag.copy()
+        newTag.putBoolean('Proofed', true)
+        newTag.putString('Serial', serial)
+        newTag.remove('Defaced')
+        output.set($FP_DataComponents.CUSTOM_DATA, $FP_CustomData.of(newTag))
 
         // Add official Straja lore
-        var lore = output.getOrCreateTagElement('display').getList('Lore', 8)
-        lore.add(Text.of('§a✔ POANSONAT: ' + serial).toJson())
-        lore.add(Text.of('§7Registrul Imperial Straja').toJson())
-        output.getOrCreateTagElement('display').put('Lore', lore)
+        var loreList = new $FP_ArrayList()
+        loreList.add($FP_Component.literal('§a✔ POANSONAT: ' + serial))
+        loreList.add($FP_Component.literal('§7Registrul Imperial Straja'))
+        output.set($FP_DataComponents.LORE, new $FP_ItemLore(loreList))
 
         event.setOutput(output)
         event.setCost(5) // Guild inspection cost in XP levels
@@ -100,71 +141,65 @@ try {
 if ($GrindstoneTakeEvent && typeof NativeEvents !== 'undefined') {
     NativeEvents.onEvent($GrindstoneTakeEvent, function(event) {
         var top = event.getTopItem()
-        if (top.isEmpty() || String(top.id) !== 'tacz:modern_kinetic_gun') return
+        if (!top || top.isEmpty() || fpGetStackId(top) !== 'tacz:modern_kinetic_gun') return
 
-        var customData = top.get('minecraft:custom_data')
-        if (!customData) return
-
-        if (!customData.Proofed) return
+        var tag = fpGetGunCustomTag(top)
+        if (!tag || !tag.getBoolean('Proofed')) return
 
         var output = top.copy()
-        var tag = output.getOrCreateTag()
-        tag.putBoolean('Proofed', false)
-        tag.putBoolean('Defaced', true)
-        tag.remove('Serial')
+        var newTag = tag.copy()
+        newTag.putBoolean('Proofed', false)
+        newTag.putBoolean('Defaced', true)
+        newTag.remove('Serial')
+        output.set($FP_DataComponents.CUSTOM_DATA, $FP_CustomData.of(newTag))
 
-        var lore = output.getOrCreateTagElement('display').getList('Lore', 8)
-        for (var i = lore.size() - 1; i >= 0; i--) {
-            var line = lore.getString(i)
-            if (line.includes('POANSONAT') || line.includes('Registrul')) {
-                lore.remove(i)
-            }
-        }
-        lore.add(Text.of('§4⚠ [SERIE PILITĂ / DEFACED]').toJson())
-        lore.add(Text.of('§cArmă de contrabandă!').toJson())
-        output.getOrCreateTagElement('display').put('Lore', lore)
+        var loreList = new $FP_ArrayList()
+        loreList.add($FP_Component.literal('§4⚠ [SERIE PILITĂ / DEFACED]'))
+        loreList.add($FP_Component.literal('§cArmă de contrabandă!'))
+        output.set($FP_DataComponents.LORE, new $FP_ItemLore(loreList))
 
         event.setNewTopItem(output)
     })
 }
 
 // 5. Permit Binding: Right-clicking Permit Blank with Proofed Weapon in Offhand
-ItemEvents.rightClicked('kubejs:permit_blank', event => {
-    var player = event.player
-    var item = event.item
-    var offhand = player.getOffhandItem()
+ItemEvents.rightClicked(event => {
+    var item = event.getItem()
+    if (!item || fpGetStackId(item) !== 'kubejs:permit_blank') return
+    console.info('[Permit] rightClicked fired for permit_blank!')
+    var player = event.getPlayer()
+    var offhand = player.getOffhandItem ? player.getOffhandItem() : player.offhandItem
+    console.info('[Permit] offhand: ' + offhand + ', id: ' + fpGetStackId(offhand))
 
-    if (offhand.isEmpty() || String(offhand.id) !== 'tacz:modern_kinetic_gun') {
+    if (!offhand || offhand.isEmpty() || fpGetStackId(offhand) !== 'tacz:modern_kinetic_gun') {
         player.tell('§e[Permis] Plasează o armă poansonată în mâna stângă (offhand) pentru a-i elibera permisul.')
         return
     }
 
-    var gunData = offhand.get('minecraft:custom_data')
-    if (!gunData || !gunData.Proofed || !gunData.Serial) {
+    var tag = fpGetGunCustomTag(offhand)
+    console.info('[Permit] tag: ' + tag)
+    if (!tag || !tag.getBoolean('Proofed') || !tag.getString('Serial')) {
         player.tell('§c[Permis] Arma din mâna stângă nu este poansonată legal! Nu se poate emite permis.')
         return
     }
 
-    var serial = String(gunData.Serial)
-    var permitBook = Item.of('minecraft:written_book')
-    var bookTag = permitBook.getOrCreateTag()
-    bookTag.putString('title', 'Permis Port-Armă ' + serial)
-    bookTag.putString('author', 'Gheorghe Comandantul')
-    bookTag.putInt('generation', 0)
+    var serial = String(tag.getString('Serial'))
+    var playerName = player.username ? String(player.username) : String(player.getName().getString())
+    console.info('[Permit] emitting permit for serial ' + serial + ' to player ' + playerName)
 
-    var pages = bookTag.getList('pages', 8)
-    pages.add(Text.of(
-        '§6§lPERMIS DE PORT-ARMĂ§r\n\n' +
-        '§0Posesor: §1' + player.name.string + '\n' +
+    var pageText = '§6§lPERMIS DE PORT-ARMĂ§r\n\n' +
+        '§0Posesor: §1' + playerName + '\n' +
         '§0Serie Armă: §2' + serial + '\n' +
         '§0Model: §0Flintlock 16.5mm\n' +
         '§0Statut: §2LEGAL / ÎNREGISTRAT\n\n' +
         '§8Eliberat de garnizoana Straja. Neprezentarea la control atrage confiscarea armei.'
-    ).toJson())
-    bookTag.put('pages', pages)
 
+    var rawJson = JSON.stringify({ text: pageText }).replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+    var giveCmd = 'give ' + playerName +
+        ' minecraft:written_book[minecraft:written_book_content={title:\'Permis Port-Arma ' + serial + '\',author:\'Gheorghe Comandantul\',pages:[\'' + rawJson + '\']}] 1'
+
+    event.server.runCommandSilent(giveCmd)
     player.swing()
     if (!player.isCreative()) item.shrink(1)
-    player.give(permitBook)
     player.tell('§a[Permis] A fost eliberat permisul de port-armă pentru seria ' + serial + '!')
 })
