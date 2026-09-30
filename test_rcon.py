@@ -24,7 +24,7 @@ def recv_packet(s):
     return rid, ptype, payload
 
 try:
-    s = socket.create_connection((HOST, PORT), timeout=5)
+    s = socket.create_connection((HOST, PORT), timeout=15)
     print("Connected to RCON")
     s.sendall(packet(1, 3, PW))
     rid, ptype, payload = recv_packet(s)

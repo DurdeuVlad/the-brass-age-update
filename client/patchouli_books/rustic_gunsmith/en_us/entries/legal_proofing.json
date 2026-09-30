@@ -1,0 +1,20 @@
+{
+  "name": "Firearm Proofing & Legality",
+  "category": "patchouli:assembly",
+  "icon": "kubejs:item/proof_stamp",
+  "sortnum": 35,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Imperial Firearm Registry$()$(br2)Under Straja municipal law, firearms crafted in private workshops are considered $(c)unproofed contraband$() until inspected by an official armorer.$(br2)Unregistered weapons risk immediate confiscation upon inspection by the gendarmerie."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)The Proofing Ritual$()$(br2)Place an unproofed musket or pistol upon an $(bold)Anvil$() alongside an $(6)Imperial Proof Stamp$().$(br2)For a fee of 5 experience levels, the stamp will strike a unique, permanent serial number ($(2)#RC-15-XXXX$()) onto the breech block."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Permits & The Black Market$()$(br2)Officers issue formal permits by right-clicking a $(e)Permit Blank$() with a proofed weapon in hand.$(br2)$(bold)Warning:$() Scraping a proofed weapon upon a $(4)Grindstone$() will permanently file away its serial, turning it into a $(c)Defaced Black Market Gun$()."
+    }
+  ]
+}

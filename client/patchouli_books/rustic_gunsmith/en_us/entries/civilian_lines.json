@@ -1,0 +1,20 @@
+{
+  "name": "P.U.L.A SRL Civilian Lines",
+  "category": "patchouli:workshop",
+  "icon": "kubejs:item/miracle_fertilizer",
+  "sortnum": 30,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Commercial Chemical Expansion$()$(br2)P.U.L.A SRL does not live by gunpowder alone. By utilizing the karst sulfur and nitrate deposits of Straja, the company supplies five vital civilian industries across the realm."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)1. Viticulture & Cellaring$()$(br2)Sulfur cask fumigation strips purify oak barrels for Vinery winemakers. Royal vintage strips guarantee reserve grade wine.$(br2)$(bold)2. Miracle Fertilizer$()$(br2)Super-phosphate mineral fertilizer triple-speeds crop maturity when applied to farm soils."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)3. Medicated Sulfur Soap$()$(br2)Saponified antiseptic bars that wash away poison, infections, and lingering corruption.$(br2)$(bold)4. Safety Matches$()$(br2)Friction matchboxes that ignite campfires and torches in cavern winds.$(br2)$(bold)5. Vitriol Heavy Leather$()$(br2)Acid-tanned hides granting +50% durability to armor and saddles."
+    }
+  ]
+}
