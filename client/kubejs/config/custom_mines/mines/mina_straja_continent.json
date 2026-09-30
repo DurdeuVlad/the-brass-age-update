@@ -1,0 +1,255 @@
+{
+	"id": "mina_straja_continent",
+	"displayName": "Mina Carstică Straja (Continent)",
+	"dimension": "minecraft:overworld",
+	"npcTag": "mine_npc_mina_straja_continent",
+	"npcName": "Gheorghe Minerul",
+	"npcDialogId": 357091999,
+	"claimTag": "cm_claim_mina_straja_continent",
+	"memberTag": "cm_member_mina_straja_continent",
+	"ownerMarker": "#mine_mina_straja_continent",
+	"stageUnlockCooldownMs": 5000,
+	"autoUnclaimMissingTeam": true,
+	"layout": {
+		"entranceCenter": {
+			"x": 1250,
+			"y": 72,
+			"z": -850
+		},
+		"facing": "north",
+		"entrance": {
+			"width": 11,
+			"depth": 11,
+			"height": 11
+		},
+		"shaft": {
+			"width": 19,
+			"depth": 19,
+			"height": 44,
+			"bottomHubHeight": 6
+		},
+		"miningZone": {
+			"width": 48,
+			"depth": 48,
+			"verticalRadius": 16,
+			"entranceYOffset": 0,
+			"resetSplitYOffset": 0,
+			"resetBelowBlock": "minecraft:deepslate",
+			"resetAboveBlock": "minecraft:stone"
+		},
+		"entranceStructure": {
+			"key": "entrance",
+			"enabled": true,
+			"id": "mines:mine_entrance",
+			"authoredFacing": "north",
+			"captureBaseline": true
+		},
+		"shaftStructure": {
+			"key": "shaft_1",
+			"enabled": true,
+			"id": "mines:mine_shaft_1",
+			"authoredFacing": "north",
+			"placementOffset": {
+				"back": -1,
+				"right": 0,
+				"y": 7
+			}
+		},
+		"shaft2Structure": {
+			"key": "shaft_2",
+			"enabled": true,
+			"id": "mines:mine_shaft_2",
+			"authoredFacing": "north"
+		},
+		"warehouseStructure": {
+			"key": "warehouse",
+			"enabled": true,
+			"id": "mines:warehouse",
+			"authoredFacing": "north",
+			"width": 11,
+			"height": 15,
+			"depth": 21,
+			"diagonalOffset": 16,
+			"backOffset": 3,
+			"facingOffsetQuarterTurns": -3,
+			"yOffset": 0,
+			"captureBaseline": true,
+			"playerPlacement": {
+				"enabled": true,
+				"markerBlock": "minecraft:lodestone",
+				"markerName": "Warehouse Entrance Marker",
+				"minRadius": 0,
+				"maxRadius": 50,
+				"entranceToCenterBlocks": 10,
+				"baseYOffsetFromMarker": -1
+			}
+		},
+		"additionalAccessZones": [],
+		"autoEjectDistance": 17
+	},
+	"stages": [
+		{
+			"id": "shaft_1",
+			"displayName": "Mine Shaft 1 and Bottom Hub",
+			"dialogAction": "Unlock Mine Shaft 1",
+			"questTemplate": "shaft_1",
+			"authTag": "cm_mina_straja_continent_shaft_1_done",
+			"structureKey": "shaft_1"
+		},
+		{
+			"id": "warehouse",
+			"displayName": "Warehouse",
+			"dialogAction": "Build the Warehouse",
+			"questTemplate": "warehouse",
+			"authTag": "cm_mina_straja_continent_warehouse_done",
+			"structureKey": "warehouse"
+		},
+		{
+			"id": "zone_1",
+			"displayName": "Mining Zone 1 (Sulfur Caverns)",
+			"dialogAction": "Unlock Mining Zone 1",
+			"questTemplate": "zone_1",
+			"authTag": "cm_mina_straja_continent_zone_1_done",
+			"branch": "north"
+		},
+		{
+			"id": "zone_2",
+			"displayName": "Mining Zone 2 (Dripstone Stalactites)",
+			"dialogAction": "Unlock Mining Zone 2",
+			"questTemplate": "zone_2",
+			"authTag": "cm_mina_straja_continent_zone_2_done",
+			"branch": "east"
+		},
+		{
+			"id": "zone_3",
+			"displayName": "Mining Zone 3 (Iron Seams)",
+			"dialogAction": "Unlock Mining Zone 3",
+			"questTemplate": "zone_3",
+			"authTag": "cm_mina_straja_continent_zone_3_done",
+			"branch": "south"
+		},
+		{
+			"id": "zone_4",
+			"displayName": "Mining Zone 4 (Limestone Vaults)",
+			"dialogAction": "Unlock Mining Zone 4",
+			"questTemplate": "zone_4",
+			"authTag": "cm_mina_straja_continent_zone_4_done",
+			"branch": "west"
+		},
+		{
+			"id": "shaft_2",
+			"displayName": "Mine Shaft 2",
+			"dialogAction": "Unlock Mine Shaft 2",
+			"questTemplate": "shaft_2",
+			"authTag": "cm_mina_straja_continent_shaft_2_done",
+			"structureKey": "shaft_2"
+		}
+	],
+	"branches": {
+		"north": {
+			"enabled": true,
+			"resetHours": 8,
+			"hosts": [
+				"minecraft:stone",
+				"minecraft:deepslate",
+				"minecraft:tuff"
+			],
+			"ores": [
+				{
+					"block": "butchery:sulfur_ore",
+					"count": 600,
+					"veinSize": 18
+				},
+				{
+					"block": "minecraft:coal_ore",
+					"count": 800,
+					"veinSize": 20
+				}
+			],
+			"protectRespawnPositions": false,
+			"bannedPlacedBlocks": [
+				"minecraft:tnt"
+			]
+		},
+		"east": {
+			"enabled": true,
+			"resetHours": 8,
+			"hosts": [
+				"minecraft:stone",
+				"minecraft:deepslate",
+				"minecraft:tuff"
+			],
+			"ores": [
+				{
+					"block": "minecraft:dripstone_block",
+					"count": 1200,
+					"veinSize": 25
+				},
+				{
+					"block": "minecraft:pointed_dripstone",
+					"count": 800,
+					"veinSize": 16
+				}
+			],
+			"protectRespawnPositions": false,
+			"bannedPlacedBlocks": [
+				"minecraft:tnt"
+			]
+		},
+		"south": {
+			"enabled": true,
+			"resetHours": 8,
+			"hosts": [
+				"minecraft:stone",
+				"minecraft:deepslate",
+				"minecraft:tuff"
+			],
+			"ores": [
+				{
+					"block": "minecraft:iron_ore",
+					"count": 800,
+					"veinSize": 20
+				},
+				{
+					"block": "create:zinc_ore",
+					"count": 600,
+					"veinSize": 18
+				}
+			],
+			"protectRespawnPositions": false,
+			"bannedPlacedBlocks": [
+				"minecraft:tnt"
+			]
+		},
+		"west": {
+			"enabled": true,
+			"resetHours": 8,
+			"hosts": [
+				"minecraft:stone",
+				"minecraft:deepslate",
+				"minecraft:tuff"
+			],
+			"ores": [
+				{
+					"block": "minecraft:dripstone_block",
+					"count": 600,
+					"veinSize": 20
+				},
+				{
+					"block": "butchery:sulfur_ore",
+					"count": 300,
+					"veinSize": 15
+				},
+				{
+					"block": "minecraft:coal_ore",
+					"count": 600,
+					"veinSize": 20
+				}
+			],
+			"protectRespawnPositions": false,
+			"bannedPlacedBlocks": [
+				"minecraft:tnt"
+			]
+		}
+	}
+}
