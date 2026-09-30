@@ -1,10 +1,18 @@
 # ⚜ THE BRASS AGE UPDATE — TESTER & REVIEW GUIDE ⚜
 ### Ghid de Testare & Instalare pentru Testeri (Rustic Craft II)
 
-Versiune: `v1.0.0-Release`  
+Versiune: `v1.0.1-Release`  
 Platformă: `Minecraft 1.21.1` / `NeoForge 21.1.248`  
 Modpack: **Rustic Craft II**  
 Repository: `DurdeuVlad/the-brass-age-update`
+
+---
+
+> [!IMPORTANT]
+> **NOTĂ CRUCIALĂ PENTRU TESTERI — DE CE NU PORNEA v1.0.0**:
+> 1. **Pachetul este un Patch / Overlay, NU un modpack întreg independent**: Dacă importați zip-ul ca o instanță nouă în CurseForge / Prism Launcher, jocul va crăpa imediat la pornire (`Missing mandatory dependencies: kubejs, create`) pentru că lipsesc celelalte 150 de moduri din Rustic Craft II. Acest pachet trebuie extras **PESTE** instanța voastră existentă de Rustic Craft II!
+> 2. **Instalare Automată cu 1-Click**: Am adăugat scriptul `install_patch.bat` (și `.ps1`) în rădăcina arhivei pentru a preveni orice eroare manuală de copiere a folderelor.
+> 3. **Remedieri v1.0.1**: S-au corectat schemele Create 6 / NeoForge 1.21.1 pentru asamblarea secvențială (`transitional_item`), s-au inclus scripturile de client (tooltips) și server în toate pachetele, s-au adăugat cele 34 de texturi pixel-art 16x16 și Lăzile Militare Sigilate.
 
 ---
 
@@ -19,27 +27,31 @@ Acest export conține sistemul complet al expansiunii **The Brass Age**:
 6. **Mina Continentală Straja**: Integrare completă în motorul de mine `custom_mines` cu 3 zone de adâncime (Galerie carstică de sulf, Fisiuri de salpetru, Adâncuri de saramură și alamă).
 7. **Sistem Legal de Poansonare & Piață Neagră**: Armele noi sunt contrabandă (`NEPOANSONAT`); baterea pe nicovală cu Sigiliul Imperial aplică serie unică `#RC-15-XXXX`; polizarea pe tocilă (grindstone) pilește seria pentru lumea interlopă.
 8. **UX Prietenos**: Comenzi universale `/flintlock` și `/arma`, HUD dinamic pe actionbar la reîncărcare (numărătoare inversă 20s, avertizare la sprint).
+9. **34 Texturi Pixel-Art Autentice 16x16**: Toate piesele, pulberile, lăzile și armele au artă completă stil Minecraft.
 
 ---
 
 ## 🚀 2. Instalare Rapidă (Quick Start)
 
-### Opțiunea A: Pentru Testeri Client / Singleplayer (Cea mai comună)
-1. Deschide launcher-ul tău de Minecraft (Prism Launcher, CurseForge, Modrinth sau ATLauncher).
-2. Dă click-dreapta pe instanța **Rustic Craft II** și alege **Open Folder** / **Folder Instanță** (unde se află folderele `mods`, `config`, `kubejs`).
-3. Descarcă arhiva **`TheBrassAge-Update-All-In-One-v1.0.0.zip`**.
-4. Extrage conținutul arhivei direct peste instanța ta, permițând suprascrierea fișierelor (Overwrite All):
-   - `kubejs/` -> se îmbină cu folderul `kubejs` existent
-   - `patchouli_books/` -> se copiază în folderul principal
-   - `tacz/` -> se copiază în folderul principal
-   - `mods/` -> adaugă TaCZ și compatibilitățile necesare
-   - `config/` -> actualizează configurațiile de rucsac și depozitare
-5. Pornește jocul!
+### Opțiunea A: Instalare Automată 1-Click (Recomandată)
+1. Deschide launcher-ul tău (Prism Launcher, CurseForge, Modrinth sau ATLauncher).
+2. Dă click-dreapta pe instanța **Rustic Craft II** și alege **Open Folder** / **Folder Instanță** (unde vezi folderele `mods`, `config`, `kubejs`).
+3. Descarcă și extrage **`TheBrassAge-Update-All-In-One-v1.0.1.zip`** direct în acel folder.
+4. Dă dublu-click pe **`install_patch.bat`** (sau click-dreapta `Run with PowerShell` pe `install_patch.ps1`).
+5. Gata! Pornește jocul.
 
-### Opțiunea B: Pentru Administratori de Server Dedicat
-1. Oprește serverul (`stop`).
-2. Descarcă **`TheBrassAge-Update-Server-v1.0.0.zip`** (sau `All-In-One`).
-3. Extrage în rădăcina serverului dedicat.
+### Opțiunea B: Instalare Manuală (Fără installer)
+Dacă preferi să copiezi manual, extrage arhiva și suprascrie (Overwrite All) următoarele foldere în instanța ta:
+- `mods/` -> adaugă TaCZ și compatibilitățile necesare
+- `kubejs/` -> se îmbină cu scripturile, texturile și lăzile militare
+- `tacz/` -> conține gunpack-urile cu muschete și pistoale
+- `patchouli_books/` -> adaugă Manualul Armurierului
+- `config/` -> actualizează setările de rucsac și depozitare
+
+### Opțiunea C: Pentru Administratori de Server Dedicat
+1. Oprește serverul dedicat (`stop`).
+2. Descarcă **`TheBrassAge-Update-Server-v1.0.1.zip`** (sau `All-In-One`).
+3. Extrage în rădăcina serverului dedicat (sau rulează `install_patch.bat`).
 4. Repornește serverul.
 
 ---

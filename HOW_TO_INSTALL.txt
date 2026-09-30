@@ -1,0 +1,46 @@
+=====================================================================
+  ⚜ THE BRASS AGE UPDATE — INSTRUCTIUNI RAPIDE DE INSTALARE v1.0.1 ⚜
+=====================================================================
+
+ATENȚIE PENTRU TESTERI:
+Acest pachet este un UPDATE / PATCH pentru modpack-ul existent Rustic Craft II.
+NU încercați să importați această arhivă ca profil nou în CurseForge / Prism!
+Dacă o importați ca profil nou, Minecraft va crăpa imediat pentru că lipsesc
+celelalte 150 de moduri ale jocului de bază (Create, KubeJS, etc.).
+
+---------------------------------------------------------------------
+METODA 1: INSTALARE AUTOMATĂ (1-CLICK) [RECOMANDATĂ]
+---------------------------------------------------------------------
+1. Deschideți folderul instanței voastre Rustic Craft II:
+   - În Prism Launcher: Click dreapta pe instanță -> "Folder Instanță" -> ".minecraft"
+   - În CurseForge: Click dreapta pe profil -> "Open Folder"
+   - În Modrinth: Click dreapta -> "Open Folder"
+2. Extrageți conținutul acestei arhive direct în folderul instanței.
+3. Rulați cu dublu click:
+   --> install_patch.bat (sau install_patch.ps1)
+4. Porniți jocul!
+
+---------------------------------------------------------------------
+METODA 2: EXTRACT MANUAL
+---------------------------------------------------------------------
+Copiați și suprascrieți (Merge / Overwrite All) următoarele foldere
+peste folderul instanței voastre Rustic Craft II:
+  - mods/             (adaugă TaCZ și compatibilitățile)
+  - kubejs/           (conține rețetele, texturile și lăzile militare)
+  - tacz/             (conține gunpack-urile cu muschete și pistoale)
+  - patchouli_books/  (conține cartea Manualul Armurierului)
+  - config/           (actualizează setările de rucsac și unelte)
+
+---------------------------------------------------------------------
+CE S-A REPARAT ÎN v1.0.1:
+---------------------------------------------------------------------
+1. Schema Create 6 / NeoForge 1.21.1 a fost complet corectată (rezolvată
+   eroarea de sequenced_assembly cu transitional_item id).
+2. Adăugate toate scripturile de client (tooltips în limba română) și
+   scripturile de server în toate pachetele, asigurând funcționarea
+   perfectă atât pe Dedicated Server cât și în Singleplayer.
+3. Adăugate Lăzile Militare Sigilate (înlocuitorul coferelor) și toate
+   cele 34 de texturi pixel-art 16x16 autentice stil Minecraft.
+4. Adăugat instalator automatizat .bat / .ps1 pentru prevenirea
+   erorilor de extragere.
+=====================================================================

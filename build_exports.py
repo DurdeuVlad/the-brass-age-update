@@ -6,6 +6,7 @@ import hashlib
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 EXPORTS_DIR = os.path.join(BASE_DIR, "exports")
 STAGING_DIR = os.path.join(BASE_DIR, "staging")
+VERSION = "v1.0.1"
 
 os.makedirs(EXPORTS_DIR, exist_ok=True)
 if os.path.exists(STAGING_DIR):
@@ -25,14 +26,22 @@ def zip_dir(source_dir, output_zip_path):
     print(f"Created: {os.path.basename(output_zip_path)} ({size_mb:.2f} MB) - SHA256: {sha256[:12]}...")
     return output_zip_path
 
+def copy_installer_files(target_stage):
+    for doc in ["TESTER_GUIDE.md", "HOW_TO_INSTALL.txt", "install_patch.bat", "install_patch.ps1"]:
+        src = os.path.join(BASE_DIR, doc)
+        if os.path.exists(src):
+            shutil.copy(src, os.path.join(target_stage, doc))
+    # Also create README_TESTERS.txt copy of HOW_TO_INSTALL
+    src_how = os.path.join(BASE_DIR, "HOW_TO_INSTALL.txt")
+    if os.path.exists(src_how):
+        shutil.copy(src_how, os.path.join(target_stage, "README_TESTERS.txt"))
+
 # 1. Build All-In-One Package (Recommended for Singleplayer & Drop-in modpack update)
 aio_stage = os.path.join(STAGING_DIR, "all_in_one")
 os.makedirs(aio_stage, exist_ok=True)
+copy_installer_files(aio_stage)
 
-shutil.copy(os.path.join(BASE_DIR, "TESTER_GUIDE.md"), os.path.join(aio_stage, "TESTER_GUIDE.md"))
-shutil.copy(os.path.join(BASE_DIR, "TESTER_GUIDE.md"), os.path.join(aio_stage, "README_TESTERS.txt"))
-
-# Copy folders
+# Copy base server folders (configs, kubejs server/startup scripts, mods, patchouli, tacz)
 for folder in ["config", "defaultconfigs", "kubejs", "mods", "patchouli_books", "tacz"]:
     src = os.path.join(BASE_DIR, "server", folder)
     if os.path.exists(src):
@@ -44,32 +53,43 @@ aio_assets = os.path.join(aio_stage, "kubejs", "assets")
 if os.path.exists(client_assets) and not os.path.exists(aio_assets):
     shutil.copytree(client_assets, aio_assets)
 
-zip_dir(aio_stage, os.path.join(EXPORTS_DIR, "TheBrassAge-Update-All-In-One-v1.0.0.zip"))
+client_scripts = os.path.join(BASE_DIR, "client", "kubejs", "client_scripts")
+aio_client_scripts = os.path.join(aio_stage, "kubejs", "client_scripts")
+if os.path.exists(client_scripts) and not os.path.exists(aio_client_scripts):
+    shutil.copytree(client_scripts, aio_client_scripts)
+
+zip_dir(aio_stage, os.path.join(EXPORTS_DIR, f"TheBrassAge-Update-All-In-One-{VERSION}.zip"))
 
 # 2. Build Server Package (For dedicated server administrators)
 server_stage = os.path.join(STAGING_DIR, "server")
 os.makedirs(server_stage, exist_ok=True)
-shutil.copy(os.path.join(BASE_DIR, "TESTER_GUIDE.md"), os.path.join(server_stage, "TESTER_GUIDE.md"))
+copy_installer_files(server_stage)
 
 for folder in ["config", "defaultconfigs", "kubejs", "mods", "patchouli_books", "tacz"]:
     src = os.path.join(BASE_DIR, "server", folder)
     if os.path.exists(src):
         shutil.copytree(src, os.path.join(server_stage, folder))
 
-zip_dir(server_stage, os.path.join(EXPORTS_DIR, "TheBrassAge-Update-Server-v1.0.0.zip"))
+zip_dir(server_stage, os.path.join(EXPORTS_DIR, f"TheBrassAge-Update-Server-{VERSION}.zip"))
 
-# 3. Build Client Package (For players connecting to a remote dedicated server)
+# 3. Build Client Package (For players connecting to a remote dedicated server OR singleplayer)
 client_stage = os.path.join(STAGING_DIR, "client")
 os.makedirs(client_stage, exist_ok=True)
-shutil.copy(os.path.join(BASE_DIR, "TESTER_GUIDE.md"), os.path.join(client_stage, "TESTER_GUIDE.md"))
+copy_installer_files(client_stage)
 
 for folder in ["config", "kubejs", "mods", "patchouli_books", "tacz"]:
     src = os.path.join(BASE_DIR, "client", folder)
     if os.path.exists(src):
         shutil.copytree(src, os.path.join(client_stage, folder))
 
-zip_dir(client_stage, os.path.join(EXPORTS_DIR, "TheBrassAge-Update-Client-v1.0.0.zip"))
+# Ensure server_scripts are present in Client package for Singleplayer integrated server support
+server_scripts = os.path.join(BASE_DIR, "server", "kubejs", "server_scripts")
+client_server_scripts = os.path.join(client_stage, "kubejs", "server_scripts")
+if os.path.exists(server_scripts) and not os.path.exists(client_server_scripts):
+    shutil.copytree(server_scripts, client_server_scripts)
+
+zip_dir(client_stage, os.path.join(EXPORTS_DIR, f"TheBrassAge-Update-Client-{VERSION}.zip"))
 
 # Clean up staging
 shutil.rmtree(STAGING_DIR)
-print("Staging cleaned up. All exports built successfully!")
+print(f"Staging cleaned up. All {VERSION} exports built successfully!")

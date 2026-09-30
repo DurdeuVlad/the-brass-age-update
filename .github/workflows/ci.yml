@@ -54,27 +54,28 @@ jobs:
       - name: Verify Export Packages
         run: |
           ls -lh exports/
-          test -f exports/TheBrassAge-Update-All-In-One-v1.0.0.zip
-          test -f exports/TheBrassAge-Update-Client-v1.0.0.zip
-          test -f exports/TheBrassAge-Update-Server-v1.0.0.zip
+          test -f exports/TheBrassAge-Update-All-In-One-*.zip
+          test -f exports/TheBrassAge-Update-Client-*.zip
+          test -f exports/TheBrassAge-Update-Server-*.zip
 
       - name: Upload All-In-One Package Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TheBrassAge-Update-All-In-One-v1.0.0
-          path: exports/TheBrassAge-Update-All-In-One-v1.0.0.zip
+          name: TheBrassAge-Update-All-In-One-Latest
+          path: exports/TheBrassAge-Update-All-In-One-*.zip
           retention-days: 14
 
       - name: Upload Client Package Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TheBrassAge-Update-Client-v1.0.0
-          path: exports/TheBrassAge-Update-Client-v1.0.0.zip
+          name: TheBrassAge-Update-Client-Latest
+          path: exports/TheBrassAge-Update-Client-*.zip
           retention-days: 14
 
       - name: Upload Server Package Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TheBrassAge-Update-Server-v1.0.0
-          path: exports/TheBrassAge-Update-Server-v1.0.0.zip
+          name: TheBrassAge-Update-Server-Latest
+          path: exports/TheBrassAge-Update-Server-*.zip
           retention-days: 14
+

@@ -73,14 +73,19 @@ Production efficiency scales non-linearly with kinetic and thermal automation:
 
 ---
 
-## 🚀 Installation & Deployment
+## 🚀 Installation & Deployment (v1.0.1)
+
+> [!TIP]
+> **Automated 1-Click Installation for Testers**:
+> Download **`TheBrassAge-Update-All-In-One-v1.0.1.zip`** from [Releases](https://github.com/DurdeuVlad/the-brass-age-update/releases), extract directly into your existing **Rustic Craft II** instance folder, and double-click **`install_patch.bat`** (or `install_patch.ps1`). See [**`HOW_TO_INSTALL.txt`**](HOW_TO_INSTALL.txt) and [**`TESTER_GUIDE.md`**](TESTER_GUIDE.md) for full instructions.
 
 1. **Server Deployment**:
-   - Merge the contents of `server/` directly into the Minecraft server root directory.
-   - Ensure the server runs Minecraft 1.21.1 NeoForge with Create, KubeJS, and TACZ.
+   - Merge the contents of `server/` (or `TheBrassAge-Update-Server-v1.0.1.zip`) directly into the Minecraft server root directory.
+   - Restart the dedicated server.
 2. **Client Deployment**:
-   - Merge the contents of `client/` into the client instance root directory.
-   - Both client and server must share identical gunpack zip checksums (`MANIFEST.csv`) for zero-desync bullet prediction.
+   - Merge the contents of `client/` (or `TheBrassAge-Update-Client-v1.0.1.zip`) into the client instance root directory.
+   - In Singleplayer, both client and server scripts are bundled to guarantee seamless offline play.
+
 
 ---
 
