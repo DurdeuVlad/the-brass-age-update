@@ -169,6 +169,11 @@
 					"block": "minecraft:coal_ore",
 					"count": 800,
 					"veinSize": 20
+				},
+				{
+					"block": "minecraft:dripstone_block",
+					"count": 150,
+					"veinSize": 6
 				}
 			],
 			"protectRespawnPositions": false,
