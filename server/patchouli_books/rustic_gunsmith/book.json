@@ -1,0 +1,13 @@
+{
+  "name": "The Gunsmith's Book of Work",
+  "landing_text": "An account of the pistol, the shoulder arm, and their ammunition.$(br2)Twenty workshop patterns for Rustic Craft II.$(br2)A period-inspired Minecraft handbook.",
+  "version": 1,
+  "use_resource_pack": false,
+  "book_texture": "patchouli:textures/gui/book_brown.png",
+  "model": "patchouli:book_brown",
+  "show_progress": false,
+  "show_toasts": false,
+  "text_color": "34291f",
+  "header_color": "674b2b",
+  "link_color": "795431"
+}

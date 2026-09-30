@@ -1,0 +1,23 @@
+{
+  "name": "Reinforced Long Barrel",
+  "category": "patchouli:barrel",
+  "icon": "kubejs:rifle_barrel",
+  "sortnum": 12,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Lay the two finished short barrels at opposite ends of the grid. Tempered steel braces the corners, brass bands flank the centre, and a precision mechanism occupies the heart. Together these make the reinforced long barrel."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:rifle_barrel",
+      "link_recipe": false,
+      "text": "One finished Reinforced Long Barrel. Keep this piece ready for the next assembly."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "kubejs:flintlocks/rifle_barrel",
+      "text": "Follow this grid exactly. One craft yields one finished component."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "Trigger Assembly",
+  "category": "patchouli:lock",
+  "icon": "kubejs:trigger_assembly",
+  "sortnum": 17,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Set the tempered spring above the precision mechanism, flank the mechanism with screws, and place the tripwire hook below. The hook is a Minecraft ingredient; this pattern is the workshop's game recipe."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:trigger_assembly",
+      "link_recipe": false,
+      "text": "One finished Trigger Assembly. Keep this piece ready for the next assembly."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "kubejs:flintlocks/trigger_assembly",
+      "text": "Follow this grid exactly. One craft yields one finished component."
+    }
+  ]
+}

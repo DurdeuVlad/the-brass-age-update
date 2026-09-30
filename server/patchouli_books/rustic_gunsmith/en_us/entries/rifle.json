@@ -1,0 +1,17 @@
+{
+  "name": "FK15 Flintlock Rifle",
+  "category": "patchouli:assembly",
+  "icon": "kubejs:rifle_stock",
+  "sortnum": 23,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Bring the reinforced barrel and shoulder stock together with the common lock and ramrod. Two further bands, a screw, a tempered piece and a precision mechanism complete the pattern. The rifle is assembled from parts, not from a finished pistol."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "kubejs:flintlocks/rifle",
+      "text": "One finished gun, unloaded. Supply qkl:16mm ammunition and use your TaCZ Reload key."
+    }
+  ]
+}

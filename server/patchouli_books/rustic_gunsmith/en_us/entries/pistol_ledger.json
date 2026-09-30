@@ -1,0 +1,20 @@
+{
+  "name": "Pistol Ledger",
+  "category": "patchouli:workshop",
+  "icon": "minecraft:paper",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Reckon these finished supplies before beginning the pistol. Totals include every custom intermediate.$(br2)Sheets, alloys and precision mechanisms are counted as finished supplies. Their upstream materials, machines, ammunition and fuel are additional."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Stores$()$(br2)76 Iron Sheet$(br)56 Charcoal$(br)16 Andesite Alloy$(br)26 Iron Nugget$(br)3 Precision Mechanism"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Stores$()$(br2)2 Flint$(br)9 Brass Sheet$(br)1 Tripwire Hook$(br)6 Stripped Dark Oak Log$(br)3 Leather"
+    }
+  ]
+}

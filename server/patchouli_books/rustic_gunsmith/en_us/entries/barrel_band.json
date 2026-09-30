@@ -1,0 +1,23 @@
+{
+  "name": "Brass Barrel Band",
+  "category": "patchouli:forge",
+  "icon": "kubejs:barrel_band",
+  "sortnum": 8,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The brass band binds the larger assemblies together. Arrange three brass sheets about the open centre and place a screw below. The rifle consumes six bands throughout its construction; the pistol requires one."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:barrel_band",
+      "link_recipe": false,
+      "text": "One finished Brass Barrel Band. Keep this piece ready for the next assembly."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "kubejs:flintlocks/barrel_band",
+      "text": "Follow this grid exactly. One craft yields one finished component."
+    }
+  ]
+}

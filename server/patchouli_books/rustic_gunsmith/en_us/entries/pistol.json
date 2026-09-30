@@ -1,0 +1,17 @@
+{
+  "name": "FK15P Flintlock Pistol",
+  "category": "patchouli:assembly",
+  "icon": "kubejs:pistol_stock",
+  "sortnum": 22,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Bring the barrel, complete lock, ramrod and bound stock to the bench. Place the band, screw, tempered piece and leather precisely as shown. The work yields one FK15P pistol, unloaded and ready for its Minecraft ammunition."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "kubejs:flintlocks/pistol",
+      "text": "One finished gun, unloaded. Supply qkl:16mm ammunition and use your TaCZ Reload key."
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "Order of the Rifle",
+  "category": "patchouli:assembly",
+  "icon": "kubejs:rifle_stock",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Prepare 24 tempered steel, 20 Gun Screws and one tempered spring. Assemble one complete lock.$(br2)Finish two short barrels, then join them into the reinforced long barrel."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:rifle_stock",
+      "text": "Make three hardwood blanks. Bind one into a pistol stock, then combine it with the other two blanks for this rifle stock."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Make six bands in total: two for the long barrel, two for its stock and two for final assembly. Prepare one ramrod.$(br2)Six precision mechanisms are consumed throughout the chain. A finished pistol is never an ingredient."
+    }
+  ]
+}

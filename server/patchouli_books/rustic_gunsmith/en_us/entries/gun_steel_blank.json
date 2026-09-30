@@ -1,0 +1,23 @@
+{
+  "name": "Gun Steel Blank",
+  "category": "patchouli:forge",
+  "icon": "kubejs:gun_steel_blank",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Begin with the stock of the forge. Lay iron sheets about charcoal and an andesite-alloy heart, following the nine-square pattern. The rough billet is but a beginning; set it aside for the blast furnace before using it in the finer work."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:gun_steel_blank",
+      "link_recipe": false,
+      "text": "One finished Gun Steel Blank. Keep this piece ready for the next assembly."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "kubejs:flintlocks/gun_steel_blank",
+      "text": "Follow this grid exactly. One craft yields one finished component."
+    }
+  ]
+}

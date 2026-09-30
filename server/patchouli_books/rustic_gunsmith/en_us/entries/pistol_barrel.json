@@ -1,0 +1,23 @@
+{
+  "name": "Finished Pistol Barrel",
+  "category": "patchouli:barrel",
+  "icon": "kubejs:pistol_barrel",
+  "sortnum": 11,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Finish the short barrel by joining the blank with two pieces of andesite alloy, a screw and a precision mechanism. For the long gun, prepare two such barrels before proceeding to the next plate."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:pistol_barrel",
+      "link_recipe": false,
+      "text": "One finished Finished Pistol Barrel. Keep this piece ready for the next assembly."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "kubejs:flintlocks/pistol_barrel",
+      "text": "Follow this grid exactly. One craft yields one finished component."
+    }
+  ]
+}

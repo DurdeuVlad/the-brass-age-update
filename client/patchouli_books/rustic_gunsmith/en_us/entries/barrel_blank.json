@@ -1,0 +1,23 @@
+{
+  "name": "Barrel Blank",
+  "category": "patchouli:barrel",
+  "icon": "kubejs:barrel_blank",
+  "sortnum": 10,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Now attend to the barrel stock. Six tempered pieces form the sides of the pattern, while two iron sheets occupy its ends. Leave the middle square empty. This rough part must still pass through the finishing recipe."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:barrel_blank",
+      "link_recipe": false,
+      "text": "One finished Barrel Blank. Keep this piece ready for the next assembly."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "kubejs:flintlocks/barrel_blank",
+      "text": "Follow this grid exactly. One craft yields one finished component."
+    }
+  ]
+}

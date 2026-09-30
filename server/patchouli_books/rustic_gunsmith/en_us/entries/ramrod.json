@@ -1,0 +1,23 @@
+{
+  "name": "Steel Ramrod",
+  "category": "patchouli:forge",
+  "icon": "kubejs:ramrod",
+  "sortnum": 9,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Set two tempered pieces along the rising diagonal, with a screw at its upper end. Keep the completed rod beside the final assembly: the rod is consumed as a fitted part of the finished gun."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:ramrod",
+      "link_recipe": false,
+      "text": "One finished Steel Ramrod. Keep this piece ready for the next assembly."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "kubejs:flintlocks/ramrod",
+      "text": "Follow this grid exactly. One craft yields one finished component."
+    }
+  ]
+}

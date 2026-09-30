@@ -1,0 +1,23 @@
+{
+  "name": "Mainspring Blank",
+  "category": "patchouli:forge",
+  "icon": "kubejs:mainspring_blank",
+  "sortnum": 13,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "A lock begins with its spring. Arrange five iron sheets in the open, bent pattern shown on this plate. Do not fill the empty squares. The resulting blank still requires the furnace before it belongs in the trigger assembly."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:mainspring_blank",
+      "link_recipe": false,
+      "text": "One finished Mainspring Blank. Keep this piece ready for the next assembly."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "kubejs:flintlocks/mainspring_blank",
+      "text": "Follow this grid exactly. One craft yields one finished component."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "Hardwood Stock Blank",
+  "category": "patchouli:stock",
+  "icon": "kubejs:stock_blank",
+  "sortnum": 19,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Turn next to the stock-maker's bench. Six stripped dark oak logs form the stepped blank. Use the exact timber named in the ledger: planks, unstripped logs and other species do not answer this pattern."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:stock_blank",
+      "link_recipe": false,
+      "text": "One finished Hardwood Stock Blank. Keep this piece ready for the next assembly."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "kubejs:flintlocks/stock_blank",
+      "text": "Follow this grid exactly. One craft yields one finished component."
+    }
+  ]
+}

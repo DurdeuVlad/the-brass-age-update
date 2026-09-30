@@ -1,0 +1,24 @@
+{
+  "name": "A Lot of Sixteen",
+  "category": "patchouli:ammo",
+  "icon": "minecraft:paper",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Cut two Iron or Zinc Nuggets into twenty large cores. Run the wad sequence once with four Paper to make thirty Wads."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Mix two Gunpowder, one Charcoal and 250 mB Water into ten cakes. Smoke just one cake, then press it into four charges.$(br2)Run the ammunition pattern four times."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "The lot yields sixteen rounds. Four cores, fourteen wads and nine undried cakes remain.$(br2)Fuel and machine construction are additional. Four rounds require one assembly cycle; sixty-four rounds require sixteen cycles."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Carry the finished ammo in your inventory. Hold either gun and use the configured TaCZ Reload key. Both guns hold one round. Wait for the reload animation to finish."
+    }
+  ]
+}

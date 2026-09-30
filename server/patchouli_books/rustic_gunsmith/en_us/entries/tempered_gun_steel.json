@@ -1,0 +1,23 @@
+{
+  "name": "Tempered Gun Steel",
+  "category": "patchouli:forge",
+  "icon": "kubejs:tempered_gun_steel",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Bring the rough billet to the furnace and allow the work its full appointed time. In this workshop, the blast furnace yields the tempered piece required by barrels, hammers and fittings. Count the finished pieces before beginning assembly."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:tempered_gun_steel",
+      "link_recipe": false,
+      "text": "One finished Tempered Gun Steel. Keep this piece ready for the next assembly."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:gun_steel_blank",
+      "text": "Place one of these blanks in a blast furnace with fuel. The result is one Tempered Gun Steel. Time: 20 seconds at 20 TPS. An ordinary furnace will not perform this recipe."
+    }
+  ]
+}

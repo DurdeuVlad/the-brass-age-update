@@ -1,0 +1,28 @@
+{
+  "name": "To the Apprentice",
+  "category": "patchouli:workshop",
+  "icon": "minecraft:crafting_table",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Lay out the several parts before beginning. Keep the barrel-maker's pieces apart from the stock-maker's, and gather the smaller fittings in a tray.$(br2)This is a fictional trade handbook for Minecraft. The voice is old-fashioned; the patterns and materials belong to Rustic Craft II."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Read the plates$()$(br2)Each square takes one named item. Leave empty squares empty. Every component recipe gives one item, including Gun Screws.$(br2)The crafting table serves most work. Steel and springs need a blast furnace. Final ammunition needs nine Mechanical Crafters."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)A word on discovery$()$(br2)The custom recipes remain craftable but are hidden from EMI/JEI for everyone. Read their patterns here.$(br2)No crafting recipe, starting gift or loot entry is provided for this handbook. An administrator must issue it."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Create materials$()$(br2)Press iron or brass ingots into sheets. Heated Basin mixing joins one copper and one zinc ingot into two brass ingots.$(br2)The alloy crafting pattern uses two andesite and two iron or zinc nuggets."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Precision mechanisms$()$(br2)Begin with a Golden Sheet. Deploy a Cogwheel, a Large Cogwheel and an Iron Nugget, in that order. Repeat five times.$(br2)One attempt uses five of each applied ingredient and may give a byproduct. Count successful mechanisms before assembly."
+    }
+  ]
+}

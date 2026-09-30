@@ -1,0 +1,21 @@
+{
+  "name": "Order of the Pistol",
+  "category": "patchouli:assembly",
+  "icon": "kubejs:pistol_stock",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Prepare 14 tempered steel and 13 Gun Screws. Make one tempered spring, then the hammer, pan and trigger. Join these into one complete lock."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:pistol_barrel",
+      "text": "Finish one short barrel. Carve one hardwood blank and bind it into the pistol stock. Prepare one brass band and one ramrod."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Bring the assemblies to the final pistol pattern. Reserve its extra screw, steel and leather.$(br2)Three precision mechanisms are consumed across the barrel, trigger and lock. The finished FK15P is unloaded."
+    }
+  ]
+}

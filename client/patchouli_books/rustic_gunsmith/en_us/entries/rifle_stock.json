@@ -1,0 +1,23 @@
+{
+  "name": "Reinforced Rifle Stock",
+  "category": "patchouli:stock",
+  "icon": "kubejs:rifle_stock",
+  "sortnum": 21,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "For the shoulder arm, gather two further hardwood blanks and the bound pistol stock. Add leather, a screw and two brass bands. The resulting reinforced stock is reserved for the final long-gun assembly."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:rifle_stock",
+      "link_recipe": false,
+      "text": "One finished Reinforced Rifle Stock. Keep this piece ready for the next assembly."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "kubejs:flintlocks/rifle_stock",
+      "text": "Follow this grid exactly. One craft yields one finished component."
+    }
+  ]
+}

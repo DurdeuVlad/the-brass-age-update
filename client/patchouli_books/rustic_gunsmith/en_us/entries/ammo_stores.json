@@ -1,0 +1,37 @@
+{
+  "name": "The Ammunition Stores",
+  "category": "patchouli:ammo",
+  "icon": "tacz_c:gunpowder_charge",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The two guns share 16.5mm ammunition, whose gun-pack ID is qkl:16mm. Prepare the large cores, paper wads and charges separately before final assembly."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "tacz_c:large_bullet_core",
+      "text": "A Mechanical Saw cuts one Iron or Zinc Nugget into ten Large Bullet Cores. Use the large cores, not ordinary cores or finished bullets."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "tacz_c:wad",
+      "text": "Begin with one Paper. Deploy another Paper three times, then press and saw the in-progress item. One pass uses four Paper and yields thirty Wads."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "tacz_c:gunpowder_cake",
+      "text": "Mix two Minecraft Gunpowder, one Charcoal and 250 mB Water in a Basin. This yields ten cakes. No heat is required for the mixing step."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "tacz_c:gunpowder_cake_dry",
+      "text": "Smoke a cake with fuel to obtain one dry cake. Recipe time: 50 ticks, or 2.5 seconds at normal server speed."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "tacz_c:gunpowder_charge",
+      "text": "Press one dry cake to obtain four charges. Alternatively craft five Creatified Gunpowder Pellets shapelessly into one charge. The final ammo pattern requires this charge."
+    }
+  ]
+}

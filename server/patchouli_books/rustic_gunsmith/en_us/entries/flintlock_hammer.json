@@ -1,0 +1,23 @@
+{
+  "name": "Flintlock Hammer",
+  "category": "patchouli:lock",
+  "icon": "kubejs:flintlock_hammer",
+  "sortnum": 15,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The hammer is the raised member of the lock. Two flints, two tempered pieces and a screw are laid in the stepped pattern. Assemble it as its own component before bringing it to the lock plate."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:flintlock_hammer",
+      "link_recipe": false,
+      "text": "One finished Flintlock Hammer. Keep this piece ready for the next assembly."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "kubejs:flintlocks/flintlock_hammer",
+      "text": "Follow this grid exactly. One craft yields one finished component."
+    }
+  ]
+}
