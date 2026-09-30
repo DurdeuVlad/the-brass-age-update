@@ -35,7 +35,7 @@ ServerEvents.recipes(event => {
     event.custom({
         type: 'create:sequenced_assembly',
         ingredient: { item: 'minecraft:paper' },
-        transitional_item: { item: 'minecraft:paper' },
+        transitional_item: { id: 'minecraft:paper' },
         sequence: [
             {
                 type: 'create:deploying',

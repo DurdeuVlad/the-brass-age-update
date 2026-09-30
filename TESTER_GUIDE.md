@@ -12,7 +12,7 @@ Repository: `DurdeuVlad/the-brass-age-update`
 
 Acest export conține sistemul complet al expansiunii **The Brass Age**:
 1. **Arme cu Cremene Autentice**: Muscheta cu țeavă lisă FK15 (140ms timp de dare a focului, dispersie conică), Pistolul de cavalerie FK15-P, Muscheta ghintuită FK15-R Jaeger.
-2. **Limită Realistă de Transport**: Maxim 1 armă lungă (muschetă) pe spate și 2 arme scurte (pistoale) la brâu. Armele nu pot fi ascunse în rucsacuri (Backpacked) sau genți, dar pot fi depozitate în siguranță în sipete de lemn (*Berk's Furniture Coffers*).
+2. **Limită Realistă de Transport & Lăzi Militare**: Pe jos, ostașul poartă maxim 1 armă lungă (muschetă) pe spate și 2 arme scurte (pistoale) la brâu. Pentru transportul de mari cantități, armamentul se ambalează în **Lăzi Militare Sigilate** (`kubejs:crate_muskets` - 8 muschete, `kubejs:crate_pistols` - 8 pistoale, `kubejs:ammunition_crate` - 256 muniții), ideale pentru transportul în căruțe de povară (*Trotting Wagons*), vagoane de tren Create sau animale de povară.
 3. **Muniție & Război Supranatural**: Cartușe sfințite de argint (daune 4× împotriva strigoilor/nemorților și 2× împotriva vampirilor), Mitralii (Canister Shot - 8 alice) și Gloanțe Incendiare de sulf.
 4. **Economie Industrială pe 3 Niveluri (Factorio-Style)**: Rafinarea pulberii negre (Mojar manual -> Moară cu ciocane Create & Corning -> Linie chimică automatizată de asamblare secvențială).
 5. **5 Linii Civile P.U.L.A SRL**: Benzi de sulf pentru vinificație (Vinery), Îngrășământ mineral Super-Fosfat (creștere triplă a recoltelor), Săpun medicinal antiseptic de sulf, Chibrituri de siguranță, Piele grea tratată cu vitriol.
@@ -108,12 +108,14 @@ Pentru a testa rapid fără a mina resursele manual, deschide chat-ul și folose
 - **Test Suplimentar (Anulare Sprint)**: Pornește reîncărcarea și sprintează sau schimbă slotul.  
   *Rezultat*: Reîncărcarea este anulată instant cu mesajul roșu `✖ Reîncărcare anulată (sprint sau armă schimbată)!`.
 
-### ✅ Test 4: Limita de Transport (Throttled Carry Limits) & Sipete
-- **Ce testezi**: Restricția la maxim 1 muschetă și 2 pistoale.
-- **Acțiune**: Pune în inventar 1 muschetă și 2 pistoale. Apoi încearcă să mai iei de pe jos sau dintr-un cufăr încă o muschetă.
-- **Comportament Așteptat**: A doua muschetă va cădea imediat pe pământ la picioarele tale, însoțită de un sunet de clovn/greutate și un mesaj clar de atenționare: `Nu poți purta mai mult de 1 armă lungă pe umeri!`.
-- **Test Sipet**: Plasează un sipet de lemn (*Coffer* din Berk's Furniture). Pune armele în el.  
-  *Rezultat*: Armele se depozitează fără probleme. În rucsacul de pe spate (*Backpack*), armele sunt respinse.
+### ✅ Test 4: Limita de Transport pe Jos & Transportul în Vrac cu Lăzi Militare și Căruțe
+- **Ce testezi**: Restricția la maxim 1 muschetă și 2 pistoale pe jos, și transportul de mari cantități folosind Lăzile de Armament.
+- **Test 4A (Pe jos)**: Pune în inventar 1 muschetă și 2 pistoale. Apoi încearcă să mai iei de pe jos sau dintr-un cufăr încă o muschetă.  
+  *Rezultat*: A doua muschetă va cădea imediat pe pământ la picioarele tale, însoțită de un mesaj clar: `Nu poți purta mai mult de 1 armă lungă pe umeri!`.
+- **Test 4B (Ambalare în Ladă de Muschete)**: Folosește rețeta din masa de lucru (8 muschete în jurul unui cufăr de lemn) sau dă-ți o ladă: `/give @s kubejs:crate_muskets 4`.  
+  *Rezultat*: Lăzile de armament sunt obiecte sigilate de transport și NU cad pe sol! Poți purta zeci de lăzi în inventar, căruțe de povară (*Trotting Wagons: Conestoga Wagon*) sau vagoane Create.
+- **Test 4C (Desigilare Ladă)**: Ține `Lada de Muschete` în mână și apasă `Shift + Click-Dreapta` pe sol (sau plaseaz-o în masa de lucru).  
+  *Rezultat*: Se aude sunetul de rupere a scândurilor și lada se desface, descărcând pe loc cele 8 muschete și returnând cufărul!
 
 ### ✅ Test 5: Cartușe Sfințite de Argint vs Nemuritori & Vampiri
 - **Ce testezi**: Multiplicatorii de daune supranaturale și selectarea muniției din mâna secundară (*Offhand*).

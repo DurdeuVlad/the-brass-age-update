@@ -65,8 +65,8 @@ def validate_textures():
     client_tex = glob.glob(os.path.join(BASE_DIR, "client", "kubejs", "assets", "kubejs", "textures", "item", "*.png"))
     
     print(f"  [INFO] Found {len(server_tex)} server textures and {len(client_tex)} client textures.")
-    if len(server_tex) < 31 or len(client_tex) < 31:
-        print(f"  [FAIL] Expected at least 31 textures per side, got server={len(server_tex)}, client={len(client_tex)}")
+    if len(server_tex) < 34 or len(client_tex) < 34:
+        print(f"  [FAIL] Expected at least 34 textures per side, got server={len(server_tex)}, client={len(client_tex)}")
         return False
     if len(server_tex) != len(client_tex):
         print("  [FAIL] Texture count mismatch between client and server!")
@@ -90,7 +90,7 @@ def validate_required_scripts():
         "flintlock_ordnance_special.js",
         "flintlock_proofing_legal.js",
         "flintlock_ux_helpers.js",
-        "furniture_coffer_gun_restrictions.js",
+        "military_logistics_crates.js",
         "vampire_admin.js",
     ]
     missing = []

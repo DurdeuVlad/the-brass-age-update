@@ -51,7 +51,7 @@ ServerEvents.recipes(event => {
     event.custom({
         type: 'create:sequenced_assembly',
         ingredient: { item: 'tacz:ammo' },
-        transitional_item: { item: 'tacz:ammo' },
+        transitional_item: { id: 'tacz:ammo' },
         sequence: [
             {
                 type: 'create:deploying',

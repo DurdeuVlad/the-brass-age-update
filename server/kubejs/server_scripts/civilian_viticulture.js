@@ -37,7 +37,7 @@ ServerEvents.recipes(event => {
     event.custom({
         type: 'create:sequenced_assembly',
         ingredient: { item: 'kubejs:fumigation_strip' },
-        transitional_item: { item: 'kubejs:fumigation_strip' },
+        transitional_item: { id: 'kubejs:fumigation_strip' },
         sequence: [
             {
                 type: 'create:deploying',

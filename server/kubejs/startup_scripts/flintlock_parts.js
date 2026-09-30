@@ -36,7 +36,12 @@ StartupEvents.registry('item', event => {
         ['medicated_soap', 'Antiseptic Medicated Sulfur Soap'],
         ['sulfur_matches', 'Crude Sulfur Matches'],
         ['safety_matches', 'Safety Matchbox'],
-        ['vitriol_leather', 'Vitriol Heavy Leather']
+        ['vitriol_leather', 'Vitriol Heavy Leather'],
+
+        // Military Logistics Crates (Bulk Transport replacing coffers)
+        ['crate_muskets', 'Military Musket Crate'],
+        ['crate_pistols', 'Officer Pistol Crate'],
+        ['ammunition_crate', 'Heavy Ammunition Crate']
     ]
 
     parts.forEach(part => {

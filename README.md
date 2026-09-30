@@ -64,7 +64,7 @@ Production efficiency scales non-linearly with kinetic and thermal automation:
 │   │   ├── flintlock_ammo.js              # Create mechanical crafter ammunition recipes
 │   │   ├── flintlock_ballistics.js        # TaCZServerEvents dynamic ballistics enforcement
 │   │   ├── flintlock_carry_limits.js      # Staggered 1 Hz player inventory carry limits
-│   │   └── furniture_coffer_gun_restrictions.js # Event-driven storage restrictions
+│   │   └── military_logistics_crates.js   # Bulk transport crates & Trotting Wagon logistics
 │   ├── mods/                              # Server-side TaCZ & KubeJS integration JARs
 │   └── tacz/                              # ChocolateMan & Gunpowder Revolution gun packs
 ├── client/                                # Client instance overlay (exact parity with server)
