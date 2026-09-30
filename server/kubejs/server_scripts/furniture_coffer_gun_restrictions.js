@@ -40,6 +40,9 @@ function furnitureCofferCleanItem(player, stack) {
 PlayerEvents.tick(event => {
     const player = event.player
     if (!player.isAlive() || player.isSpectator()) return
+    // Stagger scans across 10 game ticks (2 Hz per player) to eliminate 20 Hz tick overhead
+    if ((player.age + Math.abs(player.uuid.hashCode())) % 10 !== 0) return
+
     let changed = false
     const menu = player.containerMenu
     if (menu instanceof FurnitureGunChestMenu) {

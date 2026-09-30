@@ -1,0 +1,20 @@
+{
+  "name": "Consecrated Silver Rounds",
+  "category": "patchouli:ammo",
+  "icon": "kubejs:item/saltpeter",
+  "sortnum": 25,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Consecrated Silver Cartridges$()$(br2)To purge the corruption creeping across the realm, ammunition must be cast with blessed silver. These cartridges deliver devastating $(6)4.0x damage$() against undead fiends and corrupt CustomNPCs, and $(b)2.0x damage$() against vampire players."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Offhand Ammunition Loading$()$(br2)Muzzleloaders are loaded deliberately. To select Silver Cartridges over lead rounds, hold them in your $(italic)offhand (slot 40)$() before pressing [R].$(br2)Your gun will prime the silver round first, sounding an amethyst chime upon impact with supernatural targets."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Production Tiers$()$(br2)$(bold)Tier 1:$() Altar assembly with silver nuggets, paper, and powder charges.$(br2)$(bold)Tier 2:$() 3x3 Mechanical Crafter pattern with bullet cores, wads, and charges.$(br2)$(bold)Tier 3:$() Automated Sequenced Assembly line anointing standard rounds with water/potion and silver."
+    }
+  ]
+}
