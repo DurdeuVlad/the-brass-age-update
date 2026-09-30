@@ -33,7 +33,7 @@ function flintlockCarryMessage(player) {
     const next = player.persistentData.getLong('flintlockCarryNextMessage')
     if (now < next) return
     player.persistentData.putLong('flintlockCarryNextMessage', now + 60)
-    player.tell('Carry limit: 2 flintlock pistols and 1 flintlock rifle. Extra guns stay on the ground.')
+    player.tell('§e[Arsenal] Limită de transport: maxim 1 pușcă și 2 pistoale. Armele în plus rămân pe sol.')
 }
 
 ItemEvents.canPickUp('tacz:modern_kinetic_gun', event => {
@@ -52,6 +52,9 @@ ItemEvents.canPickUp('tacz:modern_kinetic_gun', event => {
 PlayerEvents.tick(event => {
     const player = event.player
     if (!player.isAlive() || player.isSpectator()) return
+    // 1 Hz staggered throttling: prevents 20 Hz tick spikes across player base
+    if ((player.age + Math.abs(player.uuid.hashCode())) % 20 !== 0) return
+
     const counts = { pistol: 0, rifle: 0 }
     let changed = false
     flintlockCarriedStacks(player).forEach(stack => {
