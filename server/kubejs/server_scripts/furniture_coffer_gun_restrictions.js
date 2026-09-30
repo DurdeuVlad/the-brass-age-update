@@ -40,6 +40,9 @@ function furnitureCofferCleanItem(player, stack) {
 PlayerEvents.tick(event => {
     const player = event.player
     if (!player.isAlive() || player.isSpectator()) return
+    // 2 Hz staggered throttling (every 10 ticks): minimizes server CPU footprint
+    if ((player.age + Math.abs(player.uuid.hashCode())) % 10 !== 0) return
+
     let changed = false
     const menu = player.containerMenu
     if (menu instanceof FurnitureGunChestMenu) {
@@ -68,6 +71,6 @@ PlayerEvents.tick(event => {
         inventory.setChanged()
         menu.broadcastChanges()
         player.inventoryMenu.broadcastChanges()
-        player.tell('Guns cannot be stored in coffers. Removed guns were dropped beside you.')
+        player.tell('§e[Arsenal] Armele de foc nu pot fi depozitate în cufere (coffers). Au fost aruncate pe sol lângă tine.')
     }
 })
