@@ -111,6 +111,10 @@ ItemEvents.tooltip(event => {
         const chamber = String(customData.ChamberAmmoType || '')
         if (chamber === 'silver') {
             text.add(Text.of('§b◆ Cameră Armată: §fGlonț de Argint Consfințit (×4 vs Nemorți, ×2 vs Vampiri)'))
+        } else if (chamber === 'canister') {
+            text.add(Text.of('§6◆ Cameră Armată: §fGlonț tip Mitralii (Canister Knockback)'))
+        } else if (chamber === 'incendiary') {
+            text.add(Text.of('§c◆ Cameră Armată: §fCartuș Incendiar cu Sulf (Aprindere 8s)'))
         } else {
             text.add(Text.of('§f◆ Cameră Armată: §7Glonț Standard de Plumb (40–55 Dmg)'))
         }
@@ -120,14 +124,26 @@ ItemEvents.tooltip(event => {
         text.add(Text.of('§8[Ghid] Țintire: Apasă SHIFT (Kneel) pentru a elimina reculul și dispersia.'))
     })
 
-    // 5. Consecrated Silver Cartridge Tooltip
+    // 5. Specialized Ammunition Tooltips (Silver, Canister, Incendiary)
     event.addAdvanced('tacz:ammo', (stack, isAdvanced, text) => {
         const customData = stack.get('minecraft:custom_data')
-        if (customData && customData.SilverAmmo) {
+        if (!customData) return
+
+        if (customData.SilverAmmo) {
             text.add(Text.of('§b⚡ Glonț de Argint Consfințit'))
             text.add(Text.of('§fBătut cu argint pur și binecuvântat la altar.'))
             text.add(Text.of('§c⚔ Daune: §b×4.0 §fîmpotriva Nemorților și Creaturilor Corupte.'))
             text.add(Text.of('§c⚔ Daune: §b×2.0 §fîmpotriva Jucătorilor Vampiri.'))
+            text.add(Text.of('§eSugestie: §7Plasează-l în mâna secundară (offhand) pentru a-l încărca primul.'))
+        } else if (customData.CanisterAmmo) {
+            text.add(Text.of('§6💥 Glonț tip Mitralii (Canister)'))
+            text.add(Text.of('§fÎncărcătură densă de alice de fier pentru luptă la mică distanță.'))
+            text.add(Text.of('§eEfect: §fDispersie largă și respingere masivă a inamicilor (Knockback).'))
+            text.add(Text.of('§eSugestie: §7Plasează-l în mâna secundară (offhand) pentru a-l încărca primul.'))
+        } else if (customData.IncendiaryAmmo) {
+            text.add(Text.of('§c🔥 Cartuș Incendiar cu Sulf'))
+            text.add(Text.of('§fMiez de plumb acoperit cu sulf sublimat și amestec piroforic.'))
+            text.add(Text.of('§eEfect: §fAprinde ținta pentru 8 secunde la impact.'))
             text.add(Text.of('§eSugestie: §7Plasează-l în mâna secundară (offhand) pentru a-l încărca primul.'))
         }
     })
