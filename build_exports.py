@@ -3,7 +3,7 @@ import shutil
 import zipfile
 import hashlib
 
-BASE_DIR = r"E:\Github2\the-brass-age-update"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 EXPORTS_DIR = os.path.join(BASE_DIR, "exports")
 STAGING_DIR = os.path.join(BASE_DIR, "staging")
 

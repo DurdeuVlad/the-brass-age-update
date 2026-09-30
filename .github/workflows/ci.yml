@@ -1,0 +1,80 @@
+name: The Brass Age CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Lint & Validation Suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run CI Validation Suite
+        run: |
+          python scripts/ci_validate.py
+
+  build-packages:
+    name: Build & Verify Release Packages
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build Export ZIP Packages
+        run: |
+          python build_exports.py
+
+      - name: Verify Export Packages
+        run: |
+          ls -lh exports/
+          test -f exports/TheBrassAge-Update-All-In-One-v1.0.0.zip
+          test -f exports/TheBrassAge-Update-Client-v1.0.0.zip
+          test -f exports/TheBrassAge-Update-Server-v1.0.0.zip
+
+      - name: Upload All-In-One Package Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TheBrassAge-Update-All-In-One-v1.0.0
+          path: exports/TheBrassAge-Update-All-In-One-v1.0.0.zip
+          retention-days: 14
+
+      - name: Upload Client Package Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TheBrassAge-Update-Client-v1.0.0
+          path: exports/TheBrassAge-Update-Client-v1.0.0.zip
+          retention-days: 14
+
+      - name: Upload Server Package Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TheBrassAge-Update-Server-v1.0.0
+          path: exports/TheBrassAge-Update-Server-v1.0.0.zip
+          retention-days: 14
