@@ -77,20 +77,21 @@ Pentru a testa rapid fără a mina resursele manual, deschide chat-ul și folose
 - `/vampire remove <jucător>`  
   *Elimină statutul de Vampir.*
 
-### Give Arme & Muniție
+### Give Arme & Muniție (Minecraft 1.21.1 Data Components)
 ```
-/give @s tacz:modern_kinetic_gun[tacz:gun_id="qkl:fk15"] 1
-/give @s tacz:modern_kinetic_gun[tacz:gun_id="qkl:fk15p"] 1
-/give @s tacz:ammo[tacz:ammo_id="qkl:round_ball_silver"] 64
-/give @s tacz:ammo[tacz:ammo_id="qkl:canister_shot"] 64
-/give @s tacz:ammo[tacz:ammo_id="qkl:incendiary_round"] 64
-/give @s tacz:ammo[tacz:ammo_id="qkl:round_ball"] 64
+/give @s tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15"}] 1
+/give @s tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p"}] 1
+/give @s tacz:ammo[minecraft:custom_data={AmmoId:"qkl:16mm"}] 64
+/give @s tacz:ammo[minecraft:custom_data={AmmoId:"qkl:16mm",SilverAmmo:true}] 64
+/give @s tacz:ammo[minecraft:custom_data={AmmoId:"qkl:16mm",CanisterAmmo:true}] 64
+/give @s tacz:ammo[minecraft:custom_data={AmmoId:"qkl:16mm",IncendiaryAmmo:true}] 64
 ```
 
 ### Give Obiecte Legale & Civile
 ```
 /give @s kubejs:proof_stamp 1
 /give @s kubejs:permit_blank 4
+/experience add @s 30 levels
 /give @s kubejs:miracle_fertilizer 64
 /give @s kubejs:sulfur_soap 16
 /give @s kubejs:safety_matches 16
@@ -98,9 +99,16 @@ Pentru a testa rapid fără a mina resursele manual, deschide chat-ul și folose
 /give @s kubejs:vitriol_leather 16
 ```
 
+### Give Lăzi Militare (Sigilate)
+```
+/give @s kubejs:crate_muskets 1
+/give @s kubejs:crate_pistols 1
+/give @s kubejs:ammunition_crate 1
+```
+
 ---
 
-## 🧪 4. Scenarii de Testare Pas-cu-Pas (Test Checklist)
+## 🧪 4. Scenarii de Testare Pas-cu-Pas (Test Checklist v1.1.0)
 
 ### ✅ Test 1: Balistică cu Cremene & Timp de Dare a Focului (140ms Lock-Time)
 - **Ce testezi**: Întârzierea mecanică dintre apăsarea pe trăgaci și plecarea glonțului.
