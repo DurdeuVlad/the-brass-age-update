@@ -72,6 +72,18 @@ ServerEvents.commandRegistry(event => {
                         })
                     )
                 )
+                .then(Commands.literal('test')
+                    .executes(ctx => {
+                        let player = null
+                        try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
+                        if (!player) {
+                            ctx.source.sendFailure(Text.literal('§cDoar un jucător poate rula ghidul de testare.'))
+                            return 0
+                        }
+                        ctx.source.server.runCommandSilent(`execute as ${player.name.string} run brass_test`)
+                        return 1
+                    })
+                )
         )
     }
 

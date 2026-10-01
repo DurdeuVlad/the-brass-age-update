@@ -59,7 +59,24 @@ Mina Straja a fost complet deblocată și configurată conform progresiei econom
 
 Pentru testeri, moderatori și administratori de server, mai jos se află lista completă de verificare pas-cu-pas, comenzile rapide utile și comportamentul exact așteptat pentru fiecare mecanică nouă.
 
-### 📋 Cheat Sheet: Comenzi Utile pentru Testare
+### 🎮 Ghid Interactiv de Testare Pas-cu-Pas (Recomandat — 1-Click Dumbproof)
+Pentru a parcurge testarea fără a tasta manual comenzi `/give` sau a căuta id-uri:
+```bash
+# Deschide ghidul interactiv pas-cu-pas în chat (OP level 2):
+/brass_test
+# sau:
+/gunsmith test
+
+# Subcomenzi utile / butoane din chat:
+/brass_test next       # Confirmă pasul curent și trece la următorul
+/brass_test prev       # Pasul anterior
+/brass_test give       # Echipează automat kitul de materiale pentru pasul curent
+/brass_test spawn      # Spawnează o țintă zombie imobilizată (pasul 7 de luptă)
+/brass_test goto <1-9> # Sare direct la un pas anume (ex: /brass_test 4)
+/brass_test reset      # Resetează ghidul la Pasul 1 și curăță efectele
+```
+
+### 📋 Cheat Sheet: Comenzi Manuale Utile pentru Testare
 
 ```bash
 # 1. Comanda Admin de Acordare a Manualului Armurierului (necesită OP / perm 2):

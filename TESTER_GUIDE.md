@@ -61,7 +61,16 @@ Dacă preferi să copiezi manual, extrage arhiva și suprascrie (Overwrite All) 
 
 Pentru a testa rapid fără a mina resursele manual, deschide chat-ul și folosește următoarele comenzi:
 
-### Manual & Ghiduri
+### 🎮 Ghid Interactiv de Testare Pas-cu-Pas (Recomandat — 1-Click Dumbproof)
+- `/brass_test` (sau `/gunsmith test` / `/testguide`)  
+  *§c[ADMIN ONLY, OP Level 2] §aDeschide ghidul interactiv pas-cu-pas în chat! Te ghidează prin fiecare din cele 9 teste, oferă butoane clickabile pentru echiparea automată a kitului de testare (`[📦 Dă-mi Kitul]`), spawnare de ținte (`[👾 Spawn Zombie]`) și confirmare pas cu pas (`[✔ Confirmă & Pasul Următor]`). Nu mai trebuie să tastezi manual nicio comandă `/give`!*
+- `/brass_test next` - Confirmă testul curent și trece la pasul următor.
+- `/brass_test prev` - Se întoarce la pasul anterior.
+- `/brass_test give` - Echipează kitul de materiale pentru pasul curent.
+- `/brass_test goto <1..9>` - Sare direct la un pas specific (ex: `/brass_test 4`).
+- `/brass_test reset` - Resetează ghidul la Pasul 1 și curăță efectele negative.
+
+### Manual & Ghiduri Clasice
 - `/flintlock` sau `/arma`  
   *Afișează cartonașul ghid complet de tragere, ochire și reîncărcare (disponibil tuturor jucătorilor).*
 - `/gunsmith` sau `/gunsmith book [jucător]` (sau `/manual_armurier`)  
