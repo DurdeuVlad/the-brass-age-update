@@ -1,12 +1,12 @@
 =====================================================================
-  ⚜ THE BRASS AGE UPDATE — INSTRUCTIUNI RAPIDE DE INSTALARE v1.0.1 ⚜
+  ⚜ THE BRASS AGE UPDATE — INSTRUCTIUNI RAPIDE DE INSTALARE v1.1.0 ⚜
 =====================================================================
 
 ATENȚIE PENTRU TESTERI:
 Acest pachet este un UPDATE / PATCH pentru modpack-ul existent Rustic Craft II.
 NU încercați să importați această arhivă ca profil nou în CurseForge / Prism!
 Dacă o importați ca profil nou, Minecraft va crăpa imediat pentru că lipsesc
-celelalte 150 de moduri ale jocului de bază (Create, KubeJS, etc.).
+celelate 150 de moduri ale jocului de bază (Create, KubeJS, etc.).
 
 ---------------------------------------------------------------------
 METODA 1: INSTALARE AUTOMATĂ (1-CLICK) [RECOMANDATĂ]
@@ -32,15 +32,16 @@ peste folderul instanței voastre Rustic Craft II:
   - config/           (actualizează setările de rucsac și unelte)
 
 ---------------------------------------------------------------------
-CE S-A REPARAT ÎN v1.0.1:
+CE ESTE NOU ÎN v1.1.0:
 ---------------------------------------------------------------------
-1. Schema Create 6 / NeoForge 1.21.1 a fost complet corectată (rezolvată
-   eroarea de sequenced_assembly cu transitional_item id).
-2. Adăugate toate scripturile de client (tooltips în limba română) și
-   scripturile de server în toate pachetele, asigurând funcționarea
-   perfectă atât pe Dedicated Server cât și în Singleplayer.
-3. Adăugate Lăzile Militare Sigilate (înlocuitorul coferelor) și toate
-   cele 34 de texturi pixel-art 16x16 autentice stil Minecraft.
-4. Adăugat instalator automatizat .bat / .ps1 pentru prevenirea
-   erorilor de extragere.
+1. Rețetele armelor de foc necesită Create Mechanical Crafters (grilă 3x3);
+   au fost eliminate din masa clasică de crafting și ascunse complet
+   din EMI, JEI și cartea de rețete vanilla.
+2. Comandă dedicată pentru admini/operatori: /gunsmith book [jucător]
+   pentru acordarea cărții Patchouli cu toate diagramele mecanice Create.
+3. Deblocată și calibrată mina Straja pe 4 ramuri (Sulf, Fier, Cărbune,
+   Dripstone, Zinc, Argint mutat pe zona 2, Cupru eliminat, Diamante și Redstone).
+4. Sistemul de poansonare pe nicovală și emiterea permiselor de port-armă
+   au fost adaptate integral la Data Components pe Minecraft 1.21.1 / NeoForge
+   și verificate empiric în joc cu un client real (mc-pilot).
 =====================================================================

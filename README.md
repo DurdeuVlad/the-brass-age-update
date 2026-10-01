@@ -73,17 +73,17 @@ Production efficiency scales non-linearly with kinetic and thermal automation:
 
 ---
 
-## 🚀 Installation & Deployment (v1.0.1)
+## 🚀 Installation & Deployment (v1.1.0)
 
 > [!TIP]
 > **Automated 1-Click Installation for Testers**:
-> Download **`TheBrassAge-Update-All-In-One-v1.0.1.zip`** from [Releases](https://github.com/DurdeuVlad/the-brass-age-update/releases), extract directly into your existing **Rustic Craft II** instance folder, and double-click **`install_patch.bat`** (or `install_patch.ps1`). See [**`HOW_TO_INSTALL.txt`**](HOW_TO_INSTALL.txt) and [**`TESTER_GUIDE.md`**](TESTER_GUIDE.md) for full instructions.
+> Download **`TheBrassAge-Update-All-In-One-v1.1.0.zip`** from [Releases](https://github.com/DurdeuVlad/the-brass-age-update/releases), extract directly into your existing **Rustic Craft II** instance folder, and double-click **`install_patch.bat`** (or `install_patch.ps1`). See [**`HOW_TO_INSTALL.txt`**](HOW_TO_INSTALL.txt) and [**`TESTER_GUIDE.md`**](TESTER_GUIDE.md) for full instructions.
 
 1. **Server Deployment**:
-   - Merge the contents of `server/` (or `TheBrassAge-Update-Server-v1.0.1.zip`) directly into the Minecraft server root directory.
+   - Merge the contents of `server/` (or `TheBrassAge-Update-Server-v1.1.0.zip`) directly into the Minecraft server root directory.
    - Restart the dedicated server.
 2. **Client Deployment**:
-   - Merge the contents of `client/` (or `TheBrassAge-Update-Client-v1.0.1.zip`) into the client instance root directory.
+   - Merge the contents of `client/` (or `TheBrassAge-Update-Client-v1.1.0.zip`) into the client instance root directory.
    - In Singleplayer, both client and server scripts are bundled to guarantee seamless offline play.
 
 

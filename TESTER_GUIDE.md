@@ -1,7 +1,7 @@
 # ⚜ THE BRASS AGE UPDATE — TESTER & REVIEW GUIDE ⚜
 ### Ghid de Testare & Instalare pentru Testeri (Rustic Craft II)
 
-Versiune: `v1.0.1-Release`  
+Versiune: `v1.1.0-Release`  
 Platformă: `Minecraft 1.21.1` / `NeoForge 21.1.248`  
 Modpack: **Rustic Craft II**  
 Repository: `DurdeuVlad/the-brass-age-update`
@@ -9,24 +9,25 @@ Repository: `DurdeuVlad/the-brass-age-update`
 ---
 
 > [!IMPORTANT]
-> **NOTĂ CRUCIALĂ PENTRU TESTERI — DE CE NU PORNEA v1.0.0**:
-> 1. **Pachetul este un Patch / Overlay, NU un modpack întreg independent**: Dacă importați zip-ul ca o instanță nouă în CurseForge / Prism Launcher, jocul va crăpa imediat la pornire (`Missing mandatory dependencies: kubejs, create`) pentru că lipsesc celelalte 150 de moduri din Rustic Craft II. Acest pachet trebuie extras **PESTE** instanța voastră existentă de Rustic Craft II!
-> 2. **Instalare Automată cu 1-Click**: Am adăugat scriptul `install_patch.bat` (și `.ps1`) în rădăcina arhivei pentru a preveni orice eroare manuală de copiere a folderelor.
-> 3. **Remedieri v1.0.1**: S-au corectat schemele Create 6 / NeoForge 1.21.1 pentru asamblarea secvențială (`transitional_item`), s-au inclus scripturile de client (tooltips) și server în toate pachetele, s-au adăugat cele 34 de texturi pixel-art 16x16 și Lăzile Militare Sigilate.
+> **NOUTĂȚI MAJORE ÎN v1.1.0**:
+> 1. **Armele necesită Create Mechanical Crafters**: Rețetele armelor de foc nu mai pot fi făcute la masa obișnuită de lucru și au fost ascunse din EMI / JEI / Recipe book.
+> 2. **Comandă Admin `/gunsmith book [jucător]`**: Oferă cartea Patchouli "Manualul Armurierului" cu diagramele Create 3x3.
+> 3. **Mina Straja deblocată pe 4 ramuri**: Sulf, Fier, Cărbune, Dripstone, Zinc, Argint (mutat pe zona 2), Cupru (eliminat), Diamante și Redstone.
+> 4. **Verificare empirică în joc**: Sistemul de poansonare pe nicovală, permisele semnate și restricția armelor testate cu un client real (mc-pilot).
 
 ---
 
 ## 📦 1. Ce conține acest pachet de export?
 
 Acest export conține sistemul complet al expansiunii **The Brass Age**:
-1. **Arme cu Cremene Autentice**: Muscheta cu țeavă lisă FK15 (140ms timp de dare a focului, dispersie conică), Pistolul de cavalerie FK15-P, Muscheta ghintuită FK15-R Jaeger.
+1. **Arme cu Cremene Autentice**: Muscheta cu țeavă lisă FK15 (140ms timp de dare a focului, dispersie conică), Pistolul de cavalerie FK15-P, Muscheta ghintuită FK15-R Jaeger. Asamblare exclusiv pe Create Mechanical Crafters (3x3).
 2. **Limită Realistă de Transport & Lăzi Militare**: Pe jos, ostașul poartă maxim 1 armă lungă (muschetă) pe spate și 2 arme scurte (pistoale) la brâu. Pentru transportul de mari cantități, armamentul se ambalează în **Lăzi Militare Sigilate** (`kubejs:crate_muskets` - 8 muschete, `kubejs:crate_pistols` - 8 pistoale, `kubejs:ammunition_crate` - 256 muniții), ideale pentru transportul în căruțe de povară (*Trotting Wagons*), vagoane de tren Create sau animale de povară.
 3. **Muniție & Război Supranatural**: Cartușe sfințite de argint (daune 4× împotriva strigoilor/nemorților și 2× împotriva vampirilor), Mitralii (Canister Shot - 8 alice) și Gloanțe Incendiare de sulf.
 4. **Economie Industrială pe 3 Niveluri (Factorio-Style)**: Rafinarea pulberii negre (Mojar manual -> Moară cu ciocane Create & Corning -> Linie chimică automatizată de asamblare secvențială).
 5. **5 Linii Civile P.U.L.A SRL**: Benzi de sulf pentru vinificație (Vinery), Îngrășământ mineral Super-Fosfat (creștere triplă a recoltelor), Săpun medicinal antiseptic de sulf, Chibrituri de siguranță, Piele grea tratată cu vitriol.
-6. **Mina Continentală Straja**: Integrare completă în motorul de mine `custom_mines` cu 3 zone de adâncime (Galerie carstică de sulf, Fisiuri de salpetru, Adâncuri de saramură și alamă).
+6. **Mina Continentală Straja**: Integrare completă în motorul de mine `custom_mines` cu 4 zone de adâncime calibrate.
 7. **Sistem Legal de Poansonare & Piață Neagră**: Armele noi sunt contrabandă (`NEPOANSONAT`); baterea pe nicovală cu Sigiliul Imperial aplică serie unică `#RC-15-XXXX`; polizarea pe tocilă (grindstone) pilește seria pentru lumea interlopă.
-8. **UX Prietenos**: Comenzi universale `/flintlock` și `/arma`, HUD dinamic pe actionbar la reîncărcare (numărătoare inversă 20s, avertizare la sprint).
+8. **UX Prietenos**: Comenzi universale `/flintlock` și `/arma`, comenzi de operator `/gunsmith book [player]`, HUD dinamic pe actionbar la reîncărcare (numărătoare inversă 20s, avertizare la sprint).
 9. **34 Texturi Pixel-Art Autentice 16x16**: Toate piesele, pulberile, lăzile și armele au artă completă stil Minecraft.
 
 ---
@@ -36,7 +37,7 @@ Acest export conține sistemul complet al expansiunii **The Brass Age**:
 ### Opțiunea A: Instalare Automată 1-Click (Recomandată)
 1. Deschide launcher-ul tău (Prism Launcher, CurseForge, Modrinth sau ATLauncher).
 2. Dă click-dreapta pe instanța **Rustic Craft II** și alege **Open Folder** / **Folder Instanță** (unde vezi folderele `mods`, `config`, `kubejs`).
-3. Descarcă și extrage **`TheBrassAge-Update-All-In-One-v1.0.1.zip`** direct în acel folder.
+3. Descarcă și extrage **`TheBrassAge-Update-All-In-One-v1.1.0.zip`** direct în acel folder.
 4. Dă dublu-click pe **`install_patch.bat`** (sau click-dreapta `Run with PowerShell` pe `install_patch.ps1`).
 5. Gata! Pornește jocul.
 
@@ -50,7 +51,7 @@ Dacă preferi să copiezi manual, extrage arhiva și suprascrie (Overwrite All) 
 
 ### Opțiunea C: Pentru Administratori de Server Dedicat
 1. Oprește serverul dedicat (`stop`).
-2. Descarcă **`TheBrassAge-Update-Server-v1.0.1.zip`** (sau `All-In-One`).
+2. Descarcă **`TheBrassAge-Update-Server-v1.1.0.zip`** (sau `All-In-One`).
 3. Extrage în rădăcina serverului dedicat (sau rulează `install_patch.bat`).
 4. Repornește serverul.
 

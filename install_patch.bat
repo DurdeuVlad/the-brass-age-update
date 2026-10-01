@@ -1,8 +1,8 @@
 @echo off
 chcp 65001 > nul
-title The Brass Age Update - Patch Installer v1.0.1
+title The Brass Age Update - Patch Installer v1.1.0
 echo =====================================================================
-echo    ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.0.1 ⚜
+echo    ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.1.0 ⚜
 echo    Rustic Craft II (Minecraft 1.21.1 / NeoForge 21.1.248)
 echo =====================================================================
 echo.
@@ -67,7 +67,7 @@ if exist "%SCRIPT_DIR%defaultconfigs" (
 
 echo.
 echo =====================================================================
-echo  ✔ SUCCESS: The Brass Age v1.0.1 successfully installed!
+echo  ✔ SUCCESS: The Brass Age v1.1.0 successfully installed!
 echo.
 echo  Quick check:
 echo   - 34 item textures and weapon crates installed.
