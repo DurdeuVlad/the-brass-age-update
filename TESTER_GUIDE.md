@@ -13,7 +13,8 @@ Repository: `DurdeuVlad/the-brass-age-update`
 > 1. **Armele necesită Create Mechanical Crafters**: Rețetele armelor de foc nu mai pot fi făcute la masa obișnuită de lucru și au fost ascunse din EMI / JEI / Recipe book.
 > 2. **Comandă Admin `/gunsmith book [jucător]`**: Oferă cartea Patchouli "Manualul Armurierului" cu diagramele Create 3x3.
 > 3. **Mina Straja deblocată pe 4 ramuri**: Sulf, Fier, Cărbune, Dripstone, Zinc, Argint (mutat pe zona 2), Cupru (eliminat), Diamante și Redstone.
-> 4. **Verificare empirică în joc**: Sistemul de poansonare pe nicovală, permisele semnate și restricția armelor testate cu un client real (mc-pilot).
+> 4. **Ghid Interactiv de Testare 1-Click (`/brass_test` & `/gunsmith test`)**: Asistență pas-cu-pas în chat cu butoane clickabile pentru echiparea automată a kiturilor și validare fără tastare manuală.
+> 5. **Verificare empirică în joc**: Sistemul de poansonare pe nicovală, permisele semnate și restricția armelor testate cu un client real (mc-pilot).
 
 ---
 
@@ -119,80 +120,157 @@ Pentru a testa rapid fără a mina resursele manual, deschide chat-ul și folose
 
 ## 🧪 4. Scenarii de Testare Pas-cu-Pas (Test Checklist v1.1.0)
 
-### ✅ Test 1: Balistică cu Cremene & Timp de Dare a Focului (140ms Lock-Time)
-- **Ce testezi**: Întârzierea mecanică dintre apăsarea pe trăgaci și plecarea glonțului.
-- **Acțiune**: Încarcă muscheta FK15. Ochește o țintă la 20 de metri și apasă click-dreapta.
-- **Comportament Așteptat**: Vei auzi scăpărarea cremenei, o mică fracțiune de secundă de întârziere (140ms - arderea pulberii din tigaie), urmată de bubuitura masivă a țevii. Dacă miști arma brusc în acele 140ms, tragi pe lângă țintă!
+> 💡 **MOD RECOMANDAT — GHID ASISTAT**:  
+> În loc să tastezi manual comenzi `/give`, tastează în chat:  
+> **`/brass_test`** (sau **`/gunsmith test`**)  
+> Vei primi pe rând fiecare scenariu în chat, cu butoane clickabile `[ 📦 DĂ-MI KITUL DE TEST ]` pentru echipare automată și `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` pentru validare!
 
-### ✅ Test 2: Poziția în Genunchi (Kneel / SHIFT Dispersion)
-- **Ce testezi**: Reducerea dispersiei când pui genunchiul la pământ.
-- **Acțiune**: Trage 3 focuri din picioare la 40 de metri. Apoi ține apăsat `SHIFT` (genunchi pus la sol pentru sprijinirea țevii grele) și trage alte 3 focuri.
-- **Comportament Așteptat**: Din picioare, dispersia este largă (con istoric). În genunchi, dispersia scade cu ~70%, permițând lovituri precise.
+---
 
-### ✅ Test 3: HUD Dinamic pe Actionbar la Reîncărcare (20s)
-- **Ce testezi**: Feedback-ul vizual și sonor în timpul reîncărcării.
-- **Acțiune**: Apasă tasta `[R]` pentru a reîncărca muscheta.
-- **Comportament Așteptat**:
-  1. Se aude sunetul de turnare a pulberii din corn în țeavă.
-  2. Pe Actionbar (deasupra barei de viață) apare numărătoarea inversă cu contrast ridicat:  
-     `[Muschetă] Încarci pulberea și glonțul... 18.4s (Nu schimba arma, nu sprinta!)`
-  3. La finalul celor 20s, se aude un sunet mecanic puternic de armare a cocoșului și mesajul verde `Armă încărcată și armată!`.
-- **Test Suplimentar (Anulare Sprint)**: Pornește reîncărcarea și sprintează sau schimbă slotul.  
-  *Rezultat*: Reîncărcarea este anulată instant cu mesajul roșu `✖ Reîncărcare anulată (sprint sau armă schimbată)!`.
+### ✅ Testul 1: Secretizarea Rețetelor & Rețeaua Create Mechanical Crafter (3×3)
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 1` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` în chat pentru a primi direct toate componentele și uneltele necesare!
+- **Ce testezi**: Imposibilitatea fabricării armelor la masa clasică și cerința de asamblare cinetică Create.
+- **Cum testezi**:
+  1. Deschide o Masă de Lucru (*Crafting Table*). Pune componentele unei arme în grilă.
+  2. Verifică lista de rețete în EMI/JEI căutând `qkl:fk15` sau `qkl:fk15p`.
+  3. Construiește o rețea 3×3 de **Create Mechanical Crafters**, leag-o la un arbore de rotație (sau folosește un `Hand Crank`) și așază componentele conform manualului.
+  4. Rotește manivela pentru asamblare cinetică.
+- **Rezultat Așteptat**:
+  - Masa de lucru clasică arată slotul de ieșire **complet gol** (rețeta a fost ștearsă).
+  - În EMI/JEI, rețeta de asamblare a armei **NU apare deloc** (este ascunsă).
+  - Create Mechanical Crafter preia componentele și asamblează mecanic pistolul `FK15-P` la finalizarea rotației.
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 
-### ✅ Test 4: Limita de Transport pe Jos & Transportul în Vrac cu Lăzi Militare și Căruțe
-- **Ce testezi**: Restricția la maxim 1 muschetă și 2 pistoale pe jos, și transportul de mari cantități folosind Lăzile de Armament.
-- **Test 4A (Pe jos)**: Pune în inventar 1 muschetă și 2 pistoale. Apoi încearcă să mai iei de pe jos sau dintr-un cufăr încă o muschetă.  
-  *Rezultat*: A doua muschetă va cădea imediat pe pământ la picioarele tale, însoțită de un mesaj clar: `Nu poți purta mai mult de 1 armă lungă pe umeri!`.
-- **Test 4B (Ambalare în Ladă de Muschete)**: Folosește rețeta din masa de lucru (8 muschete în jurul unui cufăr de lemn) sau dă-ți o ladă: `/give @s kubejs:crate_muskets 4`.  
-  *Rezultat*: Lăzile de armament sunt obiecte sigilate de transport și NU cad pe sol! Poți purta zeci de lăzi în inventar, căruțe de povară (*Trotting Wagons: Conestoga Wagon*) sau vagoane Create.
-- **Test 4C (Desigilare Ladă)**: Ține `Lada de Muschete` în mână și apasă `Shift + Click-Dreapta` pe sol (sau plaseaz-o în masa de lucru).  
-  *Rezultat*: Se aude sunetul de rupere a scândurilor și lada se desface, descărcând pe loc cele 8 muschete și returnând cufărul!
+---
 
-### ✅ Test 5: Cartușe Sfințite de Argint vs Nemuritori & Vampiri
-- **Ce testezi**: Multiplicatorii de daune supranaturale și selectarea muniției din mâna secundară (*Offhand*).
-- **Acțiune**:
-  1. Plasează `Glonț de Argint` în mâna secundară (slotul de scut/offhand, tasta `F`).
-  2. Apasă `[R]` pentru reîncărcare. Muscheta se va încărca cu glonțul de argint din mâna secundară.
-  3. Trage într-un Zombie sau Schelet.
-  4. Trage într-un jucător marcat cu `/vampire add <nume>`.
-- **Comportament Așteptat**:
-  - La impact, se aude un clopoțel de ametist (`minecraft:block.amethyst_block.hit`).
-  - Nemorții primesc daune cvadruple (**4.0×**), murind dintr-o singură lovitură.
-  - Vampirii primesc daune duble (**2.0×**).
+### ✅ Testul 2: Manualul Oficial al Armurierului (`/gunsmith book`)
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 2` și apasă `[ 📖 DESCHIDE MANUALUL ]` în chat!
+- **Ce testezi**: Comanda de admin și conținutul cărții Patchouli.
+- **Cum testezi**:
+  1. Ca operator/admin, tastează `/gunsmith book @s` (sau testează pe alt jucător: `/gunsmith book <nume>`).
+  2. Deschide cartea primită (*The Gunsmith's Book of Work*).
+  3. Navighează la capitolul **"VI. The Final Assembly"** și deschide paginile pentru `FK15 Flintlock Musket` și `FK15P Cavalry Pistol`.
+- **Rezultat Așteptat**:
+  - Cartea se deschide într-un GUI curat Patchouli.
+  - Pagina afișează diagrama 3×3 Create Mechanical Crafter cu schema componentelor (`BBR / MWS / TIP`), materialele necesare și instrucțiunile imperiale de asamblare.
+  - Jucătorii fără permisiune OP nu pot executa `/gunsmith` (acces restricționat).
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 
-### ✅ Test 6: Muniție Tactică — Mitralii (Canister) & Incendiar
-- **Ce testezi**: Împrăștierea de alice și focul persistent.
-- **Acțiune**: Încarcă un `Canister Shot` din mâna secundară și trage într-un grup de mobi la mică distanță. Apoi trage cu un `Incendiary Round`.
-- **Comportament Așteptat**: Mitraliile aruncă 8 fragmente de schije care lovesc mai multe ținte simultan. Glonțul incendiar aprinde ținta în flăcări timp de 8 secunde.
+---
 
-### ✅ Test 7: Sistem Legal de Poansonare, Serii & Piață Neagră
-- **Ce testezi**: Traseul legal al armelor de la fabrică până la jandarmerie.
-- **Acțiune**:
-  1. Dă-ți o muschetă nouă: tooltip-ul va afișa `§cNEPOANSONAT (Contrabandă)`.
-  2. Pune muscheta pe o Nicovală (*Anvil*), iar în al doilea slot pune un `Sigiliu Imperial` (`kubejs:proof_stamp`).
-  3. Asigură-te că ai cel puțin 5 niveluri de experiență și ridică arma.
-  4. Ține arma poansonată în mâna stângă (offhand) și dă click-dreapta cu un `Permis Blank` (`kubejs:permit_blank`) în mâna dreaptă.
-  5. Ia arma poansonată și pune-o pe o Tocilă (*Grindstone*).
-- **Comportament Așteptat**:
-  - Nicovala ștanțează o serie unică secvențială (ex: `✔ POANSONAT: #RC-15-0101`).
-  - Permisul devine o carte oficială scrisă semnată de Comandamentul Garnizoanei Straja cu numele tău și seria armei.
-  - Tocila rade seria mecanic, transformând arma în `⚠ [SERIE PILITĂ / DEFACED]` pentru contrabandiști.
+### ✅ Testul 3: Limita de Purtare a Armelor (Hard Cap Inventory Limiter)
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 3` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` în chat pentru a primi 2 muschete și 3 pistoale!
+- **Ce testezi**: Restricția la maxim 1 armă lungă (muschetă/pușcă) și 2 arme scurte (pistoale).
+- **Cum testezi**:
+  1. Pune în inventar 1 muschetă și 2 pistoale.
+  2. Dă-ți încă o muschetă sau încearcă să ridici una de pe sol (`/give @s tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15"}] 1`).
+  3. Încearcă același lucru încercând să ții 3 pistoale simultan.
+- **Rezultat Așteptat**:
+  - Arma în exces este **aruncată automat din inventar pe pământ** la picioarele jucătorului.
+  - În chat apare avertizarea roșie a garnizoanei: `Nu poți purta mai mult de 1 armă lungă pe umeri!` sau `Nu poți purta mai mult de 2 pistoale la brâu!`.
+  - Nu există scăpare prin inventarul personal de crafting (grid-ul 2x2 este de asemenea monitorizat).
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 
-### ✅ Test 8: Cele 5 Linii Civile P.U.L.A SRL
-- **Săpun cu Sulf** (`kubejs:sulfur_soap`): Dă-ți efect de otravă (`/effect give @s poison 30 1`) și folosește săpunul prin click-dreapta.  
-  *Rezultat*: Efectul de otravă este curățat instant.
-- **Îngrășământ Super-Fosfat** (`kubejs:miracle_fertilizer`): Aplică prin click-dreapta pe culturi de grâu/cartofi.  
-  *Rezultat*: Planta crește instant cu 3 stadii (triplul făinii de oase obișnuite).
-- **Chibrituri de Siguranță** (`kubejs:safety_matches`): Dă click-dreapta pe sol sau pe un foc de tabără stins.  
-  *Rezultat*: Aprinde focul garantat.
-- **Benzi de Fumigație** (`kubejs:fumigation_strip`): Ingredient vital pentru sterilizarea butoaielor de stejar Vinery.
-- **Piele cu Vitriol** (`kubejs:vitriol_leather`): Piele tratată cu acid pentru armuri de durabilitate mare.
+---
 
-### ✅ Test 9: Mina Continentală Straja
-- **Ce testezi**: Deblocarea noilor filoane carstice în motorul `custom_mines`.
-- **Acțiune**: Interacționează cu NPC-ul Mirel la mina din Straja.
-- **Comportament Așteptat**: Dialogul include cele 3 zone de extracție (`mina_straja_continent`), oferind minereu de sulf, salpetru și adâncuri de saramură.
+### ✅ Testul 4: Ritualul de Poansonare Legală pe Nicovală (#RC-15-XXXX)
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 4` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` pentru nicovală, Sigiliul Imperial, XP și pistol nepoansonat!
+- **Ce testezi**: Ștanțarea seriei oficiale, consumul de experiență și blocarea re-poansonării.
+- **Cum testezi**:
+  1. Ia o armă nouă (nepoansonată) și un Sigiliu Imperial (`kubejs:proof_stamp`).
+  2. Asigură-te că ai cel puțin 5 niveluri de XP (`/experience add @s 30 levels`).
+  3. Deschide o nicovală (*Anvil*): plasează arma în primul slot (stânga) și Sigiliul în al doilea slot (mijloc).
+  4. Ridică arma din slotul de rezultat (dreapta).
+  5. Încearcă să pui arma deja poansonată din nou pe nicovală cu sigiliul.
+- **Rezultat Așteptat**:
+  - Nicovala consumă **5 niveluri de XP** (cost de inspecție imperială).
+  - Sigiliul Imperial este un instrument indestructibil (rămâne în inventar).
+  - Arma primește NBT-ul: `Proofed: true` și o serie unică secvențială (ex. `Serial: "#RC-15-0105"`).
+  - Tooltip-ul armei afișează cu verde: `✔ POANSONAT: #RC-15-0105` și `Registrul Imperial Straja`.
+  - Re-poansonarea unei arme deja legale este refuzată (slotul de ieșire rămâne gol).
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
+
+---
+
+### ✅ Testul 5: Emiterea Permisului Oficial de Port-Armă (Carte Scrisă Semnată)
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 5` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` pentru formulare albe și armă cu serie înregistrată!
+- **Ce testezi**: Legarea permisului de serie și emiterea documentului oficial.
+- **Cum testezi**:
+  1. Ține arma poansonată (ex. `#RC-15-0105`) în mâna secundară (*Offhand* - slotul de scut, tasta `F`).
+  2. Pune în mâna principală formulare albe de permis (`kubejs:permit_blank`).
+  3. Dă click-dreapta în aer sau pe un bloc.
+  4. Deschide cartea scrisă primită în inventar.
+  5. Testează scenariul negativ: ține o armă nepoansonată în offhand și dă click-dreapta cu permisul.
+- **Rezultat Așteptat**:
+  - Click-dreapta consumă 1 formular alb și emite o carte scrisă `minecraft:written_book` intitulată `Permis Port-Armă #RC-15-XXXX`.
+  - Cartea este semnată de `Gheorghe Comandantul` și conține numele tău de jucător, seria armei, modelul și statutul `LEGAL / ÎNREGISTRAT`.
+  - Dacă arma din stânga nu este poansonată legal, permisul refuză emiterea cu mesajul: `Arma din mâna stângă nu este poansonată legal!`.
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
+
+---
+
+### ✅ Testul 6: Piața Neagră — Pilirea Serie pe Tocilă (Grindstone Defacing)
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 6` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` pentru tocilă și armă legală!
+- **Ce testezi**: Ștergerea seriei pentru contrabandiști și trecerea în statutul Defaced.
+- **Cum testezi**:
+  1. Pune o armă poansonată legal pe o Tocilă (*Grindstone*).
+  2. Ridică arma din slotul de rezultat.
+  3. Încearcă să pui arma pilită înapoi pe nicovală cu Sigiliul Imperial.
+- **Rezultat Așteptat**:
+  - Tocila șterge seria și lore-ul oficial Straja.
+  - Arma primește lore-ul roșu de contrabandă: `⚠ [SERIE PILITĂ / DEFACED]` și `Armă de contrabandă!`.
+  - Nicovala refuză ștanțarea armelor pilite (armele din lumea interlopă nu pot fi re-legalizate casual).
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
+
+---
+
+### ✅ Testul 7: Muniție Specială & Luptă Tactică (Argint, Mitralii & Incendiare)
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 7` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]`, apoi `[ 👾 SPAWN ZOMBIE ]` sau `[ 🧛 MARCHEAZĂ CA VAMPIR ]` direct din chat!
+- **Ce testezi**: Selectarea muniției din mâna secundară, feedback-ul HUD la reîncărcare (20s) și efectele speciale de luptă.
+- **Cum testezi**:
+  1. Pune cartușe de argint (`SilverAmmo: true`) în mâna stângă (offhand).
+  2. Apasă tasta `[R]` pentru reîncărcare:
+     - Pe Actionbar apare numărătoarea inversă cu contrast ridicat: `[Muschetă] Încarci pulberea și glonțul... (Nu schimba arma, nu sprinta!)`.
+     - Dacă sprintezi, reîncărcarea se anulează instantaneu cu mesaj roșu.
+  3. Trage într-un Zombie / Schelet și într-un jucător cu `/vampire add`.
+  4. Încarcă apoi `CanisterAmmo` (Mitralii) și trage într-un grup de mobi la mică distanță.
+  5. Încarcă `IncendiaryAmmo` și trage într-o țintă.
+- **Rezultat Așteptat**:
+  - Glonțul de Argint provoacă **4.0× daune** nemorților (one-shot kill) și **2.0× daune** vampirilor, acompaniat de clinchet de ametist.
+  - Mitraliile împrăștie alice cu recul masiv și resping inamicii (Knockback).
+  - Glonțul incendiar aprinde ținta în flăcări timp de 8 secunde.
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
+
+---
+
+### ✅ Testul 8: Lăzile Militare Sigilate & Transportul de Armament
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 8` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` pentru lăzi sigilate!
+- **Ce testezi**: Ambalarea armelor pentru transportul cu trenul Create sau căruțe Trotting Wagons.
+- **Cum testezi**:
+  1. Pune o ladă `kubejs:crate_muskets` sau `kubejs:crate_pistols` în hotbar.
+  2. Ține apăsat `SHIFT` (crouch) și dă click-dreapta pe sol.
+  3. Fă același lucru cu o ladă de muniție `kubejs:ammunition_crate`.
+- **Rezultat Așteptat**:
+  - Se aude sunetul de rupere a sigiliului de lemn și zăvor de fier.
+  - Lada se desigilează: 8 muschete (sau 8 pistoale / 256 cartușe) sunt descărcate la picioare, iar jucătorul primește un cufăr de lemn înapoi.
+  - Lăzile stivuibile (stack size 16) permit transportul legal a sute de arme fără a declanșa limita individuală de purtare.
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
+
+---
+
+### ✅ Testul 9: Mina Straja — Deblocarea Ramurii 4 & Noile Filoane
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 9` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` pentru materialele de deblocare!
+- **Ce testezi**: Progresia minieră și distribuția noilor resurse.
+- **Cum testezi**:
+  1. Mergi la mina Straja și vorbește cu NPC-ul Mirel.
+  2. Verifică deblocarea zonelor 1, 2, 3 și noua zonă 4.
+  3. Minează sau inspectează conținutul zonelor.
+- **Rezultat Așteptat**:
+  - Zona 1: Minereu abundent de Sulf (900), Fier (600), Cărbune (700) și Dripstone introductiv (300).
+  - Zona 2: Depozit masiv de Dripstone (2000), Sulf (500), Argint integrat; Cuprul a fost complet extras.
+  - Zona 3: Fier (800), Zinc (600), Sulf (200), Andesit (500).
+  - Zona 4 (Deblocată): Punct strategic final al Statului cu Sulf (1000), Diamante (100) și Redstone (500).
+> ⏩ **Validare Finală**: Apasă `[ ✔ CONFIRMĂ & FINALIZEAZĂ TESTUL! ]` pentru a vedea ecranul de succes și a curăța efectele temporare.
 
 ---
 

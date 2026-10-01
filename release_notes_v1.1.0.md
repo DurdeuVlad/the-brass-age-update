@@ -32,6 +32,15 @@ Mina Straja a fost complet deblocată și configurată conform progresiei econom
 - Limită strictă de inventar: maxim 1 armă lungă și 2 pistoale. Armele suplimentare cad instantaneu la picioarele jucătorului.
 - Transport în masă: Lăzi militare sigilate (`kubejs:crate_muskets`, `kubejs:crate_pistols`, `kubejs:ammunition_crate`) pentru logistică cu căruțe Trotting Wagons și trenuri Create.
 
+### 6. 🎮 Ghid Interactiv de Testare Pas-cu-Pas (`/brass_test` & `/gunsmith test`)
+- **Comandă dedicată testerilor & administratorilor (OP level 2)**: Sistem interactiv complet în chat care te ghidează pas-cu-pas prin toate cele 9 scenarii de testare, eliminând complet tastarea manuală a comenzilor `/give` și a ID-urilor complexe de NBT/Data Components.
+- **Butoane interactive în chat (Clickable Tellraw Actions)**:
+  - `[ 📦 DĂ-MI KITUL DE TEST ]`: Echipează instant toate materialele, uneltele, componentele și nivelurile de XP necesare pentru pasul curent.
+  - `[ 👾 SPAWN ZOMBIE ]` & `[ 🧛 MARCHEAZĂ CA VAMPIR ]`: Asistență directă pentru testul balistic și al multiplicatorilor de daune la cartușele de argint.
+  - `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]`: Salvează progresul în `persistentData`, redă sunet de nivel și afișează următorul scenariu.
+  - `[ ◀ Pasul Anterior ]` & `[ 🔄 Reset ]`: Navigare complet flexibilă sau resetare rapidă la Pasul 1.
+- **Handholding pas-cu-pas**: Fiecare pas afișează clar instrucțiunile specifice și comportamentul exact pe care testerul trebuie să-l observe.
+
 ---
 
 ## 📦 Pachete de Descărcat (Release Downloads)
@@ -115,6 +124,7 @@ Pentru a parcurge testarea fără a tasta manual comenzi `/give` sau a căuta id
 ### 🔬 Scenarii de Testare Pas-cu-Pas (Checklist)
 
 #### ✅ Testul 1: Secretizarea Rețetelor & Rețeaua Create Mechanical Crafter (3×3)
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 1` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` în chat pentru a primi direct toate cele 12 componente și unelte!
 - **Ce testezi**: Imposibilitatea fabricării armelor la masa clasică și cerința de asamblare cinetică Create.
 - **Cum testezi**:
   1. Deschide o Masă de Lucru (*Crafting Table*).
@@ -125,10 +135,12 @@ Pentru a parcurge testarea fără a tasta manual comenzi `/give` sau a căuta id
   - Masa de lucru clasică arată slotul de ieșire **complet gol** (rețeta a fost ștearsă).
   - În EMI/JEI, rețeta de asamblare a armei **NU apare deloc** (este ascunsă).
   - Create Mechanical Crafter preia componentele și asamblează mecanic arma la finalizarea ciclului cinetic.
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 
 ---
 
 #### ✅ Testul 2: Manualul Oficial al Armurierului (`/gunsmith book`)
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 2` și apasă `[ 📖 DESCHIDE MANUALUL ]` în chat!
 - **Ce testezi**: Comanda de admin și conținutul cărții Patchouli.
 - **Cum testezi**:
   1. Ca operator/admin, tastează `/gunsmith book @s` (sau testează pe alt jucător: `/gunsmith book <nume>`).
@@ -138,10 +150,12 @@ Pentru a parcurge testarea fără a tasta manual comenzi `/give` sau a căuta id
   - Cartea se deschide într-un GUI curat Patchouli.
   - Pagina afișează diagrama 3×3 Create Mechanical Crafter cu schema componentelor (`BBR / MWS / TIP`), materialele necesare și instrucțiunile imperiale de asamblare.
   - Jucătorii fără permisiune OP nu pot executa `/gunsmith` (acces restricționat).
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 
 ---
 
 #### ✅ Testul 3: Limita de Purtare a Armelor (Hard Cap Inventory Limiter)
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 3` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` în chat pentru a primi 2 muschete și 3 pistoale!
 - **Ce testezi**: Restricția la maxim 1 armă lungă (muschetă/pușcă) și 2 arme scurte (pistoale).
 - **Cum testezi**:
   1. Pune în inventar 1 muschetă și 2 pistoale.
@@ -151,10 +165,12 @@ Pentru a parcurge testarea fără a tasta manual comenzi `/give` sau a căuta id
   - Arma în exces este **aruncată automat din inventar pe pământ** la picioarele jucătorului.
   - În chat apare avertizarea roșie a garnizoanei: `Nu poți purta mai mult de 1 armă lungă pe umeri!` sau `Nu poți purta mai mult de 2 pistoale la brâu!`.
   - Nu există scăpare prin inventarul personal de crafting (grid-ul 2x2 este de asemenea monitorizat).
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 
 ---
 
 #### ✅ Testul 4: Ritualul de Poansonare Legală pe Nicovală (#RC-15-XXXX)
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 4` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` pentru nicovală, Sigiliul Imperial, XP și pistol nepoansonat!
 - **Ce testezi**: Ștanțarea seriei oficiale, consumul de experiență și blocarea re-poansonării.
 - **Cum testezi**:
   1. Ia o armă nouă (nepoansonată) și un Sigiliu Imperial (`kubejs:proof_stamp`).
@@ -168,10 +184,12 @@ Pentru a parcurge testarea fără a tasta manual comenzi `/give` sau a căuta id
   - Arma primește NBT-ul: `Proofed: true` și o serie unică secvențială (ex. `Serial: "#RC-15-0105"`).
   - Tooltip-ul armei afișează cu verde: `✔ POANSONAT: #RC-15-0105` și `Registrul Imperial Straja`.
   - Re-poansonarea unei arme deja legale este refuzată (slotul de ieșire rămâne gol).
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 
 ---
 
 #### ✅ Testul 5: Emiterea Permisului Oficial de Port-Armă (Carte Scrisă Semnată)
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 5` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` pentru formulare albe și armă cu serie înregistrată!
 - **Ce testezi**: Legarea permisului de serie și emiterea documentului oficial.
 - **Cum testezi**:
   1. Ține arma poansonată (ex. `#RC-15-0105`) în mâna secundară (*Offhand* - slotul de scut, tasta `F`).
@@ -183,10 +201,12 @@ Pentru a parcurge testarea fără a tasta manual comenzi `/give` sau a căuta id
   - Click-dreapta consumă 1 formular alb și emite o carte scrisă `minecraft:written_book` intitulată `Permis Port-Armă #RC-15-XXXX`.
   - Cartea este semnată de `Gheorghe Comandantul` și conține numele tău de jucător, seria armei, modelul și statutul `LEGAL / ÎNREGISTRAT`.
   - Dacă arma din stânga nu este poansonată legal, permisul refuză emiterea cu mesajul: `Arma din mâna stângă nu este poansonată legal!`.
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 
 ---
 
 #### ✅ Testul 6: Piața Neagră — Pilirea Serie pe Tocilă (Grindstone Defacing)
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 6` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` pentru tocilă și armă legală!
 - **Ce testezi**: Ștergerea seriei pentru contrabandiști și trecerea în statutul Defaced.
 - **Cum testezi**:
   1. Pune o armă poansonată legal pe o Tocilă (*Grindstone*).
@@ -196,10 +216,12 @@ Pentru a parcurge testarea fără a tasta manual comenzi `/give` sau a căuta id
   - Tocila șterge seria și lore-ul oficial Straja.
   - Arma primește lore-ul roșu de contrabandă: `⚠ [SERIE PILITĂ / DEFACED]` și `Armă de contrabandă!`.
   - Nicovala refuză ștanțarea armelor pilite (armele din lumea interlopă nu pot fi re-legalizate casual).
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 
 ---
 
 #### ✅ Testul 7: Muniție Specială — Cartușe de Argint, Mitralii & Incendiare
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 7` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]`, apoi `[ 👾 SPAWN ZOMBIE ]` sau `[ 🧛 MARCHEAZĂ CA VAMPIR ]` direct din chat!
 - **Ce testezi**: Selectarea muniției din mâna secundară și efectele speciale de luptă.
 - **Cum testezi**:
   1. Pune cartușe de argint (`SilverAmmo: true`) în mâna stângă (offhand).
@@ -211,10 +233,12 @@ Pentru a parcurge testarea fără a tasta manual comenzi `/give` sau a căuta id
   - Glonțul de Argint provoacă **4.0× daune** nemorților (one-shot kill) și **2.0× daune** vampirilor, acompaniat de clinchet de ametist.
   - Mitraliile împrăștie alice cu recul masiv și resping inamicii (Knockback).
   - Glonțul incendiar aprinde ținta în flăcări timp de 8 secunde.
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 
 ---
 
 #### ✅ Testul 8: Lăzile Militare Sigilate & Transportul de Armament
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 8` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` pentru lăzi sigilate!
 - **Ce testezi**: Ambalarea armelor pentru transportul cu trenul Create sau căruțe Trotting Wagons.
 - **Cum testezi**:
   1. Pune o ladă `kubejs:crate_muskets` sau `kubejs:crate_pistols` în hotbar.
@@ -224,10 +248,12 @@ Pentru a parcurge testarea fără a tasta manual comenzi `/give` sau a căuta id
   - Se aude sunetul de rupere a sigiliului de lemn și zăvor de fier.
   - Lada se desigilează: 8 muschete (sau 8 pistoale / 256 cartușe) sunt descărcate la picioare, iar jucătorul primește un cufăr de lemn înapoi.
   - Lăzile stivuibile (stack size 16) permit transportul legal a sute de arme fără a declanșa limita individuală de purtare.
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 
 ---
 
 #### ✅ Testul 9: Mina Straja — Deblocarea Ramurii 4 & Noile Filoane
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 9` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` pentru materialele de deblocare!
 - **Ce testezi**: Progresia minieră și distribuția noilor resurse.
 - **Cum testezi**:
   1. Mergi la mina Straja și vorbește cu NPC-ul Mirel.
@@ -238,6 +264,7 @@ Pentru a parcurge testarea fără a tasta manual comenzi `/give` sau a căuta id
   - Zona 2: Depozit masiv de Dripstone (2000), Sulf (500), Argint integrat; Cuprul a fost complet extras.
   - Zona 3: Fier (800), Zinc (600), Sulf (200), Andesit (500).
   - Zona 4 (Deblocată): Punct strategic final al Statului cu Sulf (1000), Diamante (100) și Redstone (500).
+> ⏩ **Validare Finală**: Apasă `[ ✔ CONFIRMĂ & FINALIZEAZĂ TESTUL! ]` pentru a vedea ecranul de succes și a curăța efectele temporare.
 
 ---
 

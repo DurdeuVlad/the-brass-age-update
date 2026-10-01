@@ -44,4 +44,8 @@ CE ESTE NOU ÎN v1.1.0:
 4. Sistemul de poansonare pe nicovală și emiterea permiselor de port-armă
    au fost adaptate integral la Data Components pe Minecraft 1.21.1 / NeoForge
    și verificate empiric în joc cu un client real (mc-pilot).
+5. Ghid Interactiv de Testare Pas-cu-Pas (/brass_test sau /gunsmith test):
+   Comandă dedicată operatorilor care te ghidează prin toate cele 9 teste,
+   cu butoane clickabile în chat pentru echiparea automată a kiturilor de testare.
 =====================================================================
+
