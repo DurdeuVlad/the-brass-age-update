@@ -54,62 +54,6 @@ ServerEvents.recipes(event => {
     }).id('kubejs:flintlocks/ammo_incendiary_sulfur')
 })
 
-// 3. Ammunition State Bridge & Offhand Priority for Specialized Ordnance
-if (typeof TimelessGunEvents !== 'undefined') {
-    TimelessGunEvents.gunReload(event => {
-        const player = event.entity
-        if (!player || !player.isPlayer()) return
-        const gun = event.gunItemStack
+// Note: Canister scattershot knockback & Incendiary burning hooks are managed by the unified
+// tactical ammunition combat bridge in flintlock_ammo_silver_combat.js.
 
-        const offhand = player.getOffhandItem()
-        if (!offhand.isEmpty() && String(offhand.id) === 'tacz:ammo') {
-            const ammoData = offhand.get('minecraft:custom_data')
-            if (ammoData) {
-                if (ammoData.getBoolean('CanisterAmmo')) {
-                    gun.getOrCreateTag().putString('ChamberAmmoType', 'canister')
-                    player.tell('§6[Muniție] Ai încărcat Glonț tip Mitralii (Canister) din mâna secundară.')
-                    return
-                }
-                if (ammoData.getBoolean('IncendiaryAmmo')) {
-                    gun.getOrCreateTag().putString('ChamberAmmoType', 'incendiary')
-                    player.tell('§c[Muniție] Ai încărcat Cartuș Incendiar cu Sulf din mâna secundară.')
-                    return
-                }
-            }
-        }
-    })
-
-    // 4. Ordnance Hit Effects: Incendiary Ignition & Canister Cone Burst
-    TimelessGunEvents.entityHurtByGunPre(event => {
-        const bullet = event.bullet
-        const target = event.hurtEntity
-        const attacker = event.attacker
-        if (!target) return
-
-        let ammoType = ''
-        if (bullet) {
-            ammoType = bullet.persistentData.getString('AmmoType')
-        } else if (attacker && attacker.isPlayer()) {
-            ammoType = attacker.persistentData.getString('LastFiredAmmoType')
-        }
-
-        if (ammoType === 'incendiary') {
-            target.setRemainingFireTicks(160) // 8 seconds burn
-            const level = target.level()
-            level.playSound(null, target.x, target.y, target.z, 'minecraft:item.firecharge.use', 'players', 1.0, 1.0)
-            if (attacker && attacker.isPlayer()) {
-                attacker.tell('§c🔥 [Incendiar] Țintă incendiată pentru 8 secunde!')
-            }
-        } else if (ammoType === 'canister') {
-            // High defensive close-range knockback
-            target.knockback(0.8, -target.lookAngle.x, -target.lookAngle.z)
-            const level = target.level()
-            level.playSound(null, target.x, target.y, target.z, 'minecraft:entity.iron_golem.attack', 'players', 1.0, 1.2)
-            if (attacker && attacker.isPlayer()) {
-                attacker.tell('§6💥 [Canister] Dispersie defensivă reușită!')
-            }
-        }
-    })
-} else {
-    console.info('[TheBrassAge] TimelessGunEvents is not loaded in this environment; ordnance hooks deferred.')
-}

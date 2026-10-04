@@ -8,6 +8,7 @@ var $FP_ItemLore = Java.loadClass('net.minecraft.world.item.component.ItemLore')
 var $FP_Component = Java.loadClass('net.minecraft.network.chat.Component')
 var $FP_ItemStack = Java.loadClass('net.minecraft.world.item.ItemStack')
 var $FP_ArrayList = Java.loadClass('java.util.ArrayList')
+var $FP_CompoundTag = Java.loadClass('net.minecraft.nbt.CompoundTag')
 
 function fpGetStackId(stack) {
     if (!stack || stack.isEmpty()) return ''
@@ -25,11 +26,28 @@ function fpGetGunCustomTag(stack) {
     if (!stack || stack.isEmpty()) return null
     try {
         var data = stack.get($FP_DataComponents.CUSTOM_DATA)
-        if (data) return data.copyTag()
+        if (data) {
+            if (typeof data.copyTag === 'function') return data.copyTag()
+            if (typeof data.getUnsafe === 'function') return data.getUnsafe()
+        }
     } catch (e) {}
     try {
         var c = stack.get('minecraft:custom_data')
-        if (c && typeof c.copyTag === 'function') return c.copyTag()
+        if (c) {
+            if (typeof c.copyTag === 'function') return c.copyTag()
+            if (typeof c.getUnsafe === 'function') return c.getUnsafe()
+        }
+    } catch (e) {}
+    try {
+        if (stack.nbt) {
+            var ct = new $FP_CompoundTag()
+            for (var k in stack.nbt) {
+                if (typeof stack.nbt[k] === 'string') ct.putString(k, stack.nbt[k])
+                else if (typeof stack.nbt[k] === 'boolean') ct.putBoolean(k, stack.nbt[k])
+                else if (typeof stack.nbt[k] === 'number') ct.putInt(k, stack.nbt[k])
+            }
+            return ct
+        }
     } catch (e) {}
     return null
 }
@@ -62,11 +80,12 @@ ServerEvents.recipes(event => {
 
 // 2. Serial Number Generator Helper
 function getNextStrajaSerial(server) {
-    let current = server.persistentData.getInt('StrajaSerialCount')
+    var current = server.persistentData.getInt('StrajaSerialCount')
     if (!current || current < 100) current = 100
-    const next = current + 1
+    var next = current + 1
     server.persistentData.putInt('StrajaSerialCount', next)
-    const padded = String(next).padStart(4, '0')
+    var padded = String(next)
+    while (padded.length < 4) padded = '0' + padded
     return '#RC-15-' + padded
 }
 
@@ -132,60 +151,240 @@ if ($AnvilUpdateEvent && typeof NativeEvents !== 'undefined') {
     })
 }
 
+// Helper to create defaced gun stack
+function fpCreateDefacedGun(gunStack) {
+    var tag = fpGetGunCustomTag(gunStack)
+    if (!tag) return null
+    var output = gunStack.copy()
+    var newTag = null
+    try {
+        newTag = (typeof tag.copy === 'function') ? tag.copy() : new $FP_CompoundTag()
+        if (typeof tag.copy !== 'function') {
+            for (var k in tag) {
+                if (typeof tag[k] === 'string') newTag.putString(k, tag[k])
+                else if (typeof tag[k] === 'boolean') newTag.putBoolean(k, tag[k])
+                else if (typeof tag[k] === 'number') newTag.putInt(k, tag[k])
+            }
+        }
+    } catch (e) {
+        newTag = new $FP_CompoundTag()
+    }
+    newTag.putBoolean('Proofed', false)
+    newTag.putBoolean('Defaced', true)
+    newTag.remove('Serial')
+    newTag.remove('GunSerial')
+
+    var nativeStack = (typeof output.getItemStack === 'function') ? output.getItemStack() : output
+    var loreList = new $FP_ArrayList()
+    loreList.add($FP_Component.literal('§4⚠ [SERIE PILITĂ / DEFACED]'))
+    loreList.add($FP_Component.literal('§cArmă de contrabandă!'))
+
+    try {
+        if (nativeStack && typeof nativeStack.set === 'function') {
+            nativeStack.set($FP_DataComponents.CUSTOM_DATA, $FP_CustomData.of(newTag))
+            nativeStack.set($FP_DataComponents.LORE, new $FP_ItemLore(loreList))
+        } else {
+            output.set($FP_DataComponents.CUSTOM_DATA, $FP_CustomData.of(newTag))
+            output.set($FP_DataComponents.LORE, new $FP_ItemLore(loreList))
+        }
+    } catch (e) {
+        console.error('[fpCreateDefacedGun] set error: ' + e)
+    }
+    return output
+}
+
+function fpIsProofedGun(stack) {
+    if (!stack || stack.isEmpty() || fpGetStackId(stack) !== 'tacz:modern_kinetic_gun') return false
+    var tag = fpGetGunCustomTag(stack)
+    if (!tag) return false
+    var isProofed = false
+    try {
+        if (typeof tag.getBoolean === 'function') {
+            isProofed = tag.getBoolean('Proofed') || tag.getByte('Proofed') == 1 || tag.getInt('Proofed') == 1 || String(tag.getString('Proofed')) === 'true'
+        } else if (tag.Proofed) {
+            isProofed = true
+        }
+    } catch (e) {}
+
+    var serial = ''
+    try {
+        if (typeof tag.getString === 'function') {
+            serial = tag.getString('Serial') || tag.getString('GunSerial')
+        } else {
+            serial = tag.Serial || tag.GunSerial || ''
+        }
+    } catch (e) {}
+    var hasSerial = serial && String(serial).length > 0 && String(serial).indexOf('#RC-') === 0
+
+    var isDefaced = false
+    try {
+        if (typeof tag.getBoolean === 'function') isDefaced = tag.getBoolean('Defaced')
+        else isDefaced = !!tag.Defaced
+    } catch (e) {}
+    return (isProofed || hasSerial) && !isDefaced
+}
+
 // 4. Grindstone Defacing: Proofed Firearm -> Defaced Black Market Arm
+var $GrindstonePlaceEvent = null
 var $GrindstoneTakeEvent = null
 try {
+    $GrindstonePlaceEvent = Java.loadClass('net.neoforged.neoforge.event.GrindstoneEvent$OnPlaceItem')
     $GrindstoneTakeEvent = Java.loadClass('net.neoforged.neoforge.event.GrindstoneEvent$OnTakeItem')
 } catch (e) {}
+
+if ($GrindstonePlaceEvent && typeof NativeEvents !== 'undefined') {
+    NativeEvents.onEvent($GrindstonePlaceEvent, function(event) {
+        var top = event.getTopItem()
+        var bottom = event.getBottomItem()
+        
+        var targetGun = null
+        if (fpIsProofedGun(top)) targetGun = top
+        else if (fpIsProofedGun(bottom)) targetGun = bottom
+        
+        if (!targetGun) return
+        var defaced = fpCreateDefacedGun(targetGun)
+        if (defaced) {
+            event.setOutput(defaced)
+            event.setXp(0)
+        }
+    })
+}
 
 if ($GrindstoneTakeEvent && typeof NativeEvents !== 'undefined') {
     NativeEvents.onEvent($GrindstoneTakeEvent, function(event) {
         var top = event.getTopItem()
-        if (!top || top.isEmpty() || fpGetStackId(top) !== 'tacz:modern_kinetic_gun') return
+        var bottom = event.getBottomItem()
+        var isGun = fpIsProofedGun(top) || fpIsProofedGun(bottom)
+        if (!isGun) return
 
-        var tag = fpGetGunCustomTag(top)
-        if (!tag || !tag.getBoolean('Proofed')) return
-
-        var output = top.copy()
-        var newTag = tag.copy()
-        newTag.putBoolean('Proofed', false)
-        newTag.putBoolean('Defaced', true)
-        newTag.remove('Serial')
-        output.set($FP_DataComponents.CUSTOM_DATA, $FP_CustomData.of(newTag))
-
-        var loreList = new $FP_ArrayList()
-        loreList.add($FP_Component.literal('§4⚠ [SERIE PILITĂ / DEFACED]'))
-        loreList.add($FP_Component.literal('§cArmă de contrabandă!'))
-        output.set($FP_DataComponents.LORE, new $FP_ItemLore(loreList))
-
-        event.setNewTopItem(output)
+        if (fpIsProofedGun(top)) {
+            event.setNewTopItem($FP_ItemStack.EMPTY)
+        }
+        if (fpIsProofedGun(bottom)) {
+            event.setNewBottomItem($FP_ItemStack.EMPTY)
+        }
+        var player = event.getPlayer()
+        if (player) {
+            var server = player.getServer ? player.getServer() : player.server
+            if (server) {
+                var x = player.x.toFixed(1)
+                var y = player.y.toFixed(1)
+                var z = player.z.toFixed(1)
+                server.runCommandSilent('playsound minecraft:block.grindstone.use player @a ' + x + ' ' + y + ' ' + z + ' 1.0 1.0')
+            }
+            player.tell('§c[Piața Neagră] Ai pilit seria armei la tocilă! Arma a devenit ilegală.')
+        }
     })
 }
 
-// 5. Permit Binding: Right-clicking Permit Blank with Proofed Weapon in Offhand
+// In-World Grindstone Defacing: Right-Click a Grindstone block directly with a proofed firearm
+BlockEvents.rightClicked(event => {
+    var block = event.block
+    var bId = ''
+    try {
+        bId = String(block.id || (block.kjs$getId ? block.kjs$getId() : '')).toLowerCase()
+    } catch (e) {}
+    if (bId.indexOf('grindstone') === -1) return
+
+    var handStr = event.hand ? String(event.hand).toUpperCase() : ''
+    console.info('[GrindstoneClick] block=' + bId + ', hand=' + handStr + ', item=' + event.item)
+
+    if (handStr && handStr.indexOf('OFF') !== -1) return
+
+    var player = event.player || (typeof event.getEntity === 'function' ? event.getEntity() : null)
+    if (!player) return
+    var item = event.item || (typeof event.getItem === 'function' ? event.getItem() : null)
+    if (!item || item.isEmpty()) return
+
+    var sId = fpGetStackId(item)
+    console.info('[GrindstoneClick] stackId=' + sId)
+    if (sId !== 'tacz:modern_kinetic_gun') return
+
+    var isProofed = fpIsProofedGun(item)
+    console.info('[GrindstoneClick] isProofed=' + isProofed)
+    if (!isProofed) return
+
+    var defaced = fpCreateDefacedGun(item)
+    console.info('[GrindstoneClick] defaced=' + defaced)
+    if (defaced) {
+        try {
+            item.shrink(1)
+            player.give(defaced)
+            if (typeof player.swing === 'function') player.swing()
+
+            var px = (typeof player.getX === 'function') ? player.getX() : (player.x || 0)
+            var py = (typeof player.getY === 'function') ? player.getY() : (player.y || 0)
+            var pz = (typeof player.getZ === 'function') ? player.getZ() : (player.z || 0)
+
+            var server = player.getServer ? player.getServer() : (player.server || (player.level && player.level.getServer ? player.level.getServer() : null))
+            if (server) {
+                server.runCommandSilent('playsound minecraft:block.grindstone.use player @a ' + Number(px).toFixed(1) + ' ' + Number(py).toFixed(1) + ' ' + Number(pz).toFixed(1) + ' 1.0 1.0')
+            }
+            player.tell('§c[Piața Neagră] Ai pilit seria armei la tocilă! Arma a devenit ilegală (Defaced).')
+        } catch (err) {
+            console.error('[GrindstoneClick] Error applying defaced gun: ' + err)
+        }
+        try { event.cancel() } catch (e) {}
+    }
+})
+
+// 5. Permit Binding: Right-clicking Permit Blank with Proofed Weapon in either hand
 ItemEvents.rightClicked(event => {
-    var item = event.getItem()
-    if (!item || fpGetStackId(item) !== 'kubejs:permit_blank') return
-    console.info('[Permit] rightClicked fired for permit_blank!')
-    var player = event.getPlayer()
+    var item = event.item || (typeof event.getItem === 'function' ? event.getItem() : null)
+    if (!item || item.isEmpty() || fpGetStackId(item) !== 'kubejs:permit_blank') return
+    var player = event.player || (typeof event.getEntity === 'function' ? event.getEntity() : null)
+    if (!player) return
+
+    var mainhand = player.getMainHandItem ? player.getMainHandItem() : player.mainHandItem
     var offhand = player.getOffhandItem ? player.getOffhandItem() : player.offhandItem
-    console.info('[Permit] offhand: ' + offhand + ', id: ' + fpGetStackId(offhand))
 
-    if (!offhand || offhand.isEmpty() || fpGetStackId(offhand) !== 'tacz:modern_kinetic_gun') {
-        player.tell('§e[Permis] Plasează o armă poansonată în mâna stângă (offhand) pentru a-i elibera permisul.')
+    var gunStack = null
+    if (fpGetStackId(mainhand) === 'kubejs:permit_blank') {
+        gunStack = offhand
+    } else if (fpGetStackId(offhand) === 'kubejs:permit_blank') {
+        gunStack = mainhand
+    } else {
+        gunStack = offhand
+    }
+
+    if (!gunStack || gunStack.isEmpty() || fpGetStackId(gunStack) !== 'tacz:modern_kinetic_gun') {
+        player.tell('§e[Permis] Ține o armă poansonată în cealaltă mână pentru a-i elibera permisul.')
         return
     }
 
-    var tag = fpGetGunCustomTag(offhand)
-    console.info('[Permit] tag: ' + tag)
-    if (!tag || !tag.getBoolean('Proofed') || !tag.getString('Serial')) {
-        player.tell('§c[Permis] Arma din mâna stângă nu este poansonată legal! Nu se poate emite permis.')
+    var tag = fpGetGunCustomTag(gunStack)
+    var isProofed = false
+    try {
+        if (typeof tag.getBoolean === 'function') {
+            isProofed = tag.getBoolean('Proofed') || tag.getByte('Proofed') == 1 || tag.getInt('Proofed') == 1 || String(tag.getString('Proofed')) === 'true'
+        } else if (tag && tag.Proofed) {
+            isProofed = true
+        }
+    } catch (e) {}
+
+    var serial = ''
+    try {
+        if (typeof tag.getString === 'function') {
+            serial = tag.getString('Serial') || tag.getString('GunSerial')
+        } else if (tag) {
+            serial = tag.Serial || tag.GunSerial || ''
+        }
+    } catch (e) {}
+    var hasSerial = serial && String(serial).length > 0 && String(serial).indexOf('#RC-') === 0
+
+    var isDefaced = false
+    try {
+        if (typeof tag.getBoolean === 'function') isDefaced = tag.getBoolean('Defaced')
+        else if (tag) isDefaced = !!tag.Defaced
+    } catch (e) {}
+
+    if (!tag || (!isProofed && !hasSerial) || !serial || isDefaced) {
+        player.tell('§c[Permis] Arma din mână nu este poansonată legal! Nu se poate emite permis.')
         return
     }
 
-    var serial = String(tag.getString('Serial'))
     var playerName = player.username ? String(player.username) : String(player.getName().getString())
-    console.info('[Permit] emitting permit for serial ' + serial + ' to player ' + playerName)
+    var server = player.getServer ? player.getServer() : (player.server || (player.level && player.level.getServer ? player.level.getServer() : null))
 
     var pageText = '§6§lPERMIS DE PORT-ARMĂ§r\n\n' +
         '§0Posesor: §1' + playerName + '\n' +
@@ -198,8 +397,8 @@ ItemEvents.rightClicked(event => {
     var giveCmd = 'give ' + playerName +
         ' minecraft:written_book[minecraft:written_book_content={title:\'Permis Port-Arma ' + serial + '\',author:\'Gheorghe Comandantul\',pages:[\'' + rawJson + '\']}] 1'
 
-    event.server.runCommandSilent(giveCmd)
-    player.swing()
+    if (server) server.runCommandSilent(giveCmd)
+    if (typeof player.swing === 'function') player.swing()
     if (!player.isCreative()) item.shrink(1)
     player.tell('§a[Permis] A fost eliberat permisul de port-armă pentru seria ' + serial + '!')
 })

@@ -34,49 +34,76 @@ ServerEvents.recipes(event => {
     }).id('the_brass_age:pack_ammunition_crate')
 })
 
-// World Unpacking: Shift-Right-Clicking a crate on the ground breaks the seal and dispenses weapons
-ItemEvents.rightClicked('kubejs:crate_muskets', event => {
-    const player = event.player
-    if (!player || !player.isCrouching()) return
+// Shared Unpack Logic: handles unpacking crates whether clicked in air or on ground/blocks
+function unpackLogisticsCrate(player, stack, crateType) {
+    if (!player) return false
+    if (!stack || stack.isEmpty()) return false
 
-    event.item.shrink(1)
-    player.level().playSound(null, player.x, player.y, player.z, 'minecraft:block.wood.break', 'players', 1.0, 0.9)
-    player.level().playSound(null, player.x, player.y, player.z, 'minecraft:block.iron_trapdoor.open', 'players', 0.8, 1.2)
+    if (!player.isCreative()) {
+        stack.shrink(1)
+    }
+    var server = player.getServer ? player.getServer() : player.server
+    if (server) {
+        var x = player.x.toFixed(1)
+        var y = player.y.toFixed(1)
+        var z = player.z.toFixed(1)
+        server.runCommandSilent('playsound minecraft:block.wood.break player @a ' + x + ' ' + y + ' ' + z + ' 1.0 0.9')
+        server.runCommandSilent('playsound minecraft:block.iron_trapdoor.open player @a ' + x + ' ' + y + ' ' + z + ' 0.8 1.2')
+    }
 
-    for (let i = 0; i < 8; i++) {
-        const musket = Item.of('tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15"}]')
-        player.drop(musket, false)
+    if (crateType === 'muskets') {
+        for (var i = 0; i < 8; i++) {
+            var musket = Item.of('tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15"}]')
+            player.drop(musket, false)
+        }
+        player.tell(Text.literal('§6[Logistică Militară] Ai desigilat o Ladă de Muschete! (8 muschete descărcate)').bold(true))
+    } else if (crateType === 'pistols') {
+        for (var i = 0; i < 8; i++) {
+            var pistol = Item.of('tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p"}]')
+            player.drop(pistol, false)
+        }
+        player.tell(Text.literal('§6[Logistică Militară] Ai desigilat o Ladă de Pistoale! (8 pistoale descărcate)').bold(true))
+    } else if (crateType === 'ammo') {
+        for (var i = 0; i < 4; i++) {
+            player.drop(Item.of('tacz:ammo[minecraft:custom_data={AmmoId:"qkl:16mm"}]', 64), false)
+        }
+        player.tell(Text.literal('§6[Logistică Militară] Ai desigilat o Ladă de Muniție! (256 cartușe 16.5mm descărcate)').bold(true))
     }
     player.give('minecraft:chest')
-    player.tell(Text.literal('§6[Logistică Militară] Ai desigilat o Ladă de Muschete! (8 muschete au fost descărcate)').bold(true))
+    return true
+}
+
+// Air Unpacking (Right-Click in air)
+ItemEvents.rightClicked('kubejs:crate_muskets', event => {
+    if (unpackLogisticsCrate(event.player, event.item, 'muskets')) event.cancel()
 })
 
 ItemEvents.rightClicked('kubejs:crate_pistols', event => {
-    const player = event.player
-    if (!player || !player.isCrouching()) return
-
-    event.item.shrink(1)
-    player.level().playSound(null, player.x, player.y, player.z, 'minecraft:block.wood.break', 'players', 1.0, 0.9)
-    player.level().playSound(null, player.x, player.y, player.z, 'minecraft:block.iron_trapdoor.open', 'players', 0.8, 1.2)
-
-    for (let i = 0; i < 8; i++) {
-        const pistol = Item.of('tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p"}]')
-        player.drop(pistol, false)
-    }
-    player.give('minecraft:chest')
-    player.tell(Text.literal('§6[Logistică Militară] Ai desigilat o Ladă de Pistoale! (8 pistoale au fost descărcate)').bold(true))
+    if (unpackLogisticsCrate(event.player, event.item, 'pistols')) event.cancel()
 })
 
 ItemEvents.rightClicked('kubejs:ammunition_crate', event => {
+    if (unpackLogisticsCrate(event.player, event.item, 'ammo')) event.cancel()
+})
+
+// Ground/Block Unpacking (Right-Click on ground / any block)
+BlockEvents.rightClicked(event => {
     const player = event.player
-    if (!player || !player.isCrouching()) return
+    if (!player) return
+    const item = event.item
+    if (!item || item.isEmpty()) return
 
-    event.item.shrink(1)
-    player.level().playSound(null, player.x, player.y, player.z, 'minecraft:block.wood.break', 'players', 1.0, 0.9)
-
-    for (let i = 0; i < 4; i++) {
-        player.drop(Item.of('tacz:ammo[minecraft:custom_data={AmmoId:"qkl:round_ball"}]', 64), false)
+    var id = ''
+    try {
+        id = String(Java.loadClass('net.minecraft.core.registries.BuiltInRegistries').ITEM.getKey(item.getItem())).toLowerCase()
+    } catch (e) {
+        id = String(item.id || '').toLowerCase()
     }
-    player.give('minecraft:chest')
-    player.tell(Text.literal('§6[Logistică Militară] Ai desigilat o Ladă de Muniție! (256 cartușe descărcate)').bold(true))
+    if (id === 'kubejs:crate_muskets') {
+        if (unpackLogisticsCrate(player, item, 'muskets')) event.cancel()
+    } else if (id === 'kubejs:crate_pistols') {
+        if (unpackLogisticsCrate(player, item, 'pistols')) event.cancel()
+    } else if (id === 'kubejs:ammunition_crate') {
+        if (unpackLogisticsCrate(player, item, 'ammo')) event.cancel()
+    }
 })

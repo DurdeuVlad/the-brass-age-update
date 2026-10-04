@@ -1,7 +1,7 @@
 // In-game dynamic and informative tooltips for all Brass Age items and firearms.
 // Ensures completely foolproof understanding for players without needing out-of-game wikis.
 
-ItemEvents.tooltip(event => {
+ItemEvents.modifyTooltips(event => {
     // 1. Nitrates, Powder Intermediates & Barrels
     event.add('kubejs:saltpeter', [
         Text.of('§7Sare de azot extrasă din depozitele carstice.'),
@@ -87,69 +87,8 @@ ItemEvents.tooltip(event => {
         Text.of('§aEfect: §fOferă +50% rezistență armurilor de piele călite și hamurilor de luptă.')
     ])
 
-    // 4. Firearms & Proofing State Inspection
-    event.addAdvanced('tacz:modern_kinetic_gun', (stack, isAdvanced, text) => {
-        const customData = stack.get('minecraft:custom_data')
-        if (!customData) return
-
-        const gunId = String(customData.GunId || '')
-        if (gunId !== 'qkl:fk15' && gunId !== 'qkl:fk15p') return
-
-        // Provenance & Serial Status
-        if (customData.Proofed && customData.Serial) {
-            text.add(Text.of('§a✔ Serie Legală: §f' + customData.Serial))
-            text.add(Text.of('§7Status: §aÎnregistrat în Registrul Imperial Straja'))
-        } else if (customData.Defaced) {
-            text.add(Text.of('§4⚠ SERIE PILITĂ / DEFACED'))
-            text.add(Text.of('§cArmă de contrabandă! Conține modificări ilegale de piață neagră.'))
-        } else {
-            text.add(Text.of('§c✖ NEPOANSONAT (Ilegal)'))
-            text.add(Text.of('§eAplică pe nicovală cu §6Sigiliul Imperial §epentru legalizare.'))
-        }
-
-        // Chambered Ammunition / Offhand Reload Tip
-        const chamber = String(customData.ChamberAmmoType || '')
-        if (chamber === 'silver') {
-            text.add(Text.of('§b◆ Cameră Armată: §fGlonț de Argint Consfințit (×4 vs Nemorți, ×2 vs Vampiri)'))
-        } else if (chamber === 'canister') {
-            text.add(Text.of('§6◆ Cameră Armată: §fGlonț tip Mitralii (Canister Knockback)'))
-        } else if (chamber === 'incendiary') {
-            text.add(Text.of('§c◆ Cameră Armată: §fCartuș Incendiar cu Sulf (Aprindere 8s)'))
-        } else {
-            text.add(Text.of('§f◆ Cameră Armată: §7Glonț Standard de Plumb (40–55 Dmg)'))
-        }
-
-        // Tactical guidance for players
-        text.add(Text.of('§8[Ghid] Reîncărcare: Apasă [R] având muniția dorită în offhand (mâna stângă).'))
-        text.add(Text.of('§8[Ghid] Țintire: Apasă SHIFT (Kneel) pentru a elimina reculul și dispersia.'))
-    })
-
-    // 5. Specialized Ammunition Tooltips (Silver, Canister, Incendiary)
-    event.addAdvanced('tacz:ammo', (stack, isAdvanced, text) => {
-        const customData = stack.get('minecraft:custom_data')
-        if (!customData) return
-
-        if (customData.SilverAmmo) {
-            text.add(Text.of('§b⚡ Glonț de Argint Consfințit'))
-            text.add(Text.of('§fBătut cu argint pur și binecuvântat la altar.'))
-            text.add(Text.of('§c⚔ Daune: §b×4.0 §fîmpotriva Nemorților și Creaturilor Corupte.'))
-            text.add(Text.of('§c⚔ Daune: §b×2.0 §fîmpotriva Jucătorilor Vampiri.'))
-            text.add(Text.of('§eSugestie: §7Plasează-l în mâna secundară (offhand) pentru a-l încărca primul.'))
-        } else if (customData.CanisterAmmo) {
-            text.add(Text.of('§6💥 Glonț tip Mitralii (Canister)'))
-            text.add(Text.of('§fÎncărcătură densă de alice de fier pentru luptă la mică distanță.'))
-            text.add(Text.of('§eEfect: §fDispersie largă și respingere masivă a inamicilor (Knockback).'))
-            text.add(Text.of('§eSugestie: §7Plasează-l în mâna secundară (offhand) pentru a-l încărca primul.'))
-        } else if (customData.IncendiaryAmmo) {
-            text.add(Text.of('§c🔥 Cartuș Incendiar cu Sulf'))
-            text.add(Text.of('§fMiez de plumb acoperit cu sulf sublimat și amestec piroforic.'))
-            text.add(Text.of('§eEfect: §fAprinde ținta pentru 8 secunde la impact.'))
-            text.add(Text.of('§eSugestie: §7Plasează-l în mâna secundară (offhand) pentru a-l încărca primul.'))
-        }
-    })
-
     // Military Logistics Crates Tooltips
-    tooltip.add('kubejs:crate_muskets', [
+    event.add('kubejs:crate_muskets', [
         Text.of('§6📦 Ladă Militară de Muschete (8 Arme)'),
         Text.of('§7Ladă blindată din stejar și alamă pentru transport logistic.'),
         Text.of('§a✔ Conține: §f8 Muschete FK15 cu țeavă lisă.'),
@@ -157,7 +96,7 @@ ItemEvents.tooltip(event => {
         Text.of('§bUtilizare: §7Pune în masa de lucru sau Shift+Click-Dreapta pe sol pentru a desigila.')
     ])
 
-    tooltip.add('kubejs:crate_pistols', [
+    event.add('kubejs:crate_pistols', [
         Text.of('§6📦 Ladă Militară de Pistoale (8 Arme)'),
         Text.of('§7Cufăr întărit pentru armamentul ofițerilor de cavalerie.'),
         Text.of('§a✔ Conține: §f8 Pistoale FK15-P de dragon.'),
@@ -165,10 +104,154 @@ ItemEvents.tooltip(event => {
         Text.of('§bUtilizare: §7Pune în masa de lucru sau Shift+Click-Dreapta pe sol pentru a desigila.')
     ])
 
-    tooltip.add('kubejs:ammunition_crate', [
+    event.add('kubejs:ammunition_crate', [
         Text.of('§6📦 Ladă Grea de Muniție (256 Cartușe)'),
         Text.of('§7Cutie etanșă militară pentru protecția pulberii și gloanțelor la umezeală.'),
         Text.of('§a✔ Conține: §f4 pachete de 64 cartușe standard (256 gloanțe).'),
         Text.of('§bUtilizare: §7Pune în masa de lucru sau Shift+Click-Dreapta pe sol pentru a desigila.')
     ])
 })
+
+// Dynamic Tooltip Provider for Firearms & Custom Ammunition via Native NeoForge Event
+var $ItemTooltipEvent = null
+var $Component = null
+var $DataComponents = null
+try {
+    $ItemTooltipEvent = Java.loadClass('net.neoforged.neoforge.event.entity.player.ItemTooltipEvent')
+    $Component = Java.loadClass('net.minecraft.network.chat.Component')
+    $DataComponents = Java.loadClass('net.minecraft.core.component.DataComponents')
+} catch (e) {}
+
+function getTooltipCustomTag(stack) {
+    if (!stack || stack.isEmpty()) return null
+    try {
+        if ($DataComponents) {
+            var data = stack.get($DataComponents.CUSTOM_DATA)
+            if (data) {
+                if (typeof data.copyTag === 'function') return data.copyTag()
+                if (typeof data.getUnsafe === 'function') return data.getUnsafe()
+            }
+        }
+    } catch (e) {}
+    try {
+        var c = stack.get('minecraft:custom_data')
+        if (c) {
+            if (typeof c.copyTag === 'function') return c.copyTag()
+            if (typeof c.getUnsafe === 'function') return c.getUnsafe()
+            if (typeof c === 'object') return c
+        }
+    } catch (e) {}
+    try {
+        if (stack.nbt) return stack.nbt
+    } catch (e) {}
+    return null
+}
+
+if ($ItemTooltipEvent && typeof NativeEvents !== 'undefined') {
+    NativeEvents.onEvent($ItemTooltipEvent, function(event) {
+        var stack = event.getItemStack()
+        if (!stack || stack.isEmpty()) return
+        var text = event.getToolTip()
+        var tag = getTooltipCustomTag(stack)
+        if (!tag) return
+
+        var gunId = ''
+        try {
+            if (typeof tag.getString === 'function') gunId = String(tag.getString('GunId') || '')
+            else gunId = String(tag.GunId || '')
+        } catch (e) {}
+
+        if (gunId === 'qkl:fk15' || gunId === 'qkl:fk15p') {
+            var isProofed = false
+            try {
+                if (typeof tag.getBoolean === 'function') {
+                    isProofed = tag.getBoolean('Proofed') || tag.getByte('Proofed') == 1 || tag.getInt('Proofed') == 1 || String(tag.getString('Proofed')) === 'true'
+                } else if (tag.Proofed) {
+                    isProofed = true
+                }
+            } catch (e) {}
+
+            var serial = ''
+            try {
+                if (typeof tag.getString === 'function') {
+                    serial = tag.getString('Serial') || tag.getString('GunSerial')
+                } else {
+                    serial = tag.Serial || tag.GunSerial || ''
+                }
+            } catch (e) {}
+
+            var isDefaced = false
+            try {
+                if (typeof tag.getBoolean === 'function') isDefaced = tag.getBoolean('Defaced')
+                else isDefaced = !!tag.Defaced
+            } catch (e) {}
+
+            // Provenance & Serial Status
+            if (isProofed && serial && serial.indexOf('#RC-') === 0 && !isDefaced) {
+                text.add($Component.literal('§a✔ Serie Legală: §f' + serial))
+                text.add($Component.literal('§7Status: §aÎnregistrat în Registrul Imperial Straja'))
+            } else if (isDefaced) {
+                text.add($Component.literal('§4⚠ SERIE PILITĂ / DEFACED'))
+                text.add($Component.literal('§cArmă de contrabandă! Conține modificări ilegale de piață neagră.'))
+            } else {
+                text.add($Component.literal('§c✖ NEPOANSONAT (Ilegal)'))
+                text.add($Component.literal('§eAplică pe nicovală cu §6Sigiliul Imperial §epentru legalizare.'))
+            }
+
+            // Chambered Ammunition / Offhand Reload Tip
+            var chamber = ''
+            try {
+                if (typeof tag.getString === 'function') chamber = String(tag.getString('ChamberAmmoType') || '')
+                else chamber = String(tag.ChamberAmmoType || '')
+            } catch (e) {}
+
+            if (chamber === 'silver') {
+                text.add($Component.literal('§b◆ Cameră Armată: §fGlonț de Argint Consfințit (×4 vs Nemorți, ×2 vs Vampiri)'))
+            } else if (chamber === 'canister') {
+                text.add($Component.literal('§6◆ Cameră Armată: §fGlonț tip Mitralii (Canister Knockback)'))
+            } else if (chamber === 'incendiary') {
+                text.add($Component.literal('§c◆ Cameră Armată: §fCartuș Incendiar cu Sulf (Aprindere 8s)'))
+            } else {
+                text.add($Component.literal('§f◆ Cameră Armată: §7Glonț Standard de Plumb (40–55 Dmg)'))
+            }
+
+            // Tactical guidance for players
+            text.add($Component.literal('§8[Ghid] Reîncărcare: Apasă [R] având muniția dorită în offhand (mâna stângă).'))
+            text.add($Component.literal('§8[Ghid] Țintire: Apasă SHIFT (Kneel) pentru a elimina reculul și dispersia.'))
+        }
+
+        // Specialized Ammunition Tooltips
+        var isSilver = false
+        var isCanister = false
+        var isIncendiary = false
+        try {
+            if (typeof tag.getBoolean === 'function') {
+                isSilver = tag.getBoolean('SilverAmmo') || tag.getByte('SilverAmmo') == 1 || tag.getInt('SilverAmmo') == 1 || String(tag.getString('SilverAmmo')) === 'true'
+                isCanister = tag.getBoolean('CanisterAmmo') || tag.getByte('CanisterAmmo') == 1 || tag.getInt('CanisterAmmo') == 1 || String(tag.getString('CanisterAmmo')) === 'true'
+                isIncendiary = tag.getBoolean('IncendiaryAmmo') || tag.getByte('IncendiaryAmmo') == 1 || tag.getInt('IncendiaryAmmo') == 1 || String(tag.getString('IncendiaryAmmo')) === 'true'
+            } else {
+                isSilver = !!tag.SilverAmmo
+                isCanister = !!tag.CanisterAmmo
+                isIncendiary = !!tag.IncendiaryAmmo
+            }
+        } catch (e) {}
+
+        if (isSilver) {
+            text.add($Component.literal('§b⚡ Glonț de Argint Consfințit'))
+            text.add($Component.literal('§fBătut cu argint pur și binecuvântat la altar.'))
+            text.add($Component.literal('§c⚔ Daune: §b×4.0 §fîmpotriva Nemorților și Creaturilor Corupte.'))
+            text.add($Component.literal('§c⚔ Daune: §b×2.0 §fîmpotriva Jucătorilor Vampiri.'))
+            text.add($Component.literal('§eSugestie: §7Plasează-l în mâna secundară (offhand) pentru a-l încărca primul.'))
+        } else if (isCanister) {
+            text.add($Component.literal('§6💥 Glonț tip Mitralii (Canister)'))
+            text.add($Component.literal('§fÎncărcătură densă de alice de fier pentru luptă la mică distanță.'))
+            text.add($Component.literal('§eEfect: §fDispersie largă și respingere masivă a inamicilor (Knockback).'))
+            text.add($Component.literal('§eSugestie: §7Plasează-l în mâna secundară (offhand) pentru a-l încărca primul.'))
+        } else if (isIncendiary) {
+            text.add($Component.literal('§c🔥 Cartuș Incendiar cu Sulf'))
+            text.add($Component.literal('§fMiez de plumb acoperit cu sulf sublimat și amestec piroforic.'))
+            text.add($Component.literal('§eEfect: §fAprinde ținta pentru 8 secunde la impact.'))
+            text.add($Component.literal('§eSugestie: §7Plasează-l în mâna secundară (offhand) pentru a-l încărca primul.'))
+        }
+    })
+}

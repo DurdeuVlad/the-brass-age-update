@@ -213,13 +213,15 @@ Pentru a testa rapid fără a mina resursele manual, deschide chat-ul și folose
 > 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 6` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` pentru tocilă și armă legală!
 - **Ce testezi**: Ștergerea seriei pentru contrabandiști și trecerea în statutul Defaced.
 - **Cum testezi**:
-  1. Pune o armă poansonată legal pe o Tocilă (*Grindstone*).
-  2. Ridică arma din slotul de rezultat.
-  3. Încearcă să pui arma pilită înapoi pe nicovală cu Sigiliul Imperial.
+  1. Ține arma poansonată legal în mâna principală.
+  2. Dă **click-dreapta direct pe un bloc de Tocilă (*Grindstone*)** așezat în lume (sau plaseaz-o în GUI-ul tocilei).
+  3. Verifică tooltip-ul armei și sunetul de șlefuire/scântei.
+  4. Încearcă să pui arma pilită înapoi pe nicovală cu Sigiliul Imperial.
 - **Rezultat Așteptat**:
-  - Tocila șterge seria și lore-ul oficial Straja.
+  - Se aude sunetul de polizare (`block.grindstone.use`) și apar particule de piatră.
+  - Seria oficială și statutul legal sunt șterse complet.
   - Arma primește lore-ul roșu de contrabandă: `⚠ [SERIE PILITĂ / DEFACED]` și `Armă de contrabandă!`.
-  - Nicovala refuză ștanțarea armelor pilite (armele din lumea interlopă nu pot fi re-legalizate casual).
+  - Nicovala și permisul refuză armele pilite (armele din lumea interlopă nu pot fi re-legalizate casual).
 > ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 
 ---
@@ -237,7 +239,7 @@ Pentru a testa rapid fără a mina resursele manual, deschide chat-ul și folose
   5. Încarcă `IncendiaryAmmo` și trage într-o țintă.
 - **Rezultat Așteptat**:
   - Glonțul de Argint provoacă **4.0× daune** nemorților (one-shot kill) și **2.0× daune** vampirilor, acompaniat de clinchet de ametist.
-  - Mitraliile împrăștie alice cu recul masiv și resping inamicii (Knockback).
+  - Mitraliile împrăștie alice cu recul masiv și resping puternic inamicii (Knockback).
   - Glonțul incendiar aprinde ținta în flăcări timp de 8 secunde.
 > ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 
@@ -247,12 +249,12 @@ Pentru a testa rapid fără a mina resursele manual, deschide chat-ul și folose
 > 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 8` și apasă `[ 📦 DĂ-MI KITUL DE TEST ]` pentru lăzi sigilate!
 - **Ce testezi**: Ambalarea armelor pentru transportul cu trenul Create sau căruțe Trotting Wagons.
 - **Cum testezi**:
-  1. Pune o ladă `kubejs:crate_muskets` sau `kubejs:crate_pistols` în hotbar.
-  2. Ține apăsat `SHIFT` (crouch) și dă click-dreapta pe sol.
+  1. Pune o ladă `kubejs:crate_muskets` sau `kubejs:crate_pistols` în mână.
+  2. Dă click-dreapta pe sol (sau ține apăsat `SHIFT` și dă click-dreapta în aer/sol).
   3. Fă același lucru cu o ladă de muniție `kubejs:ammunition_crate`.
 - **Rezultat Așteptat**:
   - Se aude sunetul de rupere a sigiliului de lemn și zăvor de fier.
-  - Lada se desigilează: 8 muschete (sau 8 pistoale / 256 cartușe) sunt descărcate la picioare, iar jucătorul primește un cufăr de lemn înapoi.
+  - Lada se desigilează: 8 muschete (sau 8 pistoale / 256 cartușe) sunt descărcate pe blocul țintit sau la picioare, iar jucătorul primește un cufăr de lemn înapoi.
   - Lăzile stivuibile (stack size 16) permit transportul legal a sute de arme fără a declanșa limita individuală de purtare.
 > ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
 

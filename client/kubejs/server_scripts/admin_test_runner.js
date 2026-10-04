@@ -125,7 +125,7 @@ const TEST_STEPS = [
         ],
         kitCommands: [
             "give {player} kubejs:permit_blank 4",
-            "give {player} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:\"qkl:fk15p\",Proofed:true,GunSerial:\"#RC-15-0105\",OwnerUUID:\"00000000-0000-0000-0000-000000000000\"}] 1"
+            "give {player} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:\"qkl:fk15p\",Proofed:1b,Serial:\"#RC-15-0105\",GunSerial:\"#RC-15-0105\",OwnerUUID:\"00000000-0000-0000-0000-000000000000\"}] 1"
         ]
     },
     {
@@ -134,9 +134,9 @@ const TEST_STEPS = [
         subtitle: "Ștergerea Serie pentru Contrabandiști (Grindstone Defacing)",
         desc: [
             "§71. Dă click pe butonul de kit pentru o tocilă (§fGrindstone§7) și o armă poansonată legal.",
-            "§72. Pune tocila pe sol și deschide-o.",
-            "§73. Pune arma poansonată în tocilă și ridic-o din slotul de ieșire.",
-            "§74. Verifică tooltip-ul armei obținute.",
+            "§72. Pune tocila pe sol.",
+            "§73. Poți pili seria fie prin §fShift + Click-Dreapta cu arma pe tocilă§7, fie deschizând tocila și punând arma în slotul de sus.",
+            "§74. Verifică tooltip-ul armei: apare §c⚠ [SERIE PILITĂ / DEFACED]§7.",
             "§75. Încearcă să re-poansonezi arma pilită pe nicovală cu Sigiliul Imperial."
         ],
         expected: [
@@ -146,7 +146,7 @@ const TEST_STEPS = [
         ],
         kitCommands: [
             "give {player} minecraft:grindstone 1",
-            "give {player} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:\"qkl:fk15p\",Proofed:true,GunSerial:\"#RC-15-0105\"}] 1"
+            "give {player} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:\"qkl:fk15p\",Proofed:1b,Serial:\"#RC-15-0105\",GunSerial:\"#RC-15-0105\"}] 1"
         ]
     },
     {
@@ -167,9 +167,9 @@ const TEST_STEPS = [
         ],
         kitCommands: [
             "give {player} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:\"qkl:fk15\"}] 1",
-            "give {player} tacz:ammo[minecraft:custom_data={AmmoId:\"qkl:16mm\",SilverAmmo:true}] 64",
-            "give {player} tacz:ammo[minecraft:custom_data={AmmoId:\"qkl:16mm\",CanisterAmmo:true}] 64",
-            "give {player} tacz:ammo[minecraft:custom_data={AmmoId:\"qkl:16mm\",IncendiaryAmmo:true}] 64"
+            "give {player} tacz:ammo[minecraft:custom_data={AmmoId:\"qkl:16mm\",SilverAmmo:1b},minecraft:item_name='{\"text\":\"Glonț de Argint Consfințit\",\"color\":\"aqua\",\"bold\":true,\"italic\":false}'] 64",
+            "give {player} tacz:ammo[minecraft:custom_data={AmmoId:\"qkl:16mm\",CanisterAmmo:1b},minecraft:item_name='{\"text\":\"Glonț tip Mitralii (Canister)\",\"color\":\"gold\",\"bold\":true,\"italic\":false}'] 64",
+            "give {player} tacz:ammo[minecraft:custom_data={AmmoId:\"qkl:16mm\",IncendiaryAmmo:1b},minecraft:item_name='{\"text\":\"Cartuș Incendiar cu Sulf\",\"color\":\"red\",\"bold\":true,\"italic\":false}'] 64"
         ]
     },
     {
