@@ -12,6 +12,9 @@ server_scripts = [
     "flintlock_ammo_silver_combat.js",
     "flintlock_proofing_legal.js",
     "flintlock_ordnance_special.js",
+    "admin_straja_registry.js",
+    "straja_prison.js",
+    "port_checkpoint.js",
     "admin_test_runner.js"
 ]
 
