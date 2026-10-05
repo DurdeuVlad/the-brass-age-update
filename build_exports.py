@@ -6,7 +6,7 @@ import hashlib
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 EXPORTS_DIR = os.path.join(BASE_DIR, "exports")
 STAGING_DIR = os.path.join(BASE_DIR, "staging")
-VERSION = "v1.1.1"
+VERSION = "v1.1.2"
 
 os.makedirs(EXPORTS_DIR, exist_ok=True)
 if os.path.exists(STAGING_DIR):
@@ -82,11 +82,11 @@ for folder in ["config", "kubejs", "mods", "patchouli_books", "tacz"]:
     if os.path.exists(src):
         shutil.copytree(src, os.path.join(client_stage, folder))
 
-# Ensure server_scripts are present in Client package for Singleplayer integrated server support
+# Ensure server_scripts are present and fully synced in Client package for Singleplayer integrated server support
 server_scripts = os.path.join(BASE_DIR, "server", "kubejs", "server_scripts")
 client_server_scripts = os.path.join(client_stage, "kubejs", "server_scripts")
-if os.path.exists(server_scripts) and not os.path.exists(client_server_scripts):
-    shutil.copytree(server_scripts, client_server_scripts)
+if os.path.exists(server_scripts):
+    shutil.copytree(server_scripts, client_server_scripts, dirs_exist_ok=True)
 
 zip_dir(client_stage, os.path.join(EXPORTS_DIR, f"TheBrassAge-Update-Client-{VERSION}.zip"))
 

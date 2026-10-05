@@ -1,5 +1,5 @@
 =====================================================================
-  ⚜ THE BRASS AGE UPDATE — INSTRUCTIUNI RAPIDE DE INSTALARE v1.1.1 ⚜
+  ⚜ THE BRASS AGE UPDATE — INSTRUCTIUNI RAPIDE DE INSTALARE v1.1.2 ⚜
 =====================================================================
 
 ATENȚIE PENTRU TESTERI:
@@ -26,29 +26,35 @@ METODA 2: EXTRACT MANUAL
 Copiați și suprascrieți (Merge / Overwrite All) următoarele foldere
 peste folderul instanței voastre Rustic Craft II:
   - mods/             (adaugă TaCZ și compatibilitățile)
-  - kubejs/           (conține rețetele, texturile și lăzile militare)
+  - kubejs/           (conține rețetele, scripturile, texturile și lăzile)
   - tacz/             (conține gunpack-urile cu muschete și pistoale)
   - patchouli_books/  (conține cartea Manualul Armurierului)
   - config/           (actualizează setările de rucsac și unelte)
 
 ---------------------------------------------------------------------
-CE ESTE NOU ÎN v1.1.1 (Tester Patch & Critical Fixes):
+CE ESTE NOU ÎN v1.1.2 (Garrison Registry, Licensing & Counterfeits):
 ---------------------------------------------------------------------
-1. Despachetarea Lăzilor Militare pe Sol (BlockEvents.rightClicked):
-   Lăzile de muschete, pistoale și muniție pot fi deschise acum direct
-   făcând click-dreapta pe orice bloc sau pe pământ.
-2. Închiderea Breșei de Purtare prin Masa de Crafting:
-   Armele puse în grila 3x3 de crafting sau 2x2 personală sunt scanate
-   la închiderea meniului; armele în exces cad imediat la picioare.
-3. Pilirea Serie pe Tocilă în Lume (Grindstone Defacing):
-   Click-dreapta cu arma pe blocul de tocilă (grindstone) pilește seria
-   și marchează arma ca piesă de contrabandă ilegală (Defaced).
-4. Variațiuni Tactice de Muniție Funcționale (Native TaCZ Pipeline):
-   - Gloanțele de Argint Consfințit dau 4x daune nemorților și 2x vampirilor.
-   - Mitraliile (Canister) aplică impuls puternic de knockback (2.0).
-   - Gloanțele Incendiare aprind ținta timp de 8 secunde consecutive.
-5. Validare Dual-Hand Permise & Respingere Arme Defaced:
-   Permisul alb în mâna principală și arma poansonată în offhand emit
-   cartea oficială de permis. Armele pilite sunt refuzate la ștanțare.
+1. Registrul Central al Garnizoanei Straja:
+   Bază centrală de date pentru toate armele și posesorii legali.
+   Armele nou înregistrate au nevoie de o zi reală de maturare (pending)
+   înainte de a deveni oficial legale.
+2. Cărți Fizice de Patrulă Straja (/straja book give):
+   Soldații primesc copii fizice ale registrului curent care NU se
+   actualizează automat în teren. Conține indicii subtile de joc de rol
+   (cues) pentru detectarea falsurilor fără a dezvălui mecanica completă.
+3. Licențiere Inspectori & Transportatori (/straja inspector / transporter):
+   Doar inspectorii autorizați pot poansona legal arme și emite permise.
+   Transportatorii autorizați și lăzile militare sigilate sunt scutiți
+   de confiscarea armelor.
+4. Falsificare "Papers, Please" pe Piața Neagră:
+   Jucătorii neautorizați care poansonează arme generează falsuri cu șanse
+   calibrate: 5% Nivel 1 (Aproape Perfect), 50% Nivel 2 (Comun Defectuos),
+   45% Nivel 3 (Grosolan Eșuat).
+5. Puncte de Control & Sistem Penitenciar Automatizat:
+   Punctele de control confiscă imediat armele neînregistrate, pilite și
+   falsurile de Nivel 3, trimițând infractorii direct la închisoare fără
+   avertisment (/straja checkpoint & /straja prison).
+6. Arbore Unificat de Comenzi & Test Automatizat (/straja test):
+   26/26 aserțiuni verificate empiric direct pe serverul dedicat.
 =====================================================================
 

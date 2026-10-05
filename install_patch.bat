@@ -1,8 +1,8 @@
 @echo off
 chcp 65001 > nul
-title The Brass Age Update - Patch Installer v1.1.0
+title The Brass Age Update - Patch Installer v1.1.2
 echo =====================================================================
-echo    ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.1.0 ⚜
+echo    ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.1.2 ⚜
 echo    Rustic Craft II (Minecraft 1.21.1 / NeoForge 21.1.248)
 echo =====================================================================
 echo.

@@ -1,7 +1,7 @@
 # ⚜ THE BRASS AGE UPDATE — TESTER & REVIEW GUIDE ⚜
 ### Ghid de Testare & Instalare pentru Testeri (Rustic Craft II)
 
-Versiune: `v1.1.1-Release`  
+Versiune: `v1.1.2-Release`  
 Platformă: `Minecraft 1.21.1` / `NeoForge 21.1.248`  
 Modpack: **Rustic Craft II**  
 Repository: `DurdeuVlad/the-brass-age-update`
@@ -9,12 +9,13 @@ Repository: `DurdeuVlad/the-brass-age-update`
 ---
 
 > [!IMPORTANT]
-> **NOUTĂȚI MAJORE ÎN v1.1.0**:
-> 1. **Armele necesită Create Mechanical Crafters**: Rețetele armelor de foc nu mai pot fi făcute la masa obișnuită de lucru și au fost ascunse din EMI / JEI / Recipe book.
-> 2. **Comandă Admin `/gunsmith book [jucător]`**: Oferă cartea Patchouli "Manualul Armurierului" cu diagramele Create 3x3.
-> 3. **Mina Straja deblocată pe 4 ramuri**: Sulf, Fier, Cărbune, Dripstone, Zinc, Argint (mutat pe zona 2), Cupru (eliminat), Diamante și Redstone.
-> 4. **Ghid Interactiv de Testare 1-Click (`/brass_test` & `/gunsmith test`)**: Asistență pas-cu-pas în chat cu butoane clickabile pentru echiparea automată a kiturilor și validare fără tastare manuală.
-> 5. **Verificare empirică în joc**: Sistemul de poansonare pe nicovală, permisele semnate și restricția armelor testate cu un client real (mc-pilot).
+> **NOUTĂȚI MAJORE ÎN v1.1.2**:
+> 1. **Registrul Central al Garnizoanei Straja**: Registru central de arme și posesori legali cu maturare pending de 24h pentru înregistrările noi.
+> 2. **Cărți Fizice de Patrulă Straja (`/straja book give`)**: Ghid de rol și registru tipărit pentru soldați, cu indicii subtile pentru depistarea falsurilor.
+> 3. **Licențiere Oficială Inspectori & Transportatori (`/straja inspector` & `/straja transporter`)**: Doar inspectorii autorizați pot ștanța arme și emite permise. Transportatorii și lăzile sigilate sunt scutiți la controale.
+> 4. **Sistem de Falsificare "Papers, Please" pe Piața Neagră**: Șanse calibrate la falsificare neautorizată (5% Nivel 1 Aproape Perfect, 50% Nivel 2 Comun Defectuos, 45% Nivel 3 Grosolan Eșuat).
+> 5. **Puncte de Control & Arest Penitenciar Automatizat**: Armele fără serie, pilite și falsurile de nivel 3 sunt confiscate imediat cu arestare la închisoare (`/straja checkpoint` & `/straja prison`).
+> 6. **Test Automatizat 26/26 Aserțiuni (`/straja test`)**: Rulare instantanee din RCON sau consolă cu verificare completă a tuturor mecanicilor.
 
 ---
 
@@ -38,7 +39,7 @@ Acest export conține sistemul complet al expansiunii **The Brass Age**:
 ### Opțiunea A: Instalare Automată 1-Click (Recomandată)
 1. Deschide launcher-ul tău (Prism Launcher, CurseForge, Modrinth sau ATLauncher).
 2. Dă click-dreapta pe instanța **Rustic Craft II** și alege **Open Folder** / **Folder Instanță** (unde vezi folderele `mods`, `config`, `kubejs`).
-3. Descarcă și extrage **`TheBrassAge-Update-All-In-One-v1.1.0.zip`** direct în acel folder.
+3. Descarcă și extrage **`TheBrassAge-Update-All-In-One-v1.1.2.zip`** direct în acel folder.
 4. Dă dublu-click pe **`install_patch.bat`** (sau click-dreapta `Run with PowerShell` pe `install_patch.ps1`).
 5. Gata! Pornește jocul.
 
@@ -52,7 +53,7 @@ Dacă preferi să copiezi manual, extrage arhiva și suprascrie (Overwrite All) 
 
 ### Opțiunea C: Pentru Administratori de Server Dedicat
 1. Oprește serverul dedicat (`stop`).
-2. Descarcă **`TheBrassAge-Update-Server-v1.1.0.zip`** (sau `All-In-One`).
+2. Descarcă **`TheBrassAge-Update-Server-v1.1.2.zip`** (sau `All-In-One`).
 3. Extrage în rădăcina serverului dedicat (sau rulează `install_patch.bat`).
 4. Repornește serverul.
 
@@ -118,11 +119,11 @@ Pentru a testa rapid fără a mina resursele manual, deschide chat-ul și folose
 
 ---
 
-## 🧪 4. Scenarii de Testare Pas-cu-Pas (Test Checklist v1.1.0)
+## 🧪 4. Scenarii de Testare Pas-cu-Pas (Test Checklist v1.1.2)
 
 > 💡 **MOD RECOMANDAT — GHID ASISTAT**:  
 > În loc să tastezi manual comenzi `/give`, tastează în chat:  
-> **`/brass_test`** (sau **`/gunsmith test`**)  
+> **`/brass_test`** (sau **`/straja tester`**)  
 > Vei primi pe rând fiecare scenariu în chat, cu butoane clickabile `[ 📦 DĂ-MI KITUL DE TEST ]` pentru echipare automată și `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` pentru validare!
 
 ---
@@ -272,6 +273,90 @@ Pentru a testa rapid fără a mina resursele manual, deschide chat-ul și folose
   - Zona 2: Depozit masiv de Dripstone (2000), Sulf (500), Argint integrat; Cuprul a fost complet extras.
   - Zona 3: Fier (800), Zinc (600), Sulf (200), Andesit (500).
   - Zona 4 (Deblocată): Punct strategic final al Statului cu Sulf (1000), Diamante (100) și Redstone (500).
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
+
+---
+
+### ✅ Testul 10: Registrul Central al Garnizoanei & Rollover 24h *(NOU în v1.1.2)*
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 10` și apasă `[ 🔄 TESTEAZĂ ROLLOVER ]` sau `[ 📖 CARTEA DE PATRULĂ ]` în chat!
+- **Ce testezi**: Maturarea armei în registru (pending → legal) și cartea fizică de patrulă.
+- **Cum testezi**:
+  1. Poansonează o armă ca Inspector (apasă `[ 👮 FĂ-MĂ INSPECTOR ]` la pasul 11 dacă ești Civil).
+  2. Verifică că arma tocmai poansonată apare în **coada de pending** cu `/straja registry status`.
+  3. Rulează `/straja book give @s` și deschide cartea fizică de patrulă primită.
+  4. Apasă `[ 🔄 TESTEAZĂ ROLLOVER ]` pentru a simula trecerea zilei (rollover accelerat de test).
+  5. Verifică că arma a trecut din pending în **registrul master** după rollover.
+- **Rezultat Așteptat**:
+  - Arma nou înregistrată NU este imediat legală — stă în coada de pending până la rollover-ul zilei (real-time midnight).
+  - Cartea de patrulă fizică conține registrul curent cu indicii subtile (cerneală galbenă, slove romane, ediție numerotată).
+  - O armă adăugată **ieri** apare ca legală. O armă adăugată **azi** NU apare ca legală pentru un inspector care verifică cartea veche.
+  - Cartea veche de patrulă NU se actualizează automat — trebuie emisă una nouă cu `/straja book give`.
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
+
+---
+
+### ✅ Testul 11: Licențierea Personalului (Inspectori & Transportatori) *(NOU în v1.1.2)*
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 11` și folosește butoanele `[ 👮 FĂ-MĂ INSPECTOR ]`, `[ 🚚 TRANSPORTATOR ]` sau `[ 👤 CIVIL / INFRACTOR ]` direct din chat!
+- **Ce testezi**: Conferirea și revocarea licențelor oficiale Straja, efectele lor la poansonare și la punctele de control.
+- **Cum testezi**:
+  1. Apasă `[ 👮 FĂ-MĂ INSPECTOR ]` — poansonează o armă → trebuie să iasă **serie autentică `#RC-15-XXXX`**.
+  2. Apasă `[ 👤 CIVIL / INFRACTOR ]` — poansonează o altă armă → trebuie să iasă un **fals** (Tier 1/2/3, aleatoriu).
+  3. Apasă `[ 🚚 TRANSPORTATOR ]` — treci printr-un checkpoint cu o ladă militară sigilată → **trecere liberă**.
+  4. Verifică lista cu `/straja inspector list` și `/straja transporter list`.
+- **Rezultat Așteptat**:
+  - Inspector autorizat → Poansonare pe nicovală produce serii legale `#RC-15-XXXX`, adăugate automat în pending.
+  - Civil neautorizat → Poansonare produce falsuri cu distribuție RNG: **5% T1, 50% T2, 45% T3**.
+  - Transportator autorizat sau cu ladă militară sigilată → Scutit la controale, nu este arestat.
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
+
+---
+
+### ✅ Testul 12: Falsificare „Papers, Please" — Identificarea Falsurilor *(NOU în v1.1.2)*
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 12`, apasă `[ 📦 PACHET FALSURI (T1, T2, T3) ]` pentru a primi mostre gata create, și `[ 👤 FĂ-MĂ CIVIL ]` pentru a testa poansonarea neautorizată!
+- **Ce testezi**: Gradele de dificultate ale falsurilor și capacitatea de detectare vizuală.
+- **Cum testezi**:
+  1. Primești 6 arme din pachetul de falsuri: T1 (Aproape Perfect), T2 (Comun Defectuos), T3 (Grosolan Eșuat), Pilit, Nepoansonat și Legal.
+  2. Compară vizual seriile și lore-ul fiecăreia cu un ochi neasistat de comandă — încearcă să le identifici singur.
+  3. Ca Civil (apasă `[ 👤 FĂ-MĂ CIVIL ]`), poansonează câteva arme și observă distribuția aleatorie a calității.
+  4. Trece un fals T1 printr-un checkpoint → trebuie să **treacă** poarta automată (necesită inspecție manuală de inspector uman).
+  5. Trece un fals T3 → trebuie să fie **confiscat imediat** și tu arestat fără avertisment.
+- **Rezultat Așteptat**:
+  - **T1 (5% șansă)**: Micro-diferență subtilă în serie (`1S` vs `15`, `I5` vs `15`, sau cifră romană inversată). Trece poarta automată.
+  - **T2 (50% șansă)**: Font asimetric sau separator greșit (`_` în loc de `-`, verde închis `§2` în loc de `§a`). Trece automatul dar necesită control manual.
+  - **T3 (45% șansă)**: Serie complet diferită sau aberantă (`#RUSTY-GUN-99`, lore `Atelier Nereglementat`). Respins și arestat imediat.
+  - Arme Pilite (Defaced) și Nepoansonatele → Arestare imediată fără avertisment.
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
+
+---
+
+### ✅ Testul 13: Punctul de Control Straja & Scanerul de Contrabandă *(NOU în v1.1.2)*
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 13`, apasă `[ ⚡ AUTO-SETUP CHECKPOINT ]` pentru a configura automat mediul, apoi testează cu `[ 🚨 TEST TRECERE LEGALĂ ]` sau `[ 🚨 TEST TRECERE ILEGALĂ ]`!
+- **Ce testezi**: Funcționarea punctului de control automat, confiscarea contrabandei și arestarea imediată.
+- **Cum testezi**:
+  1. Apasă `[ ⚡ AUTO-SETUP CHECKPOINT ]` — checkpoint-ul și celula de arest se configurează **automat la poziția ta curentă**, fără configurare manuală, redstone sau command blocks.
+  2. Apasă `[ 🚨 TEST TRECERE LEGALĂ ]` cu o armă legal poansonată sau cu licență de inspector/transportator.
+  3. Apasă `[ 🚨 TEST TRECERE ILEGALĂ ]` cu un fals T3, armă pilită sau nepoansonată.
+- **Rezultat Așteptat**:
+  - Trecere legală → Mesaj verde `Trecere liberă.`, niciun efect negativ.
+  - Trecere ilegală cu T3/Defaced/Unmarked → **Confiscare imediată + Arest direct fără avertisment**, modul Adventure activat.
+  - Trecere ilegală cu T1/T2 → Detectat ca suspect, blocat la checkpoint, NU arestat automat (necesită inspector uman).
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
+
+---
+
+### ✅ Testul 14: Arest Penitenciar Automatizat & Eliberare Garantată *(NOU în v1.1.2)*
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 14`, apasă `[ ⛓️ SIMULEAZĂ AREST ]` pentru a fi arestat, și `[ 🔓 ELIBEREAZĂ-MĂ IMEDIAT ]` pentru eliberare garantată!
+- **Ce testezi**: Fluxul complet de arest și eliberare din sistemul penitenciar Straja.
+- **Cum testezi**:
+  1. Apasă `[ ⛓️ SIMULEAZĂ AREST ]` — ești trimis în modul Adventure și teleportat în celulă.
+  2. Încearcă să ieși sau să ataci — nu poți (modul Adventure restricționat).
+  3. Apasă `[ 🔓 ELIBEREAZĂ-MĂ IMEDIAT ]` — ești eliberat, modul de joc revine la Survival.
+  4. Testează și eliberarea cu operator: `/brass_test release <numeJucător>` sau `/brass_test unjail <numeJucător>`.
+- **Rezultat Așteptat**:
+  - Arestul activează modul Adventure + teleportare în celula configurată la Step 13.
+  - Eliberarea prin `/brass_test release` sau `/brass_test unjail` funcționează **întotdeauna** pentru OP Level 2, indiferent de lista `SP_JAILERS`.
+  - Modul de joc revine la Survival, persistentData de arest (`cpJailed`, `cpFugitive`, `strajaThief`) este curățat complet.
+  - Nu există niciun scenariu în care testerul rămâne blocat în Adventure permanent.
 > ⏩ **Validare Finală**: Apasă `[ ✔ CONFIRMĂ & FINALIZEAZĂ TESTUL! ]` pentru a vedea ecranul de succes și a curăța efectele temporare.
 
 ---

@@ -92,6 +92,9 @@ def validate_required_scripts():
         "flintlock_ux_helpers.js",
         "military_logistics_crates.js",
         "vampire_admin.js",
+        "admin_straja_registry.js",
+        "port_checkpoint.js",
+        "straja_prison.js",
     ]
     missing = []
     for s in required_scripts:

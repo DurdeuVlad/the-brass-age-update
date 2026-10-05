@@ -15,6 +15,7 @@
 // Aliases: /gunsmith_test, /testguide, /ghid_test
 
 const $Test_IntegerArgument = Java.loadClass('com.mojang.brigadier.arguments.IntegerArgumentType')
+const $Test_StringArgument = Java.loadClass('com.mojang.brigadier.arguments.StringArgumentType')
 
 const TEST_STEPS = [
     {
@@ -219,13 +220,123 @@ const TEST_STEPS = [
             "give {player} minecraft:diamond 64",
             "give {player} minecraft:redstone 64"
         ]
+    },
+    {
+        num: 10,
+        title: "Registrul Central & Coada de Așteptare (Pending Rollover)",
+        subtitle: "Înregistrarea Armelor de Foc & Maturarea Zilnică la Straja",
+        desc: [
+            "§71. Dă click pe butonul de kit pentru pistol, formulare și cartea de patrulă.",
+            "§72. Înregistrează seria armei în registru: §f/straja register_serial #RC-15-9999 @s§7.",
+            "§73. Verifică starea armei: §f/straja lookup #RC-15-9999§7 (va arăta starea §ePENDING§7).",
+            "§74. Deschide cartea de patrulă: apasă pe butonul §b[📖 Cartea de Patrulă]§7.",
+            "§75. Treci ziua: apasă pe butonul §6[🌅 Treci Ziua (Rollover)]§7 și verifică din nou statusul."
+        ],
+        expected: [
+            "§e• Arma nou înregistrată intră în coada §ePENDING§e și devine legală doar după trecerea zilei.",
+            "§e• Cartea de patrulă fizică prezintă lista armelor oficiale și indicii subtile de inspecție.",
+            "§e• După comanda §a/straja rollover§e, arma devine oficial §aLEGALĂ / MATURATĂ§e în registru."
+        ],
+        kitCommands: [
+            "give {player} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:\"qkl:fk15p\",Proofed:1b,Serial:\"#RC-15-9999\",GunSerial:\"#RC-15-9999\"}] 1",
+            "give {player} kubejs:permit_blank 2",
+            "straja book give {player}"
+        ]
+    },
+    {
+        num: 11,
+        title: "Licențierea Personalului (Inspectori & Transportatori)",
+        subtitle: "Autorizarea Oficială pentru Ștanțare și Logistică Militarizată",
+        desc: [
+            "§71. Folosește butonul §a[👮 Fă-mă Inspector]§7 pentru a primi licența oficială de inspector.",
+            "§72. Verifică lista de inspectori autorizați: §f/straja inspector list§7.",
+            "§73. Pune o armă nouă pe nicovală cu Sigiliul Imperial (ștanțarea va fi §aAUTENTICĂ§7).",
+            "§74. Folosește butonul §6[🚚 Fă-mă Transportator]§7 pentru statutul de transportator autorizat.",
+            "§75. Folosește butonul §c[👤 Fă-mă Civil / Infractor]§7 pentru a revoca licențele și a redeveni civil."
+        ],
+        expected: [
+            "§e• Doar inspectorii licențiați pot bate pe nicovală serii oficiale autentice #RC-15-XXXX.",
+            "§e• Transportatorii licențiați sunt scutiți de confiscarea armamentului la punctele de control.",
+            "§e• Comutarea rolurilor funcționează instantaneu cu feedback clar și sunet specific."
+        ],
+        kitCommands: [
+            "give {player} minecraft:anvil 1",
+            "give {player} kubejs:proof_stamp 1",
+            "give {player} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:\"qkl:fk15p\"}] 1",
+            "experience add {player} 30 levels"
+        ]
+    },
+    {
+        num: 12,
+        title: "Piața Neagră — Falsificare \"Papers, Please\"",
+        subtitle: "Generarea Falsurilor cu Șanse Calibrate: 5% T1, 50% T2, 45% T3",
+        desc: [
+            "§71. Asigură-te că ești civil neautorizat (apasă §c[👤 Setează-mă Civil]§7).",
+            "§72. Dă click pe butonul §c[📦 Pachet Falsuri Complete]§7 pentru a primi mostre din fiecare nivel.",
+            "§73. Inspectează fiecare armă în inventar:",
+            "§7   • §bNivel 1 (5%)§7: Fals aproape perfect (cifră romană inversată, ex: #RC-XV-9012).",
+            "§7   • §eNivel 2 (50%)§7: Fals comun cu defecte de font (ex: #RC-15_4481).",
+            "§7   • §cNivel 3 (45%)§7: Fals grosolan zgâriat la rece (ex: #RUSTY-GUN-99).",
+            "§74. Încearcă să ștanțezi manual pe nicovală ca civil pentru a testa generarea aleatorie."
+        ],
+        expected: [
+            "§e• Ștanțarea de către jucători nelicențiați generează automat falsuri marcate cu FakeTier.",
+            "§e• Falsurile au defecte vizuale subtile conforme cu indiciile din cartea de patrulă Straja.",
+            "§e• Pachetul de test conține mostre gata create pentru fiecare nivel de fals fără a irosi timp la nicovală."
+        ],
+        kitCommands: [
+            "brass_test fakes"
+        ]
+    },
+    {
+        num: 13,
+        title: "Punctul de Control Straja (Scanerul de Contrabandă)",
+        subtitle: "Identificarea Automată a Armelor Ilegale & Purtarea Cratelor",
+        desc: [
+            "§71. Dă click pe butonul §e[⚡ Auto-Setup Checkpoint & Închisoare]§7 (configurează punctul instant!).",
+            "§72. Ține în mână o armă poansonată legal și apasă §a[🚨 Testează Trecere Legală]§7.",
+            "§73. Ține în mână o armă cu serie pilită (Defaced) sau o armă Nivel 3 și apasă §c[🚨 Testează Trecere Ilegală]§7.",
+            "§74. Pune o ladă militară sigilată în mână și testează din nou trecerea."
+        ],
+        expected: [
+            "§e• Trecerea cu armă legală sau statut de inspector/transportator: §aACCES PERMIS (Verde)§e.",
+            "§e• Trecerea cu armă nepoansonată sau pilită: §cAvertisment sau respingere la punctul de control§e.",
+            "§e• Trecerea cu fals grosolan Nivel 3: §4Alarmă de contrabandă gravă & trimitere automată la arest§e.",
+            "§e• Lăzile militare sigilate sunt permise pentru transport fără a declanșa confiscarea."
+        ],
+        kitCommands: [
+            "brass_test setup",
+            "give {player} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:\"qkl:fk15p\",Proofed:1b,Serial:\"#RC-15-0105\",GunSerial:\"#RC-15-0105\"}] 1",
+            "give {player} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:\"qkl:fk15p\",Defaced:1b}] 1",
+            "give {player} kubejs:crate_muskets 1"
+        ]
+    },
+    {
+        num: 14,
+        title: "Arest Penitenciar Automatizat & Eliberare din Celulă",
+        subtitle: "Sistemul Custodiei Straja, Confiscarea Bunurilor & Salvarea de Urgență",
+        desc: [
+            "§71. Asigură-te că punctul și închisoarea sunt configurate (§f/brass_test setup§7).",
+            "§72. Apasă pe butonul §4§l[ ⛓️ SIMULEAZĂ ARESTAREA ]§7.",
+            "§73. Observă efectul de întunecare a ecranului, modul Aventură și teleportarea în celulă.",
+            "§74. Pentru a ieși fără nicio problemă, apasă pe butonul §a§l[ 🔓 ELIBEREAZĂ-MĂ IMEDIAT ]§7.",
+            "§75. Verifică restabilirea modului de joc și restituirea bunurilor."
+        ],
+        expected: [
+            "§e• Jucătorul este plasat în celulă, în modul Aventură, iar tentativa de evadare îl declară FUGITIV.",
+            "§e• Butonul de eliberare §a[🔓 Eliberează-mă Imediat]§e funcționează garantat pentru orice tester.",
+            "§e• Toate cele 14 sisteme The Brass Age sunt validate 100% complet în joc!"
+        ],
+        kitCommands: [
+            "brass_test setup"
+        ]
     }
 ]
 
 function getPlayerStep(player) {
     if (!player) return 1
     const s = player.persistentData.getInt('BrassTestStep')
-    return (s >= 1 && s <= 9) ? s : 1
+    return (s >= 1 && s <= 14) ? s : 1
 }
 
 function setPlayerStep(player, step) {
@@ -235,12 +346,12 @@ function setPlayerStep(player, step) {
 
 function sendInteractiveStep(server, player, stepNum) {
     if (stepNum < 1) stepNum = 1
-    if (stepNum > 9) stepNum = 9
+    if (stepNum > 14) stepNum = 14
     
     const step = TEST_STEPS[stepNum - 1]
     
     player.sendSystemMessage(Text.literal('§6§l╔════════════════════════════════════════════════════════╗'))
-    player.sendSystemMessage(Text.literal(`§6§l║   GHID TESTARE THE BRASS AGE: PASUL ${step.num}/9             ║`))
+    player.sendSystemMessage(Text.literal(`§6§l║   GHID TESTARE THE BRASS AGE: PASUL ${step.num}/14            ║`))
     player.sendSystemMessage(Text.literal(`§e§l   ${step.title}`))
     player.sendSystemMessage(Text.literal(`§7   ${step.subtitle}`))
     player.sendSystemMessage(Text.literal('§6§l╠════════════════════════════════════════════════════════╣'))
@@ -281,12 +392,82 @@ function sendInteractiveStep(server, player, stepNum) {
                              .hover(Text.literal('§eClick pentru a te marca ca vampir și a testa vulnerabilitatea la argint.'))
         } catch (e) {}
         row1 = row1.append(btnZombie).append(btnVamp)
+    } else if (stepNum === 10) {
+        let btnRollover = Text.literal('  §6§l[ 🌅 TRECI ZIUA (ROLLOVER) ]')
+        try {
+            btnRollover = btnRollover.clickRunCommand('/brass_test rollover')
+                                     .hover(Text.literal('§eClick pentru a forța trecerea zilei și maturarea armelor din pending.'))
+        } catch (e) {}
+        let btnPatrol = Text.literal('  §b§l[ 📖 CARTEA DE PATRULĂ ]')
+        try {
+            btnPatrol = btnPatrol.clickRunCommand('/straja book give @s')
+                                 .hover(Text.literal('§eClick pentru a primi registrul fizic Straja cu indicii de inspecție.'))
+        } catch (e) {}
+        row1 = row1.append(btnRollover).append(btnPatrol)
+    } else if (stepNum === 11) {
+        let btnInsp = Text.literal('  §a§l[ 👮 FĂ-MĂ INSPECTOR ]')
+        try {
+            btnInsp = btnInsp.clickRunCommand('/brass_test role inspector')
+                             .hover(Text.literal('§eClick pentru a deveni Inspector Autorizat (ștanțare legală).'))
+        } catch (e) {}
+        let btnTransp = Text.literal('  §6§l[ 🚚 TRANSPORTATOR ]')
+        try {
+            btnTransp = btnTransp.clickRunCommand('/brass_test role transporter')
+                                 .hover(Text.literal('§eClick pentru a deveni Transportator (scutit la puncte de control).'))
+        } catch (e) {}
+        let btnCivil = Text.literal('  §c§l[ 👤 CIVIL / INFRACTOR ]')
+        try {
+            btnCivil = btnCivil.clickRunCommand('/brass_test role civil')
+                               .hover(Text.literal('§eClick pentru a revoca licențele și a deveni civil neautorizat.'))
+        } catch (e) {}
+        row1 = row1.append(btnInsp).append(btnTransp).append(btnCivil)
+    } else if (stepNum === 12) {
+        let btnFakes = Text.literal('  §c§l[ 📦 PACHET FALSURI (T1, T2, T3) ]')
+        try {
+            btnFakes = btnFakes.clickRunCommand('/brass_test fakes')
+                               .hover(Text.literal('§eClick pentru a primi mostre gata create: Tier 1 (5%), Tier 2 (50%), Tier 3 (45%) și defaced.'))
+        } catch (e) {}
+        let btnCivil2 = Text.literal('  §e§l[ 👤 FĂ-MĂ CIVIL ]')
+        try {
+            btnCivil2 = btnCivil2.clickRunCommand('/brass_test role civil')
+                                 .hover(Text.literal('§eClick pentru a fi civil nelicențiat când testezi ștanțarea manuală.'))
+        } catch (e) {}
+        row1 = row1.append(btnFakes).append(btnCivil2)
+    } else if (stepNum === 13) {
+        let btnSetup = Text.literal('  §e§l[ ⚡ AUTO-SETUP CHECKPOINT ]')
+        try {
+            btnSetup = btnSetup.clickRunCommand('/brass_test setup')
+                               .hover(Text.literal('§eClick pentru a configura automat punctul de control și celula la poziția ta!'))
+        } catch (e) {}
+        let btnPass = Text.literal('  §a§l[ 🚨 TEST TRECERE LEGALĂ ]')
+        try {
+            btnPass = btnPass.clickRunCommand('/brass_test checkpoint_test clean')
+                             .hover(Text.literal('§eClick pentru a simula verificarea unei arme legale.'))
+        } catch (e) {}
+        let btnFail = Text.literal('  §4§l[ 🚨 TEST TRECERE ILEGALĂ ]')
+        try {
+            btnFail = btnFail.clickRunCommand('/brass_test checkpoint_test t3')
+                             .hover(Text.literal('§eClick pentru a simula verificarea unui fals grosolan T3.'))
+        } catch (e) {}
+        row1 = row1.append(btnSetup).append(btnPass).append(btnFail)
+    } else if (stepNum === 14) {
+        let btnArrest = Text.literal('  §4§l[ ⛓️ SIMULEAZĂ AREST ]')
+        try {
+            btnArrest = btnArrest.clickRunCommand('/brass_test arrest_sim')
+                                 .hover(Text.literal('§eClick pentru a declanșa arestarea, modul Aventură și trimiterea în celulă.'))
+        } catch (e) {}
+        let btnUnjail = Text.literal('  §a§l[ 🔓 ELIBEREAZĂ-MĂ IMEDIAT ]')
+        try {
+            btnUnjail = btnUnjail.clickRunCommand('/brass_test release')
+                                 .hover(Text.literal('§aClick pentru a fi eliberat instant și a-ți recupera modul de joc și libertatea!'))
+        } catch (e) {}
+        row1 = row1.append(btnArrest).append(btnUnjail)
     }
     
     player.displayClientMessage(row1, false)
     
     // Row 2: Navigation & Confirmation buttons
-    let nextLabel = (stepNum === 9) ? '§6§l[ ✔ CONFIRMĂ & FINALIZEAZĂ TESTUL! ]' : '§6§l[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]'
+    let nextLabel = (stepNum === 14) ? '§6§l[ ✔ CONFIRMĂ & FINALIZEAZĂ TESTUL! ]' : '§6§l[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]'
     let btnNext = Text.literal(nextLabel)
     try {
         btnNext = btnNext.clickRunCommand('/brass_test next')
@@ -321,7 +502,7 @@ function sendTestCompleteScreen(server, player) {
     player.sendSystemMessage(Text.literal('§a§l╔════════════════════════════════════════════════════════╗'))
     player.sendSystemMessage(Text.literal('§a§l║       🎉 SUITA DE TESTARE A FOST FINALIZATĂ! 🎉        ║'))
     player.sendSystemMessage(Text.literal('§a§l╠════════════════════════════════════════════════════════╣'))
-    player.sendSystemMessage(Text.literal('§e✔ Toate cele 9 scenarii de testare au fost confirmate cu succes!'))
+    player.sendSystemMessage(Text.literal('§e✔ Toate cele 14 scenarii de testare au fost confirmate cu succes!'))
     player.sendSystemMessage(Text.literal('§7  • 1. Create Mechanical Crafter 3×3 & Secretizare Rețete'))
     player.sendSystemMessage(Text.literal('§7  • 2. Manualul Patchouli al Armurierului (/gunsmith book)'))
     player.sendSystemMessage(Text.literal('§7  • 3. Limită Realistă de Transport & Drop pe Pământ'))
@@ -331,6 +512,11 @@ function sendTestCompleteScreen(server, player) {
     player.sendSystemMessage(Text.literal('§7  • 7. Balistică Specială: Cartușe Argint, Mitralii & Incendiar'))
     player.sendSystemMessage(Text.literal('§7  • 8. Lăzi Militare Sigilate de Transport & Logistică'))
     player.sendSystemMessage(Text.literal('§7  • 9. Mina Straja: Ramura 4 & Economia Resurselor'))
+    player.sendSystemMessage(Text.literal('§7  • 10. Registrul Central al Garnizoanei & Rollover 24h'))
+    player.sendSystemMessage(Text.literal('§7  • 11. Licențierea Oficială: Inspectori & Transportatori'))
+    player.sendSystemMessage(Text.literal('§7  • 12. Falsificare "Papers, Please" (5% T1, 50% T2, 45% T3)'))
+    player.sendSystemMessage(Text.literal('§7  • 13. Punctul de Control Straja & Scaner Contrabandă'))
+    player.sendSystemMessage(Text.literal('§7  • 14. Arest Penitenciar Automatizat & Eliberare Garantată'))
     player.sendSystemMessage(Text.literal('§a§l╠════════════════════════════════════════════════════════╣'))
     player.sendSystemMessage(Text.literal('§fDacă dorești să reiei testele: §b/brass_test reset'))
     player.sendSystemMessage(Text.literal('§a§l╚════════════════════════════════════════════════════════╝'))
@@ -346,8 +532,14 @@ function giveStepKit(server, player, stepNum) {
     server.runCommandSilent(`effect clear ${pName}`)
     
     step.kitCommands.forEach(cmd => {
-        const fullCmd = cmd.replace(/{player}/g, pName)
-        server.runCommandSilent(fullCmd)
+        if (cmd === 'brass_test fakes') {
+            giveFakesPack(server, player)
+        } else if (cmd === 'brass_test setup') {
+            runTesterSetup(server, player)
+        } else {
+            const fullCmd = cmd.replace(/{player}/g, pName)
+            server.runCommandSilent(fullCmd)
+        }
     })
     
     player.playSound('minecraft:entity.item.pickup', 1.0, 1.2)
@@ -359,6 +551,202 @@ function spawnStepMob(server, player) {
     server.runCommandSilent(`execute at ${pName} run summon minecraft:zombie ^ ^ ^5 {CustomName:'{"text":"Țintă de Antrenament (Zombie)","color":"red"}',NoAI:1b,Glowing:1b}`)
     player.playSound('minecraft:entity.zombie.ambient', 1.0, 1.0)
     player.displayClientMessage(Text.literal('§c✔ [Țintă Spawnată] Un zombie imobilizat a fost plasat în fața ta pentru tir!'), true)
+}
+
+function resolvePlayerName(playerOrName) {
+    if (!playerOrName) return 'Tester'
+    if (typeof playerOrName === 'string') return playerOrName
+    if (playerOrName.name && playerOrName.name.string) return playerOrName.name.string
+    return String(playerOrName)
+}
+
+function resolvePlayerEntity(server, playerOrName) {
+    if (!playerOrName) return null
+    if (playerOrName.level || playerOrName.minecraftEntity || (playerOrName.name && playerOrName.name.string)) {
+        return playerOrName
+    }
+    var name = resolvePlayerName(playerOrName)
+    return server.getPlayerList().getPlayerByName(name)
+}
+
+function runTesterSetup(server, playerOrName) {
+    var pName = resolvePlayerName(playerOrName)
+    var player = resolvePlayerEntity(server, playerOrName)
+
+    var dim = 'minecraft:overworld'
+    var x = 0, y = 64, z = 0, yaw = 0
+    if (player) {
+        try {
+            dim = String(player.level.dimension)
+            x = Math.floor(player.x)
+            y = Math.floor(player.y)
+            z = Math.floor(player.z)
+            yaw = Math.round(Number(player.getYRot()))
+        } catch (e) {}
+    }
+
+    // 1. Setup Checkpoint site 'test_checkpoint'
+    try {
+        var cpCfg = { sites: {}, contraband: {}, banned: {}, exempt: {} }
+        var craw = String(server.persistentData.getString('portCheckpointCfg') || '')
+        if (craw.length > 2) cpCfg = JSON.parse(craw)
+        if (!cpCfg.sites) cpCfg.sites = {}
+        cpCfg.sites['test_checkpoint'] = {
+            name: 'test_checkpoint',
+            denyTarget: { dim: dim, x: x - 3, y: y, z: z, yaw: (yaw + 180) % 360 },
+            doors: [],
+            evidence: [],
+            cb: {},
+            exempt: {}
+        }
+        server.persistentData.putString('portCheckpointCfg', JSON.stringify(cpCfg))
+    } catch (e) {
+        console.error('[TesterSetup] CP config error: ' + e)
+    }
+
+    // 2. Setup Prison jailTarget & test cell
+    try {
+        var spCfg = { jailTarget: null, jcells: [], pcells: [] }
+        var sraw = String(server.persistentData.getString('strajaPrisonCfg') || '')
+        if (sraw.length > 2) spCfg = JSON.parse(sraw)
+        spCfg.jailTarget = { dim: dim, x: x + 5, y: y, z: z, yaw: yaw }
+        if (!spCfg.jcells) spCfg.jcells = []
+        var found = false
+        for (var i = 0; i < spCfg.jcells.length; i++) {
+            if (spCfg.jcells[i].testCell) {
+                spCfg.jcells[i] = { dim: dim, x: x + 5, y: y, z: z, yaw: yaw, removed: false, testCell: true }
+                found = true
+                break
+            }
+        }
+        if (!found) {
+            spCfg.jcells.push({ dim: dim, x: x + 5, y: y, z: z, yaw: yaw, removed: false, testCell: true })
+        }
+        server.persistentData.putString('strajaPrisonCfg', JSON.stringify(spCfg))
+    } catch (e) {
+        console.error('[TesterSetup] SP config error: ' + e)
+    }
+
+    // 3. Clear any existing jail or fugitive tags if player is online
+    if (player) {
+        player.persistentData.remove('cpJailed')
+        player.persistentData.remove('cpFugitive')
+        player.persistentData.remove('strajaThief')
+        player.persistentData.remove('strajaWantedUntil')
+
+        // 4. Send Confirmation Card
+        player.sendSystemMessage(Text.literal('§a§l╔════════════════════════════════════════════════════════╗'))
+        player.sendSystemMessage(Text.literal('§a§l║       ⚡ AUTO-SETUP PUNCT CONTROL & ÎNCHISOARE ⚡      ║'))
+        player.sendSystemMessage(Text.literal('§a§l╠════════════════════════════════════════════════════════╣'))
+        player.sendSystemMessage(Text.literal(`§e✔ Checkpoint Punct Respingere (§fDeny§e): §b(${x-3}, ${y}, ${z})`))
+        player.sendSystemMessage(Text.literal(`§e✔ Celulă Închisoare & Punct Comun (§fJail§e): §b(${x+5}, ${y}, ${z})`))
+        player.sendSystemMessage(Text.literal('§e✔ Autoritate Eliberare (§fJailer Status§e): §aGARANTATĂ (OP Level 2)'))
+        player.sendSystemMessage(Text.literal('§7  Mediul este 100% pregătit. Poți testa fără nicio altă configurare!'))
+        player.sendSystemMessage(Text.literal('§a§l╚════════════════════════════════════════════════════════╝'))
+
+        player.playSound('minecraft:block.beacon.activate', 1.0, 1.2)
+    }
+}
+
+function runTesterRelease(server, player, targetName) {
+    var tName = targetName ? resolvePlayerName(targetName) : (player ? resolvePlayerName(player) : 'Tester')
+    var tPlayer = server.getPlayerList().getPlayerByName(tName)
+
+    server.runCommandSilent(`strajaprison release ${tName} 0`)
+
+    if (tPlayer) {
+        tPlayer.persistentData.remove('cpJailed')
+        tPlayer.persistentData.remove('cpFugitive')
+        tPlayer.persistentData.remove('strajaThief')
+        tPlayer.persistentData.remove('strajaWantedUntil')
+
+        try {
+            if (tPlayer.gameMode && tPlayer.gameMode.getGameModeForPlayer().name() === 'ADVENTURE') {
+                tPlayer.setGameMode('survival')
+            }
+        } catch (e) {}
+
+        tPlayer.sendSystemMessage(Text.literal('§a✔ [Eliberare Garantată] Ai fost eliberat din arest! Modul de joc și libertatea au fost restabilite.'))
+        tPlayer.playSound('minecraft:ui.toast.challenge_complete', 1.0, 1.0)
+    }
+    if (player && player.sendSystemMessage) {
+        player.sendSystemMessage(Text.literal(`§a✔ Comanda de eliberare executată pentru: §e${tName}`))
+    }
+}
+
+function runTesterRole(server, playerOrName, role) {
+    var pName = resolvePlayerName(playerOrName)
+    var player = resolvePlayerEntity(server, playerOrName)
+    var r = String(role || '').toLowerCase()
+    if (r === 'inspector') {
+        server.runCommandSilent(`straja inspector add ${pName}`)
+        if (player) {
+            player.sendSystemMessage(Text.literal('§a✔ [Rol Actualizat] Ești acum §e§lINSPECTOR AUTORIZAT§a de armament!'))
+            player.sendSystemMessage(Text.literal('§7  Poți bate legal pe nicovală serii oficiale #RC-15 și emite permise de port-armă.'))
+            player.playSound('minecraft:item.armor.equip_gold', 1.0, 1.2)
+        }
+    } else if (r === 'transporter') {
+        server.runCommandSilent(`straja transporter add ${pName}`)
+        if (player) {
+            player.sendSystemMessage(Text.literal('§a✔ [Rol Actualizat] Ești acum §e§lTRANSPORTATOR AUTORIZAT§a de logistică!'))
+            player.sendSystemMessage(Text.literal('§7  Ești scutit la punctele de control când transporți armament și lăzi militare sigilate.'))
+            player.playSound('minecraft:item.armor.equip_iron', 1.0, 1.2)
+        }
+    } else if (r === 'civil' || r === 'criminal' || r === 'civilian') {
+        server.runCommandSilent(`straja inspector remove ${pName}`)
+        server.runCommandSilent(`straja transporter remove ${pName}`)
+        if (player) {
+            player.sendSystemMessage(Text.literal('§c✔ [Rol Actualizat] Ești acum §fCIVIL / INFRACTOR NEAUTORIZAT§c!'))
+            player.sendSystemMessage(Text.literal('§7  Ștanțarea pe nicovală produce falsuri (5% T1, 50% T2, 45% T3). Punctul de control te va verifica.'))
+            player.playSound('minecraft:entity.villager.no', 1.0, 1.0)
+        }
+    } else {
+        if (player) {
+            player.sendSystemMessage(Text.literal(`§cRol necunoscut: ${role}. Folosește: inspector, transporter, civil`))
+        }
+    }
+}
+
+function giveFakesPack(server, player) {
+    var pName = player.name.string
+
+    // 1. Tier 1 Near-Perfect Fake (5%)
+    server.runCommandSilent(`give ${pName} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p",Proofed:1b,Serial:"#RC-XV-9012",GunSerial:"#RC-XV-9012",FakeTier:1b,Counterfeit:1b},minecraft:item_name='{"text":"Pistol FK15-P [T1 Aproape Perfect]","color":"aqua","bold":true,"italic":false}',minecraft:lore=['{"text":"Serie: #RC-XV-9012","color":"gray","italic":false}','{"text":"(Fals subtil: cifră romană inversată)","color":"dark_gray","italic":true}']] 1`)
+
+    // 2. Tier 2 Common Flawed Fake (50%)
+    server.runCommandSilent(`give ${pName} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p",Proofed:1b,Serial:"#RC-15_4481",GunSerial:"#RC-15_4481",FakeTier:2b,Counterfeit:1b},minecraft:item_name='{"text":"Pistol FK15-P [T2 Fals Comun]","color":"gold","bold":true,"italic":false}',minecraft:lore=['{"text":"Serie: #RC-15_4481","color":"gray","italic":false}','{"text":"(Fals comun: font asimetric / separator)","color":"dark_gray","italic":true}']] 1`)
+
+    // 3. Tier 3 Botched Fake (45%)
+    server.runCommandSilent(`give ${pName} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p",Proofed:1b,Serial:"#RUSTY-GUN-99",GunSerial:"#RUSTY-GUN-99",FakeTier:3b,Counterfeit:1b},minecraft:item_name='{"text":"Pistol FK15-P [T3 Fals Grosolan]","color":"red","bold":true,"italic":false}',minecraft:lore=['{"text":"Serie: #RUSTY-GUN-99","color":"gray","italic":false}','{"text":"⚠ [Fals grosolan: zgâriat la rece]","color":"dark_red","bold":true,"italic":false}']] 1`)
+
+    // 4. Defaced Gun
+    server.runCommandSilent(`give ${pName} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p",Defaced:1b},minecraft:item_name='{"text":"Pistol FK15-P [Serie Pilită]","color":"dark_red","bold":true,"italic":false}',minecraft:lore=['{"text":"⚠ [SERIE PILITĂ / DEFACED]","color":"red","bold":true,"italic":false}']] 1`)
+
+    // 5. Unmarked Gun
+    server.runCommandSilent(`give ${pName} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p"},minecraft:item_name='{"text":"Pistol FK15-P [Nepoansonat]","color":"white","italic":false}'] 1`)
+
+    // 6. Authentic Gun
+    server.runCommandSilent(`give ${pName} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p",Proofed:1b,Serial:"#RC-15-0105",GunSerial:"#RC-15-0105"},minecraft:item_name='{"text":"Pistol FK15-P [Legal #RC-15-0105]","color":"green","bold":true,"italic":false}'] 1`)
+
+    player.playSound('minecraft:entity.item.pickup', 1.0, 1.2)
+    player.sendSystemMessage(Text.literal('§a✔ [Pachet Falsuri Livrat] Ai primit mostre gata create: Tier 1, Tier 2, Tier 3, Pilit, Nepoansonat și Legal!'))
+}
+
+function runTesterCheckpointTest(server, player, mode) {
+    var pName = player.name.string
+    var m = String(mode || 'clean').toLowerCase()
+    if (m === 'clean' || m === 'legal') {
+        server.runCommandSilent(`strajacheckpoint inspect ${pName}`)
+        player.sendSystemMessage(Text.literal('§a✔ [Simulare Trecere Legală] Verificarea la punctul de control a fost declanșată!'))
+    } else if (m === 't3' || m === 'contraband' || m === 'illegal') {
+        server.runCommandSilent(`strajacheckpoint arrest ${pName}`)
+        player.sendSystemMessage(Text.literal('§c✔ [Simulare Arestare Contrabandă] Scanerul a trimis suspectul direct la închisoare!'))
+    }
+}
+
+function runTesterArrestSim(server, player) {
+    var pName = player.name.string
+    server.runCommandSilent(`strajaprison arrest ${pName} Testare Sistem Custodie Straja v1.1.2`)
 }
 
 ServerEvents.commandRegistry(event => {
@@ -385,7 +773,7 @@ ServerEvents.commandRegistry(event => {
                         try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
                         if (!player) return 0
                         const current = getPlayerStep(player)
-                        if (current >= 9) {
+                        if (current >= 14) {
                             sendTestCompleteScreen(ctx.source.server, player)
                             return 1
                         }
@@ -439,8 +827,156 @@ ServerEvents.commandRegistry(event => {
                         return 1
                     })
                 )
+                .then(Commands.literal('setup')
+                    .executes(ctx => {
+                        let player = null
+                        try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
+                        if (player) {
+                            runTesterSetup(ctx.source.server, player)
+                            return 1
+                        }
+                        var list = ctx.source.server.getPlayerList().getPlayers()
+                        if (list.size() > 0) {
+                            runTesterSetup(ctx.source.server, list.get(0))
+                            ctx.source.sendSystemMessage(Text.literal('§a✔ Setup executat pentru ' + list.get(0).name.string))
+                            return 1
+                        }
+                        runTesterSetup(ctx.source.server, 'ConsoleAdmin')
+                        ctx.source.sendSystemMessage(Text.literal('§a✔ Setup executat la coordonate de bază (0, 64, 0).'))
+                        return 1
+                    })
+                    .then(Commands.argument('target', $Test_StringArgument.word())
+                        .executes(ctx => {
+                            var target = $Test_StringArgument.getString(ctx, 'target')
+                            var targetPlayer = ctx.source.server.getPlayerList().getPlayerByName(target)
+                            if (targetPlayer) {
+                                runTesterSetup(ctx.source.server, targetPlayer)
+                            } else {
+                                runTesterSetup(ctx.source.server, target)
+                            }
+                            ctx.source.sendSystemMessage(Text.literal('§a✔ Setup executat pentru: ' + target))
+                            return 1
+                        })
+                    )
+                )
+                .then(Commands.literal('release')
+                    .executes(ctx => {
+                        let player = null
+                        try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
+                        if (player) {
+                            runTesterRelease(ctx.source.server, player, player.name.string)
+                            return 1
+                        }
+                        var list = ctx.source.server.getPlayerList().getPlayers()
+                        if (list.size() > 0) {
+                            runTesterRelease(ctx.source.server, list.get(0), list.get(0).name.string)
+                            return 1
+                        }
+                        return 0
+                    })
+                    .then(Commands.argument('target', $Test_StringArgument.word())
+                        .executes(ctx => {
+                            let player = null
+                            try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
+                            var target = $Test_StringArgument.getString(ctx, 'target')
+                            runTesterRelease(ctx.source.server, player, target)
+                            return 1
+                        })
+                    )
+                )
+                .then(Commands.literal('unjail')
+                    .executes(ctx => {
+                        let player = null
+                        try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
+                        if (player) {
+                            runTesterRelease(ctx.source.server, player, player.name.string)
+                            return 1
+                        }
+                        return 0
+                    })
+                    .then(Commands.argument('target', $Test_StringArgument.word())
+                        .executes(ctx => {
+                            let player = null
+                            try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
+                            var target = $Test_StringArgument.getString(ctx, 'target')
+                            runTesterRelease(ctx.source.server, player, target)
+                            return 1
+                        })
+                    )
+                )
+                .then(Commands.literal('role')
+                    .then(Commands.argument('roleName', $Test_StringArgument.word())
+                        .executes(ctx => {
+                            let player = null
+                            try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
+                            var r = $Test_StringArgument.getString(ctx, 'roleName')
+                            if (player) {
+                                runTesterRole(ctx.source.server, player, r)
+                                return 1
+                            }
+                            var list = ctx.source.server.getPlayerList().getPlayers()
+                            if (list.size() > 0) {
+                                runTesterRole(ctx.source.server, list.get(0), r)
+                                ctx.source.sendSystemMessage(Text.literal('§a✔ Rol ' + r + ' setat pentru ' + list.get(0).name.string))
+                                return 1
+                            }
+                            runTesterRole(ctx.source.server, 'TestPlayer', r)
+                            ctx.source.sendSystemMessage(Text.literal('§a✔ Rol ' + r + ' setat pentru TestPlayer'))
+                            return 1
+                        })
+                        .then(Commands.argument('target', $Test_StringArgument.word())
+                            .executes(ctx => {
+                                var r = $Test_StringArgument.getString(ctx, 'roleName')
+                                var target = $Test_StringArgument.getString(ctx, 'target')
+                                runTesterRole(ctx.source.server, target, r)
+                                ctx.source.sendSystemMessage(Text.literal('§a✔ Rol ' + r + ' setat pentru ' + target))
+                                return 1
+                            })
+                        )
+                    )
+                )
+                .then(Commands.literal('fakes')
+                    .executes(ctx => {
+                        let player = null
+                        try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
+                        if (!player) return 0
+                        giveFakesPack(ctx.source.server, player)
+                        return 1
+                    })
+                )
+                .then(Commands.literal('checkpoint_test')
+                    .then(Commands.argument('mode', $Test_StringArgument.word())
+                        .executes(ctx => {
+                            let player = null
+                            try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
+                            if (!player) return 0
+                            var mode = $Test_StringArgument.getString(ctx, 'mode')
+                            runTesterCheckpointTest(ctx.source.server, player, mode)
+                            return 1
+                        })
+                    )
+                )
+                .then(Commands.literal('arrest_sim')
+                    .executes(ctx => {
+                        let player = null
+                        try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
+                        if (!player) return 0
+                        runTesterArrestSim(ctx.source.server, player)
+                        return 1
+                    })
+                )
+                .then(Commands.literal('rollover')
+                    .executes(ctx => {
+                        let player = null
+                        try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
+                        if (!player) return 0
+                        ctx.source.server.runCommandSilent('straja rollover')
+                        player.sendSystemMessage(Text.literal('§6✔ [Rollover Executat] Toate armele din coada de ieri au fost maturate în catalogul legal!'))
+                        return 1
+                    })
+                )
                 .then(Commands.literal('goto')
-                    .then(Commands.argument('step', $Test_IntegerArgument.integer(1, 9))
+                    .then(Commands.argument('step', $Test_IntegerArgument.integer(1, 14))
                         .executes(ctx => {
                             let player = null
                             try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
@@ -452,7 +988,7 @@ ServerEvents.commandRegistry(event => {
                         })
                     )
                 )
-                .then(Commands.argument('step', $Test_IntegerArgument.integer(1, 9))
+                .then(Commands.argument('step', $Test_IntegerArgument.integer(1, 14))
                     .executes(ctx => {
                         let player = null
                         try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}

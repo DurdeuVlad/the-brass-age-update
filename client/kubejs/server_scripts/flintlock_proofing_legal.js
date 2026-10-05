@@ -89,6 +89,64 @@ function getNextStrajaSerial(server) {
     return '#RC-15-' + padded
 }
 
+function strajaIsAuthorizedInspector(player) {
+    if (!player) return false
+    try {
+        if (typeof player.hasPermissions === 'function' && player.hasPermissions(2)) return true
+        if (typeof player.hasPermission === 'function' && player.hasPermission(2)) return true
+    } catch (e) {}
+    try {
+        var tags = player.tags
+        if (tags && (tags.contains('inspector') || tags.contains('gunsmith') || tags.contains('armurier'))) return true
+    } catch (e) {}
+    try {
+        var pd = player.persistentData
+        if (pd && (pd.getBoolean('is_inspector') || pd.getBoolean('is_gunsmith'))) return true
+    } catch (e) {}
+    try {
+        var server = player.getServer ? player.getServer() : player.server
+        if (server && server.persistentData) {
+            var raw = String(server.persistentData.getString('StrajaInspectors') || '')
+            if (raw.length > 2) {
+                var list = JSON.parse(raw)
+                var pName = String(player.username || (player.getName && player.getName().getString()) || '').toLowerCase()
+                if (list.some(function(n) { return String(n).toLowerCase() === pName })) return true
+            }
+        }
+    } catch (e) {}
+    return false
+}
+
+function strajaRegisterPendingWeapon(server, player, serial, gunId) {
+    try {
+        var raw = String(server.persistentData.getString('StrajaPendingToday') || '')
+        var pending = (raw.length > 2) ? JSON.parse(raw) : []
+        var pName = player.username ? String(player.username) : String(player.getName().getString())
+        var todayStr = new Date().toISOString().substring(0, 10)
+        try {
+            var $LocalDate = Java.loadClass('java.time.LocalDate')
+            todayStr = String($LocalDate.now())
+        } catch (e) {}
+
+        var modelName = 'Flintlock Necunoscut'
+        if (gunId === 'qkl:fk15') modelName = 'Muschetă FK15 (16.5mm)'
+        else if (gunId === 'qkl:fk15p') modelName = 'Pistol Cavalerie FK15-P'
+
+        pending.push({
+            serial: serial,
+            owner: pName,
+            model: modelName,
+            inspector: pName,
+            registeredDate: todayStr,
+            status: 'PENDING_MATURATION'
+        })
+        server.persistentData.putString('StrajaPendingToday', JSON.stringify(pending))
+        console.info('[StrajaRegistry] Enqueued pending weapon ' + serial + ' for ' + pName)
+    } catch (err) {
+        console.error('[StrajaRegistry] Failed to enqueue pending weapon: ' + err)
+    }
+}
+
 // 3. Anvil Proofing Event: Firearm + Proof Stamp -> Serialized Firearm
 var $AnvilUpdateEvent = null
 try {
@@ -134,20 +192,69 @@ if ($AnvilUpdateEvent && typeof NativeEvents !== 'undefined') {
         if (!server) return
         var serial = getNextStrajaSerial(server)
 
-        var newTag = tag.copy()
-        newTag.putBoolean('Proofed', true)
-        newTag.putString('Serial', serial)
-        newTag.remove('Defaced')
-        output.set($FP_DataComponents.CUSTOM_DATA, $FP_CustomData.of(newTag))
+        var isInspector = strajaIsAuthorizedInspector(player)
 
-        // Add official Straja lore
+        var newTag = tag.copy()
         var loreList = new $FP_ArrayList()
-        loreList.add($FP_Component.literal('§a✔ POANSONAT: ' + serial))
-        loreList.add($FP_Component.literal('§7Registrul Imperial Straja'))
+
+        if (isInspector) {
+            // Authentic Official Proofing by Licensed Inspector
+            newTag.putBoolean('Proofed', true)
+            newTag.putBoolean('Forged', false)
+            newTag.putInt('ForgeryTier', 0)
+            newTag.putString('Serial', serial)
+            newTag.putString('GunSerial', serial)
+            newTag.remove('Defaced')
+
+            loreList.add($FP_Component.literal('§a✔ POANSONAT: ' + serial))
+            loreList.add($FP_Component.literal('§7Registrul Imperial Straja'))
+
+            // Enqueue into pending maturation roll for today
+            strajaRegisterPendingWeapon(server, player, serial, gunId)
+        } else {
+            // Unlicensed Criminal Forgery (Papers, Please RNG Quality Curve)
+            // 5% Near Perfect (Tier 1), 50% Common Fake (Tier 2), 45% Botched (Tier 3)
+            var roll = Math.random()
+            var fakeSerial = serial
+            var tier = 2
+            var lore1 = ''
+            var lore2 = ''
+
+            if (roll < 0.05) {
+                // Tier 1: Near Perfect (Micro-tell in serial like 1S or I5, and royal lore with subtle dot)
+                tier = 1
+                fakeSerial = serial.replace('15-', (Math.random() < 0.5 ? '1S-' : 'I5-'))
+                lore1 = '§a✔ POANSONAT: ' + fakeSerial
+                lore2 = '§7Registrul Imperial Straja.' // subtle trailing period
+            } else if (roll < 0.55) {
+                // Tier 2: Common Fake (Copper vitriol ink §2, missing '-l' in Registru)
+                tier = 2
+                lore1 = '§2✔ POANSONAT: ' + serial
+                lore2 = '§7Registru Imperial Straja' // missing '-l'
+            } else {
+                // Tier 3: Botched / Crude (Red/yellow ink, typo POASONAT without N, crude lore)
+                tier = 3
+                lore1 = (Math.random() < 0.5 ? '§c✔ POASONAT: ' : '§e✔ POANSONAT?: ') + serial
+                lore2 = '§7Atelier Nereglementat'
+            }
+
+            newTag.putBoolean('Proofed', false)
+            newTag.putBoolean('Forged', true)
+            newTag.putInt('ForgeryTier', tier)
+            newTag.putString('Serial', fakeSerial)
+            newTag.putString('GunSerial', fakeSerial)
+            newTag.remove('Defaced')
+
+            loreList.add($FP_Component.literal(lore1))
+            loreList.add($FP_Component.literal(lore2))
+            // Unlicensed smithing NEVER enters any official queue
+        }
+
+        output.set($FP_DataComponents.CUSTOM_DATA, $FP_CustomData.of(newTag))
         output.set($FP_DataComponents.LORE, new $FP_ItemLore(loreList))
 
         event.setOutput(output)
-        event.setCost(5) // Guild inspection cost in XP levels
+        event.setCost(5) // Inspection / forging cost in XP levels
     })
 }
 
@@ -379,26 +486,74 @@ ItemEvents.rightClicked(event => {
     } catch (e) {}
 
     if (!tag || (!isProofed && !hasSerial) || !serial || isDefaced) {
-        player.tell('§c[Permis] Arma din mână nu este poansonată legal! Nu se poate emite permis.')
+        player.tell('§c[Permis] Arma din mână nu poartă o serie de poansonare! Nu se poate emite permis.')
         return
     }
 
     var playerName = player.username ? String(player.username) : String(player.getName().getString())
     var server = player.getServer ? player.getServer() : (player.server || (player.level && player.level.getServer ? player.level.getServer() : null))
+    var isInspector = strajaIsAuthorizedInspector(player)
+    var todayStr = new Date().toISOString().substring(0, 10)
+    try {
+        var $LocalDate = Java.loadClass('java.time.LocalDate')
+        todayStr = String($LocalDate.now())
+    } catch (e) {}
+
+    var permitAuthor = 'Gheorghe Comandantul'
+    var permitTitle = 'Permis Port-Arma ' + serial
+    var statusText = '§2LEGAL / ÎNREGISTRAT'
+    var watermarkText = '§8Cancelaria Garnizoanei Straja'
+
+    if (isInspector) {
+        // Authentic Imperial Permit
+        permitAuthor = 'Gheorghe Comandantul'
+        permitTitle = 'Permis Port-Arma ' + serial
+        statusText = '§2LEGAL / ÎNREGISTRAT'
+        watermarkText = '§8Cancelaria Garnizoanei Straja'
+    } else {
+        // Unlicensed Counterfeit Permit (Papers, Please RNG: 5% Near Perfect, 50% Common, 45% Botched)
+        var pRoll = Math.random()
+        if (pRoll < 0.05) {
+            // Tier 1: Near Perfect (Micro-tell in author name: missing 'n' -> Gheorghe Comandatul, subtle trailing period)
+            permitAuthor = 'Gheorghe Comandatul'
+            permitTitle = 'Permis Port-Arma ' + serial
+            statusText = '§2LEGAL / ÎNREGISTRAT'
+            watermarkText = '§8Cancelaria Garnizoanei Straja.'
+        } else if (pRoll < 0.55) {
+            // Tier 2: Common Fake (Wrong shade of green §a instead of §2)
+            permitAuthor = 'Gheorghe Comandantul'
+            permitTitle = 'Permis Port-Arma ' + serial
+            statusText = '§aLEGAL / ÎNREGISTRAT'
+            watermarkText = '§8Cancelaria Garnizoanei Straja'
+        } else {
+            // Tier 3: Botched / Crude (Wrong title, fake official name, red stamped status, ridiculous watermark)
+            permitAuthor = 'Comandant Gheorghe'
+            permitTitle = 'Permis ' + serial
+            statusText = '§cAPROBAT / STRAJA'
+            watermarkText = '§8Cancelaria Mahala'
+        }
+    }
 
     var pageText = '§6§lPERMIS DE PORT-ARMĂ§r\n\n' +
         '§0Posesor: §1' + playerName + '\n' +
         '§0Serie Armă: §2' + serial + '\n' +
         '§0Model: §0Flintlock 16.5mm\n' +
-        '§0Statut: §2LEGAL / ÎNREGISTRAT\n\n' +
-        '§8Eliberat de garnizoana Straja. Neprezentarea la control atrage confiscarea armei.'
+        '§0Statut: ' + statusText + '\n' +
+        '§0Data Emiterii: §8' + todayStr + '\n\n' +
+        watermarkText + '\n' +
+        '§8Neprezentarea la control atrage confiscarea armei.'
 
     var rawJson = JSON.stringify({ text: pageText }).replace(/\\/g, '\\\\').replace(/'/g, "\\'")
     var giveCmd = 'give ' + playerName +
-        ' minecraft:written_book[minecraft:written_book_content={title:\'Permis Port-Arma ' + serial + '\',author:\'Gheorghe Comandantul\',pages:[\'' + rawJson + '\']}] 1'
+        ' minecraft:written_book[minecraft:written_book_content={title:\'' + permitTitle.replace(/'/g, "\\'") + '\',author:\'' + permitAuthor + '\',pages:[\'' + rawJson + '\']}] 1'
 
     if (server) server.runCommandSilent(giveCmd)
     if (typeof player.swing === 'function') player.swing()
     if (!player.isCreative()) item.shrink(1)
-    player.tell('§a[Permis] A fost eliberat permisul de port-armă pentru seria ' + serial + '!')
+
+    if (isInspector) {
+        player.tell('§a[Permis] A fost emis permisul oficial de port-armă pentru seria ' + serial + '!')
+    } else {
+        player.tell('§e[Piața Neagră] Ai plastografiat un permis de port-armă pentru seria ' + serial + '!')
+    }
 })

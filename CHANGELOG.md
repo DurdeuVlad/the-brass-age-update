@@ -4,6 +4,63 @@ All notable changes to **The Brass Age** modpack expansion for **Rustic Craft II
 
 ---
 
+## [v1.1.2] — 2026-10-05 (Garrison Weapons Registry, Inspector Licensing & "Papers, Please" Counterfeiting)
+
+This release introduces the Central Garrison Legal Weapons Registry, Authorized Personnel Licensing, the "Papers, Please" criminal firearm counterfeiting system, automated checkpoint contraband enforcement, and penal custody integration.
+
+### ✨ New Features & Systems
+
+#### 1. Garrison Central Weapons Registry (`admin_straja_registry.js`)
+- **Centralized Weapon Database**: Authoritative registry stored in persistent server data (`StrajaCentralRegistry`) mapping every serialized firearm (`#RC-15-XXXX`) to its legal owner, registration timestamp, issuing inspector, and legal status.
+- **Daily Maturation & Rollover Queue (`StrajaPendingRegistry`)**: Newly stamped firearms enter a 24-hour maturation queue. Registered weapons mature and become officially recognized at midnight / morning rollover (`/straja rollover`).
+- **Physical Patrol Snapshot Books (`/straja book give [player]`)**: Straja soldiers carry physical patrol snapshot books. Patrol books **do not auto-update** in the field; soldiers must visit the garrison or quartermaster to obtain new editions.
+- **Subtle Roleplay Cues & Inspection Heuristics**: The patrol book contains subtle roleplay guidance for officers on what to look for (font alignments, stamp symmetry, serial format rules `#RC-15-XXXX`) without meta-game spoilers.
+
+#### 2. Authorized Personnel Licensing (`/straja inspector` & `/straja transporter`)
+- **Weapons Inspectors (`StrajaInspectors`)**: Authorized inspectors can legally proof firearms on an anvil with the Imperial Stamp and issue signed firearm permits (`minecraft:written_book`).
+- **Weapons Transporters (`StrajaTransporters`)**: Logistics personnel authorized to transport weapons without contraband penalties at checkpoints, including sealed military crates (`kubejs:crate_muskets`, `kubejs:crate_pistols`, `kubejs:ammunition_crate`).
+- **Persistent Data Store**: Inspector and Transporter privileges persist across server restarts, reloads, and player disconnects. Offline players can be safely licensed via username suggestions.
+
+#### 3. "Papers, Please" Criminal Counterfeiting (`flintlock_proofing_legal.js`)
+- **Unlicensed Anvil Stamping**: When an unlicensed criminal attempts to proof a firearm with the Imperial Stamp on an anvil, the system generates counterfeit proofing marks with a calibrated probability distribution:
+  - **Tier 1 (5% Near-Perfect Fake)**: Subtle flaw (e.g. inverted Roman numerals `#RC-XV-` or slightly blurred ink). Can fool ordinary patrol inspections unless cross-referenced against the central registry book.
+  - **Tier 2 (50% Common Flawed Fake)**: Readily noticeable flaw (e.g. off-center serial `#RC-15_` or misspelled abbreviation). Alert officers will spot irregularities upon inspection.
+  - **Tier 3 (45% Botched Grotesque Fake)**: Obvious crude scratched fake (e.g. `#RUSTY-GUN-99`). Checkpoint sentries immediately sound the alarm and dispatch the offender to penal custody.
+- **Forged Weapon Permits**: Unlicensed players attempting to stamp permit blanks produce counterfeit documentation with subtle forged text.
+
+#### 4. Port Checkpoint Contraband Enforcement & Penal Custody (`port_checkpoint.js`, `straja_prison.js`)
+- **Automated Contraband Scanner**: Port checkpoint sentries evaluate all held and carried firearms:
+  - **Unmarked Guns (`Proofed: 0` or missing)**: Contraband — immediate confiscation and arrest unless the player is an authorized inspector/transporter or carrying sealed military crates.
+  - **Defaced Guns (`Defaced: 1`)**: Contraband — immediate confiscation and arrest.
+  - **Tier 3 Botched Fakes (`FakeTier: 3`)**: Contraband — automated arrest with no warning.
+- **Penal Custody Integration**: Contraband weapons are secured in confiscated chests (`StrajaPrisonChests`) and offenders are committed to prison cells (`StrajaPrisonCells`).
+
+#### 5. Unified `/straja` Command Architecture & Automated Self-Test Runner
+- **Consolidated Command Hierarchy**:
+  - `/straja inspector add|remove|list|check <player>`
+  - `/straja transporter add|remove|list|check <player>`
+  - `/straja register_serial <serial> <owner>`
+  - `/straja rollover`
+  - `/straja lookup <serial>`
+  - `/straja book give [player]`
+  - `/straja checkpoint status`
+  - `/straja prison status`
+  - `/straja test`
+  - `/straja setup` (forwarder → `/brass_test setup`)
+  - `/straja tester [args]` (forwarder → `/brass_test [args]`)
+- **Automated 26-Assertion Self-Test**: Validates licensing, maturation queues, contraband classification, 10,000-iteration Monte Carlo counterfeit probability distributions (5% T1, 50% T2, 45% T3), and patrol book formatting directly on the live dedicated server.
+
+#### 6. Automated Tester Handholding Engine (`admin_test_runner.js`)
+- **14-Step Guided Test Suite** expanded from 9 steps. Steps 10–14 cover Registry Rollover, Inspector/Transporter Licensing, Papers-Please Counterfeits, Port Checkpoint, and Penal Custody & Release.
+- **Zero-Chore Auto-Setup (`/brass_test setup` / `/straja setup`)**: Automatically binds a virtual checkpoint deny-target and prison cell anchor at the tester's current coordinates. No redstone, command blocks, or manual configuration required.
+- **Role Switching (`/brass_test role <inspector|transporter|civil>`)**: 1-click role toggling with direct persistent-data manipulation. Works from RCON and console as well as in-game.
+- **Fake Weapons Pack (`/brass_test fakes`)**: Delivers pre-generated sample firearms covering all six states: Tier 1 (Near Perfect), Tier 2 (Common Flawed), Tier 3 (Botched), Defaced, Unmarked, and Authentic Legal.
+- **Guaranteed Unjail (`/brass_test release [player]` / `/brass_test unjail [player]`)**: Emergency release that bypasses `SP_JAILERS` whitelist for OP Level 2 operators, restores game mode from Adventure to Survival, and clears all arrest persistent data tags.
+- **Bug Fix — `runTesterRole` TypeError**: Resolved `Cannot read property "string" from undefined` crash when calling `/brass_test role inspector <offlinePlayer>` from RCON or console. Introduced `resolvePlayerName()` and `resolvePlayerEntity()` helpers that safely handle both player objects and raw name strings without accessing `.name.string` on null. Replaced all `ctx.source.sendSuccess()` calls with `ctx.source.sendSystemMessage()` for RCON context compatibility.
+- **Prison Release Permission Level**: Lowered Straja Prison release guard from `hasPermission(3)` to `hasPermission(2)`, ensuring OP Level 2 operators (testers) can always release prisoners without being blocked.
+
+---
+
 ## [v1.1.1] — 2026-10-05 (Tester Patch & Critical Bug Fixes)
 
 This release addresses all issues reported by modpack testers during QA on dedicated servers and singleplayer client sessions, and includes startup script engine stabilization.
