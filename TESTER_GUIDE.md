@@ -1,7 +1,7 @@
 # ⚜ THE BRASS AGE UPDATE — TESTER & REVIEW GUIDE ⚜
 ### Ghid de Testare & Instalare pentru Testeri (Rustic Craft II)
 
-Versiune: `v1.1.0-Release`  
+Versiune: `v1.1.1-Release`  
 Platformă: `Minecraft 1.21.1` / `NeoForge 21.1.248`  
 Modpack: **Rustic Craft II**  
 Repository: `DurdeuVlad/the-brass-age-update`

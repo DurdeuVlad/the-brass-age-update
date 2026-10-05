@@ -1,5 +1,5 @@
 =====================================================================
-  ⚜ THE BRASS AGE UPDATE — INSTRUCTIUNI RAPIDE DE INSTALARE v1.1.0 ⚜
+  ⚜ THE BRASS AGE UPDATE — INSTRUCTIUNI RAPIDE DE INSTALARE v1.1.1 ⚜
 =====================================================================
 
 ATENȚIE PENTRU TESTERI:
@@ -32,20 +32,23 @@ peste folderul instanței voastre Rustic Craft II:
   - config/           (actualizează setările de rucsac și unelte)
 
 ---------------------------------------------------------------------
-CE ESTE NOU ÎN v1.1.0:
+CE ESTE NOU ÎN v1.1.1 (Tester Patch & Critical Fixes):
 ---------------------------------------------------------------------
-1. Rețetele armelor de foc necesită Create Mechanical Crafters (grilă 3x3);
-   au fost eliminate din masa clasică de crafting și ascunse complet
-   din EMI, JEI și cartea de rețete vanilla.
-2. Comandă dedicată pentru admini/operatori: /gunsmith book [jucător]
-   pentru acordarea cărții Patchouli cu toate diagramele mecanice Create.
-3. Deblocată și calibrată mina Straja pe 4 ramuri (Sulf, Fier, Cărbune,
-   Dripstone, Zinc, Argint mutat pe zona 2, Cupru eliminat, Diamante și Redstone).
-4. Sistemul de poansonare pe nicovală și emiterea permiselor de port-armă
-   au fost adaptate integral la Data Components pe Minecraft 1.21.1 / NeoForge
-   și verificate empiric în joc cu un client real (mc-pilot).
-5. Ghid Interactiv de Testare Pas-cu-Pas (/brass_test sau /gunsmith test):
-   Comandă dedicată operatorilor care te ghidează prin toate cele 9 teste,
-   cu butoane clickabile în chat pentru echiparea automată a kiturilor de testare.
+1. Despachetarea Lăzilor Militare pe Sol (BlockEvents.rightClicked):
+   Lăzile de muschete, pistoale și muniție pot fi deschise acum direct
+   făcând click-dreapta pe orice bloc sau pe pământ.
+2. Închiderea Breșei de Purtare prin Masa de Crafting:
+   Armele puse în grila 3x3 de crafting sau 2x2 personală sunt scanate
+   la închiderea meniului; armele în exces cad imediat la picioare.
+3. Pilirea Serie pe Tocilă în Lume (Grindstone Defacing):
+   Click-dreapta cu arma pe blocul de tocilă (grindstone) pilește seria
+   și marchează arma ca piesă de contrabandă ilegală (Defaced).
+4. Variațiuni Tactice de Muniție Funcționale (Native TaCZ Pipeline):
+   - Gloanțele de Argint Consfințit dau 4x daune nemorților și 2x vampirilor.
+   - Mitraliile (Canister) aplică impuls puternic de knockback (2.0).
+   - Gloanțele Incendiare aprind ținta timp de 8 secunde consecutive.
+5. Validare Dual-Hand Permise & Respingere Arme Defaced:
+   Permisul alb în mâna principală și arma poansonată în offhand emit
+   cartea oficială de permis. Armele pilite sunt refuzate la ștanțare.
 =====================================================================
 

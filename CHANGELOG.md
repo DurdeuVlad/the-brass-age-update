@@ -4,9 +4,9 @@ All notable changes to **The Brass Age** modpack expansion for **Rustic Craft II
 
 ---
 
-## [v1.1.1] — 2026-10-04 (Tester Patch & Critical Bug Fixes)
+## [v1.1.1] — 2026-10-05 (Tester Patch & Critical Bug Fixes)
 
-This release addresses all issues reported by modpack testers during QA on dedicated servers and singleplayer client sessions.
+This release addresses all issues reported by modpack testers during QA on dedicated servers and singleplayer client sessions, and includes startup script engine stabilization.
 
 ### 🐛 Fixed Issues (Bug Fixes)
 
@@ -33,6 +33,10 @@ This release addresses all issues reported by modpack testers during QA on dedic
 #### 5. Firearm Permit Issuance & Defaced Rejection (`[Permis] Arma din mâna stângă nu este poansonată legal!`)
 - **Issue**: The permit issuance system was confused by hand swapping and allowed edge-case interactions with defaced firearms.
 - **Fix**: Enhanced `flintlock_proofing_legal.js` to strictly enforce that legal permits (`Permis Port-Armă`) are only issued if the offhand holds an authentically proofed firearm with an active serial number. If the weapon is defaced (`Defaced: 1b`), permit blank stamping is refused and the blank is preserved.
+
+#### 6. Rhino JS Startup Scoping & Engine Stability
+- **Issue**: On NeoForge 21.1.248, Rhino's interpreted execution of `steel_durability.js` threw a `Redeclaration of const mults` error during item modification loop passes, causing the dedicated server to crash on startup.
+- **Fix**: Refactored lexical bindings to standard function-scoped variables, preventing loop re-initialization crashes and ensuring 100% clean server bootstrap (52/52 scripts loaded with 0 errors).
 
 ---
 
