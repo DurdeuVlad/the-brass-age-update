@@ -307,7 +307,7 @@ function fpIsProofedGun(stack) {
     var isProofed = false
     try {
         if (typeof tag.getBoolean === 'function') {
-            isProofed = tag.getBoolean('Proofed') || tag.getByte('Proofed') == 1 || tag.getInt('Proofed') == 1 || String(tag.getString('Proofed')) === 'true'
+            isProofed = tag.getBoolean('Proofed') || (tag.getInt && tag.getInt('Proofed') == 1) || String(tag.getString('Proofed')) === 'true'
         } else if (tag.Proofed) {
             isProofed = true
         }
@@ -463,7 +463,7 @@ ItemEvents.rightClicked(event => {
     var isProofed = false
     try {
         if (typeof tag.getBoolean === 'function') {
-            isProofed = tag.getBoolean('Proofed') || tag.getByte('Proofed') == 1 || tag.getInt('Proofed') == 1 || String(tag.getString('Proofed')) === 'true'
+            isProofed = tag.getBoolean('Proofed') || (tag.getInt && tag.getInt('Proofed') == 1) || String(tag.getString('Proofed')) === 'true'
         } else if (tag && tag.Proofed) {
             isProofed = true
         }
@@ -534,18 +534,22 @@ ItemEvents.rightClicked(event => {
         }
     }
 
-    var pageText = '§6§lPERMIS DE PORT-ARMĂ§r\n\n' +
+    var page1Text = '§6§lPERMIS PORT-ARMĂ§r\n\n' +
         '§0Posesor: §1' + playerName + '\n' +
-        '§0Serie Armă: §2' + serial + '\n' +
+        '§0Serie: §2' + serial + '\n' +
         '§0Model: §0Flintlock 16.5mm\n' +
         '§0Statut: ' + statusText + '\n' +
-        '§0Data Emiterii: §8' + todayStr + '\n\n' +
-        watermarkText + '\n' +
-        '§8Neprezentarea la control atrage confiscarea armei.'
+        '§0Emis: §8' + todayStr + '\n\n' +
+        watermarkText
 
-    var rawJson = JSON.stringify({ text: pageText }).replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+    var page2Text = '§6§lDISPOZIȚII LEGALE§r\n\n' +
+        '§0Prezentul act certifică înregistrarea armei în evidențele oficiale Straja.\n\n' +
+        '§8Neprezentarea la control atrage confiscarea armei și arestarea posesorului.'
+
+    var rawJson1 = JSON.stringify({ text: page1Text }).replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+    var rawJson2 = JSON.stringify({ text: page2Text }).replace(/\\/g, '\\\\').replace(/'/g, "\\'")
     var giveCmd = 'give ' + playerName +
-        ' minecraft:written_book[minecraft:written_book_content={title:\'' + permitTitle.replace(/'/g, "\\'") + '\',author:\'' + permitAuthor + '\',pages:[\'' + rawJson + '\']}] 1'
+        ' minecraft:written_book[minecraft:written_book_content={title:\'' + permitTitle.replace(/'/g, "\\'") + '\',author:\'' + permitAuthor + '\',pages:[\'' + rawJson1 + '\',\'' + rawJson2 + '\']}] 1'
 
     if (server) server.runCommandSilent(giveCmd)
     if (typeof player.swing === 'function') player.swing()

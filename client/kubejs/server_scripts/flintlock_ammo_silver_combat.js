@@ -156,6 +156,32 @@ function ammoGetCustomTag(stack) {
     return null
 }
 
+function isFlintlockGun(gunId) {
+    if (!gunId) return false
+    var gid = String(gunId).toLowerCase()
+    return gid === 'qkl:fk15' || gid === 'qkl:fk15p' || gid.indexOf('flintlock') >= 0 || gid.indexOf('fk15') >= 0
+}
+
+function getStackGunId(stack) {
+    if (!stack || stack.isEmpty()) return ''
+    try {
+        var $IGun = Java.loadClass('com.tacz.guns.api.item.IGun')
+        var iGun = $IGun.getIGunOrNull(stack)
+        if (iGun) {
+            var gid = iGun.getGunId(stack)
+            if (gid) return String(gid).toLowerCase()
+        }
+    } catch (e) {}
+    try {
+        var tag = ammoGetCustomTag(stack)
+        if (tag) {
+            var g = tag.getString('GunId') || tag.GunId
+            if (g) return String(g).toLowerCase()
+        }
+    } catch (e) {}
+    return ''
+}
+
 function setGunChamberAmmo(gunStack, ammoKind) {
     if (!gunStack || gunStack.isEmpty()) return
     try {
@@ -176,11 +202,20 @@ function getSpecialAmmoKind(stack) {
     if (ammoGetStackId(stack) !== 'tacz:ammo') return null
     var tag = ammoGetCustomTag(stack)
     if (!tag) return null
+
+    // STRICT CHECK: Ammo must be 16mm flintlock ammo (qkl:16mm)
+    var ammoId = ''
+    try {
+        if (typeof tag.getString === 'function') ammoId = tag.getString('AmmoId')
+        else ammoId = tag.AmmoId || ''
+    } catch (e) {}
+    if (ammoId && String(ammoId).toLowerCase() !== 'qkl:16mm') return null
+
     try {
         if (typeof tag.getBoolean === 'function') {
-            if (tag.getBoolean('SilverAmmo') || tag.getByte('SilverAmmo') == 1 || tag.getInt('SilverAmmo') == 1 || String(tag.getString('SilverAmmo')) === 'true') return 'silver'
-            if (tag.getBoolean('CanisterAmmo') || tag.getByte('CanisterAmmo') == 1 || tag.getInt('CanisterAmmo') == 1 || String(tag.getString('CanisterAmmo')) === 'true') return 'canister'
-            if (tag.getBoolean('IncendiaryAmmo') || tag.getByte('IncendiaryAmmo') == 1 || tag.getInt('IncendiaryAmmo') == 1 || String(tag.getString('IncendiaryAmmo')) === 'true') return 'incendiary'
+            if (tag.getBoolean('SilverAmmo') || (tag.getInt && tag.getInt('SilverAmmo') == 1) || String(tag.getString('SilverAmmo')) === 'true') return 'silver'
+            if (tag.getBoolean('CanisterAmmo') || (tag.getInt && tag.getInt('CanisterAmmo') == 1) || String(tag.getString('CanisterAmmo')) === 'true') return 'canister'
+            if (tag.getBoolean('IncendiaryAmmo') || (tag.getInt && tag.getInt('IncendiaryAmmo') == 1) || String(tag.getString('IncendiaryAmmo')) === 'true') return 'incendiary'
         } else {
             if (tag.SilverAmmo) return 'silver'
             if (tag.CanisterAmmo) return 'canister'
@@ -221,15 +256,19 @@ function onGunReload(entity, gunStack) {
     } catch (e) {}
     if (!isPlayer) return
 
+    var gunId = getStackGunId(gunStack)
+    // STRICT CHECK: Ignore modern guns! Only handle flintlock firearms.
+    if (!isFlintlockGun(gunId)) return
+
     var kind = getPlayerActiveAmmoKind(entity)
     entity.persistentData.putString('LoadedAmmoType', kind)
     if (gunStack) setGunChamberAmmo(gunStack, kind)
 
-    console.info('[TheBrassAge] GunReload by ' + (entity.username || entity.name.string) + ': ' + kind)
+    console.info('[TheBrassAge] GunReload by ' + (entity.username || entity.name.string) + ': ' + kind + ' for gun=' + gunId)
     if (kind === 'silver') {
         entity.tell('§b[Muniție] Ai încărcat Glonțul de Argint Consfințit (4x daune nemorți).')
     } else if (kind === 'canister') {
-        entity.tell('§6[Muniție] Ai încărcat Glonț tip Mitralii (Canister - knockback).')
+        entity.tell('§6[Muniție] Ai încărcat Glonț tip Mitralii (Canister - alice de fier).')
     } else if (kind === 'incendiary') {
         entity.tell('§c[Muniție] Ai încărcat Cartuș Incendiar cu Sulf (incendiere).')
     }
@@ -243,6 +282,15 @@ function onGunShoot(shooter, gunStack) {
         else if (shooter instanceof Java.loadClass('net.minecraft.world.entity.player.Player')) isPlayer = true
     } catch (e) {}
     if (!isPlayer) return
+
+    var gunId = getStackGunId(gunStack)
+    // STRICT CHECK: If shooter fired a modern / non-flintlock gun, reset any flintlock ammo state!
+    if (!isFlintlockGun(gunId)) {
+        shooter.persistentData.remove('LastFiredAmmoType')
+        shooter.persistentData.remove('LoadedAmmoType')
+        shooter.persistentData.putString('LastFiredGunId', gunId)
+        return
+    }
 
     var kind = 'lead'
     if (gunStack) {
@@ -262,10 +310,11 @@ function onGunShoot(shooter, gunStack) {
         else kind = getPlayerActiveAmmoKind(shooter)
     }
     shooter.persistentData.putString('LastFiredAmmoType', kind)
+    shooter.persistentData.putString('LastFiredGunId', gunId)
     var sLvl = (typeof shooter.getLevel === 'function') ? shooter.getLevel() : shooter.level
     var now = (sLvl && typeof sLvl.getGameTime === 'function') ? sLvl.getGameTime() : 0
     shooter.persistentData.putLong('LastFiredTime', now)
-    console.info('[TheBrassAge] GunShoot by ' + (shooter.username || shooter.name.string) + ': kind=' + kind + ', tick=' + now)
+    console.info('[TheBrassAge] GunShoot by ' + (shooter.username || shooter.name.string) + ': gun=' + gunId + ', kind=' + kind + ', tick=' + now)
 }
 
 function sendPlayerMessage(player, text) {
@@ -282,7 +331,7 @@ function sendPlayerMessage(player, text) {
     } catch (e) {}
 }
 
-function applyTacticalHitEffects(target, attacker, baseAmountSetter, currentAmount) {
+function applyTacticalHitEffects(target, attacker, baseAmountSetter, currentAmount, gunId) {
     if (!target || !attacker) return
     var isPlayer = false
     try {
@@ -291,7 +340,12 @@ function applyTacticalHitEffects(target, attacker, baseAmountSetter, currentAmou
     } catch (e) {}
     if (!isPlayer) return
 
+    // STRICT CHECK: Only apply tactical effects to flintlock firearms!
+    if (!isFlintlockGun(gunId)) return
+
     var ammo = attacker.persistentData.getString('LastFiredAmmoType') || 'lead'
+    if (ammo === 'lead') return
+
     var server = attacker.getServer ? attacker.getServer() : (attacker.server || (attacker.level && attacker.level.getServer ? attacker.level.getServer() : null))
 
     var tx = (typeof target.getX === 'function') ? Number(target.getX()).toFixed(1) : Number(target.x || 0).toFixed(1)
@@ -303,7 +357,9 @@ function applyTacticalHitEffects(target, attacker, baseAmountSetter, currentAmou
     var targetX = (typeof target.getX === 'function') ? Number(target.getX()) : Number(target.x || 0)
     var targetZ = (typeof target.getZ === 'function') ? Number(target.getZ()) : Number(target.z || 0)
 
-    console.info('[TheBrassAge] TacticalHit: ammo=' + ammo + ', target=' + (target.type ? target.type : target) + ', baseDmg=' + currentAmount)
+    console.info('[TheBrassAge] TacticalHit: gun=' + gunId + ', ammo=' + ammo + ', target=' + (target.type ? target.type : target) + ', baseDmg=' + currentAmount)
+
+    var nowTick = (target.level && typeof target.level.getGameTime === 'function') ? target.level.getGameTime() : 0
 
     if (ammo === 'incendiary') {
         try {
@@ -313,8 +369,12 @@ function applyTacticalHitEffects(target, attacker, baseAmountSetter, currentAmou
         } catch (e) {
             console.error('[TheBrassAge] Incendiary ignite error: ' + e)
         }
+        // Thermal shock bonus damage on direct impact (+25% / +3 dmg)
+        if (typeof baseAmountSetter === 'function') {
+            baseAmountSetter(currentAmount * 1.25 + 3.0)
+        }
         if (server) server.runCommandSilent('playsound minecraft:item.firecharge.use player @a ' + tx + ' ' + ty + ' ' + tz + ' 1.0 1.0')
-        sendPlayerMessage(attacker, '§c🔥 [Incendiar] Țintă incendiată pentru 8 secunde!')
+        sendPlayerMessage(attacker, '§c🔥 [Incendiar] Țintă incendiată cu șoc termic!')
     } else if (ammo === 'canister') {
         var dx = targetX - ax
         var dz = targetZ - az
@@ -328,7 +388,7 @@ function applyTacticalHitEffects(target, attacker, baseAmountSetter, currentAmou
         }
         try {
             if (typeof target.knockback === 'function') {
-                target.knockback(2.0, dx, dz)
+                target.knockback(1.5, dx, dz)
                 target.hurtMarked = true
                 target.hasImpulse = true
             } else if (typeof target.push === 'function') {
@@ -338,8 +398,13 @@ function applyTacticalHitEffects(target, attacker, baseAmountSetter, currentAmou
         } catch (e) {
             console.error('[TheBrassAge] Canister knockback error: ' + e)
         }
-        if (server) server.runCommandSilent('playsound minecraft:entity.iron_golem.attack player @a ' + tx + ' ' + ty + ' ' + tz + ' 1.0 1.2')
-        sendPlayerMessage(attacker, '§6💥 [Canister] Dispersie defensivă reușită!')
+        // Debounce audio and chat per shot (5 ticks) so 8 pellets don't spam 8 times:
+        var lastCanisterMsg = attacker.persistentData.getLong('LastCanisterMsgTick')
+        if (nowTick - lastCanisterMsg > 5) {
+            attacker.persistentData.putLong('LastCanisterMsgTick', nowTick)
+            if (server) server.runCommandSilent('playsound minecraft:entity.iron_golem.attack player @a ' + tx + ' ' + ty + ' ' + tz + ' 1.0 1.2')
+            sendPlayerMessage(attacker, '§6💥 [Canister] Dispersie defensivă de mitralii reușită!')
+        }
     } else if (ammo === 'silver') {
         var isUndead = false
         try {
@@ -363,6 +428,29 @@ function applyTacticalHitEffects(target, attacker, baseAmountSetter, currentAmou
         }
         if (!isVamp && target.persistentData) {
             try { isVamp = target.persistentData.getBoolean('is_vampire') } catch (e) {}
+        }
+
+        // Support testing on Target Dummy: if dummy has undead skull/helmet or is named undead/zombie/vampire
+        var targetTypeStr = String(target.type || (target.getType ? target.getType() : '')).toLowerCase()
+        if (targetTypeStr.indexOf('target_dummy') >= 0) {
+            try {
+                var EquipmentSlot = Java.loadClass('net.minecraft.world.entity.EquipmentSlot')
+                var headItem = target.getItemBySlot ? target.getItemBySlot(EquipmentSlot.HEAD) : null
+                if (headItem && !headItem.isEmpty()) {
+                    var hid = String(headItem.getId ? headItem.getId() : headItem.id).toLowerCase()
+                    if (hid.includes('zombie') || hid.includes('skeleton') || hid.includes('wither') || hid.includes('skull')) {
+                        isUndead = true
+                    }
+                }
+            } catch (e) {}
+            try {
+                var cName = target.getCustomName ? target.getCustomName() : null
+                if (cName) {
+                    var ns = cName.getString().toLowerCase()
+                    if (ns.includes('undead') || ns.includes('zombie') || ns.includes('skeleton')) isUndead = true
+                    if (ns.includes('vampire') || ns.includes('vampir')) isVamp = true
+                }
+            } catch (e) {}
         }
 
         if (isUndead || isVamp) {
@@ -414,12 +502,19 @@ if (typeof TimelessGunEvents !== 'undefined') {
     try {
         TimelessGunEvents.entityHurtByGunPre(event => {
             try {
+                var gunId = ''
+                try {
+                    if (event.getGunId) gunId = String(event.getGunId()).toLowerCase()
+                    else if (event.gunId) gunId = String(event.gunId).toLowerCase()
+                } catch (e) {}
+                if (!isFlintlockGun(gunId)) return
+
                 var target = event.hurtEntity || (typeof event.getHurtEntity === 'function' ? event.getHurtEntity() : null)
                 var attacker = event.attacker || (typeof event.getAttacker === 'function' ? event.getAttacker() : null)
                 var current = event.baseAmount || (typeof event.getBaseAmount === 'function' ? event.getBaseAmount() : 10)
                 applyTacticalHitEffects(target, attacker, function(newVal) {
                     if (typeof event.setBaseAmount === 'function') event.setBaseAmount(newVal)
-                }, current)
+                }, current, gunId)
             } catch (e) {
                 console.error('[TimelessGunEvents.entityHurtByGunPre] ' + e)
             }
@@ -452,9 +547,11 @@ if (typeof NativeEvents !== 'undefined') {
         NativeEvents.onEvent($TacZEntityHurtByGunPre, function(event) {
             try {
                 if (event.getLogicalSide && event.getLogicalSide().isClient()) return
+                var gunId = event.getGunId ? String(event.getGunId()).toLowerCase() : ''
+                if (!isFlintlockGun(gunId)) return
                 applyTacticalHitEffects(event.getHurtEntity(), event.getAttacker(), function(newVal) {
                     event.setBaseAmount(newVal)
-                }, event.getBaseAmount())
+                }, event.getBaseAmount(), gunId)
             } catch (e) {}
         })
     }
@@ -475,6 +572,9 @@ EntityEvents.beforeHurt(function(event) {
             else if (attacker instanceof Java.loadClass('net.minecraft.world.entity.player.Player')) isPlayer = true
         } catch (e) {}
         if (!isPlayer) return
+
+        var gunId = attacker.persistentData.getString('LastFiredGunId')
+        if (!isFlintlockGun(gunId)) return
 
         var target = event.getEntity()
         if (!target) return

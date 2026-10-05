@@ -10,7 +10,8 @@ RecipeViewerEvents.removeRecipes(event => {
         'stock_blank', 'pistol_stock', 'rifle_stock',
         'pistol', 'rifle', 'rifle_jaeger',
         'ammo_16mm', 'ammo_canister_scattershot', 'ammo_incendiary_sulfur',
-        'silver_ammo_tier1', 'silver_ammo_tier2', 'silver_ammo_tier3'
+        'silver_ammo_tier1', 'silver_ammo_tier2', 'silver_ammo_tier3',
+        'craft_proof_stamp'
     ]
 
     recipes.forEach(name => {

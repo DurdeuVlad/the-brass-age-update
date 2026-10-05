@@ -278,7 +278,7 @@ StrajaWeapons.evaluateWeaponLegality = function(stack, player) {
                 isProofed = tag.getBoolean('Proofed')
                 isDefaced = tag.getBoolean('Defaced')
                 isForged = tag.getBoolean('Forged')
-                forgeryTier = tag.getInt('ForgeryTier') || tag.getByte('ForgeryTier')
+                forgeryTier = (typeof tag.getInt === 'function' ? tag.getInt('ForgeryTier') : Number(tag.ForgeryTier || 0)) || 0
                 serial = String(tag.getString('Serial') || tag.getString('GunSerial') || '')
             } else {
                 isProofed = !!tag.Proofed

@@ -165,7 +165,7 @@ if ($ItemTooltipEvent && typeof NativeEvents !== 'undefined') {
             var isProofed = false
             try {
                 if (typeof tag.getBoolean === 'function') {
-                    isProofed = tag.getBoolean('Proofed') || tag.getByte('Proofed') == 1 || tag.getInt('Proofed') == 1 || String(tag.getString('Proofed')) === 'true'
+                    isProofed = tag.getBoolean('Proofed') || (tag.getInt && tag.getInt('Proofed') == 1) || String(tag.getString('Proofed')) === 'true'
                 } else if (tag.Proofed) {
                     isProofed = true
                 }
@@ -226,9 +226,9 @@ if ($ItemTooltipEvent && typeof NativeEvents !== 'undefined') {
         var isIncendiary = false
         try {
             if (typeof tag.getBoolean === 'function') {
-                isSilver = tag.getBoolean('SilverAmmo') || tag.getByte('SilverAmmo') == 1 || tag.getInt('SilverAmmo') == 1 || String(tag.getString('SilverAmmo')) === 'true'
-                isCanister = tag.getBoolean('CanisterAmmo') || tag.getByte('CanisterAmmo') == 1 || tag.getInt('CanisterAmmo') == 1 || String(tag.getString('CanisterAmmo')) === 'true'
-                isIncendiary = tag.getBoolean('IncendiaryAmmo') || tag.getByte('IncendiaryAmmo') == 1 || tag.getInt('IncendiaryAmmo') == 1 || String(tag.getString('IncendiaryAmmo')) === 'true'
+                isSilver = tag.getBoolean('SilverAmmo') || (tag.getInt && tag.getInt('SilverAmmo') == 1) || String(tag.getString('SilverAmmo')) === 'true'
+                isCanister = tag.getBoolean('CanisterAmmo') || (tag.getInt && tag.getInt('CanisterAmmo') == 1) || String(tag.getString('CanisterAmmo')) === 'true'
+                isIncendiary = tag.getBoolean('IncendiaryAmmo') || (tag.getInt && tag.getInt('IncendiaryAmmo') == 1) || String(tag.getString('IncendiaryAmmo')) === 'true'
             } else {
                 isSilver = !!tag.SilverAmmo
                 isCanister = !!tag.CanisterAmmo
