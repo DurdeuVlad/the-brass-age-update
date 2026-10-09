@@ -6,15 +6,19 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "$(bold)Specialized Muzzleloading Ordnance$()$(br2)For close-quarters crowd dispersal and subterranean warfare, the arsenal produces Canister Scattershot and Incendiary Sulfur rounds.$(br2)Both require a powered 3x3 array of Create Mechanical Crafters to assemble."
+      "text": "For crowd dispersal and fiend hunting, the arsenal produces Canister and Incendiary rounds.$(br2)Both require powered Create Mechanical Crafters."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Canister Scattershot (3x3)$()$(br2)N N N$(br)N W N$(br)N G N$(br2)$(bold)Legend:$()$(br)N: Iron Nugget (8 total)$()$(br)W: Wad (1)$()$(br)G: Gunpowder Charge (1)$(br2)Yields 4 Canister Cartridges. Deals wide-cone spread and massive knockback."
+      "text": "$(bold)Canister Scattershot$()$(br2)3x3 Crafter:$(br)• 8 Iron Nuggets$(br)• 1 Wad (center)$(br)• 1 Powder Charge (bot)$(br2)Yields 4 Cartridges.$(br)Discharges 14 pellets with heavy knockback."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Incendiary Sulfur Round (3x3)$()$(br2)  S  $(br)C G C$(br)  W  $(br2)$(bold)Legend:$()$(br)S: Karst Sulfur (1)$()$(br)C: Large Bullet Core (2)$()$(br)G: Gunpowder Charge (1)$()$(br)W: Wad (1)$(br2)Yields 4 Incendiary Cartridges. Deals 35 kinetic damage and 8 seconds of fire."
+      "text": "$(bold)Incendiary Round$()$(br2)3x3 Crafter:$(br)• Top: 1 Karst Sulfur$(br)• Mid: Core + Powder + Core$(br)• Bot: 1 Wad$(br2)Yields 4 Cartridges.$(br)Deals 35 damage and $(c)8s of searing fire$()."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Offhand Selection$()$(br2)Place Canister or Incendiary rounds into your $(italic)offhand (slot 40)$() prior to pressing [R].$(br2)The weapon will prioritize your tactical ammunition for the next shot."
     }
   ]
 }

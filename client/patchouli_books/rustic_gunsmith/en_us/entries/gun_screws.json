@@ -2,17 +2,17 @@
   "name": "Gun Screws",
   "category": "patchouli:forge",
   "icon": "kubejs:gun_screws",
-  "sortnum": 7,
+  "sortnum": 1,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Small fastenings govern the larger work. Place a sheet between two iron nuggets, one above and one below. Make a reserve at the outset: many later assemblies call for these screws, and each craft yields one inventory item."
+      "text": "Turn iron nuggets with iron sheets to cut threaded fixings.$(br2)Consumes 20 for the rifle, 16 for the pistol. Yields one screw per craft."
     },
     {
       "type": "patchouli:spotlight",
       "item": "kubejs:gun_screws",
       "link_recipe": false,
-      "text": "One finished Gun Screws. Keep this piece ready for the next assembly."
+      "text": "One finished Gun Screw. Keep this piece ready for the next assembly."
     },
     {
       "type": "patchouli:crafting",

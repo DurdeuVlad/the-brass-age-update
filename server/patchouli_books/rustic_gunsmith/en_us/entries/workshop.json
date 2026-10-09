@@ -6,23 +6,27 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Lay out the several parts before beginning. Keep the barrel-maker's pieces apart from the stock-maker's, and gather the smaller fittings in a tray.$(br2)This is a fictional trade handbook for Minecraft. The voice is old-fashioned; the patterns and materials belong to Rustic Craft II."
+      "text": "Lay out parts before beginning. Keep barrel pieces apart from stocks.$(br2)An old-fashioned trade handbook for Rustic Craft II."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Read the plates$()$(br2)Each square takes one named item. Leave empty squares empty. Component forge recipes yield one item, including Gun Screws.$(br2)$(c)Firearms require Create Mechanical Crafters.$() Standard crafting tables serve only for individual parts. Finished weapons and ammunition require kinetic power."
+      "text": "$(bold)Reading the Plates$()$(br2)Each grid square takes one named item. Leave empty squares empty.$(br2)Component forge recipes yield one item, including Gun Screws."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)A word on state secrecy$()$(br2)All firearm assembly recipes are classified state secrets and hidden from EMI/JEI. Only authorized holders of this handbook know the exact patterns.$(br2)No starting gift or loot provides this book. An Imperial Administrator must issue it via state authority."
+      "text": "$(bold)Kinetic Assembly$()$(br2)$(c)Firearms require Create Mechanical Crafters.$()$(br2)Standard crafting tables serve only for individual parts. Finished weapons and ammunition require kinetic power."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Create materials$()$(br2)Press iron or brass ingots into sheets. Heated Basin mixing joins one copper and one zinc ingot into two brass ingots.$(br2)The alloy crafting pattern uses two andesite and two iron or zinc nuggets."
+      "text": "$(bold)State Secrecy$()$(br2)All firearm assembly recipes are state secrets hidden from EMI/JEI.$(br2)Only authorized holders of this handbook know the patterns. Issued by Imperial Administrators."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Precision mechanisms$()$(br2)Begin with a Golden Sheet. Deploy a Cogwheel, a Large Cogwheel and an Iron Nugget, in that order. Repeat five times.$(br2)One attempt uses five of each applied ingredient and may give a byproduct. Count successful mechanisms before assembly."
+      "text": "$(bold)Create Materials$()$(br2)Press iron or brass ingots into sheets.$(br2)Heated Basin mixing joins 1 copper and 1 zinc ingot into 2 brass ingots.$(br2)Alloy pattern uses 2 andesite and 2 iron/zinc nuggets."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Precision Mechanisms$()$(br2)Start with a Golden Sheet. Deploy Cogwheel, Large Cogwheel, and Iron Nugget in sequence.$(br2)Repeat 5 times. Count successful mechanisms before assembly."
     }
   ]
 }

@@ -4,6 +4,57 @@ All notable changes to **The Brass Age** modpack expansion for **Rustic Craft II
 
 ---
 
+## [v1.2.0] — 2026-10-09 (Netherless Create 3-Tier Industrial Engine & Book Typography Guardrails)
+
+This minor release introduces the complete 3-Tier Industrial Netherless Create progression, establishes an automated typography validation engine that guarantees zero text overflow across all 270 Patchouli book pages, expands the guided in-game test runner to 16 full scenarios, and adds automated Test Suite 6 verifying 30/30 empirical assertions live on dedicated servers.
+
+### ✨ New Features & Systems
+
+#### 1. Netherless Create 3-Tier Industrial Progression (`create_netherless_pyro.js`)
+- **Consistent 3-Tier Architecture**: All Nether-exclusive materials are fully synthesizable in the Overworld, matching the modpack's standard Factorio-style industrial progression:
+  - **Tier 1 (Desperation / Manual Workbench)**: 1× base yield using crafting tables, manual tools, or basic furnaces.
+  - **Tier 2 (Kinetic Mechanical Automation)**: 2×–4× yield utilizing unheated Create mixer basins, fan bulk-washing, and sandpaper polishing.
+  - **Tier 3 (Thermodynamic Sulfur Surge & Sequenced Assembly)**: 8×–16× yield (400%+ industrial surge) powered by Blaze-heated mixer basins, sequenced assembly conveyor lines, and industrial crushing wheels.
+- **8 Dedicated Production Lines (38 Recipes)**:
+  1. *Netherrack Alchemy*: Cobblestone + Redstone + Lava (Tier 1: 1×, Tier 2: 2×, Tier 3 Heated Surge: 16×).
+  2. *Renewable Magma Cream*: Slimeball + Karst Sulfur / Lava (Tier 1: 1×, Tier 2: 3×, Tier 3 Heated Surge: 12×).
+  3. *Renewable Fire Charges*: Gunpowder + Charcoal + Saltpeter / Lava (Tier 1: 3×, Tier 2: 8×, Tier 3 Sequenced Assembly: 16×).
+  4. *Soul Sand & Soul Soil Geology*: Sand/Dirt + Bone Meal + Charcoal + Dirt / Lava (Tier 1: 1×, Tier 2: 4×, Tier 3 Heated Surge: 16×).
+  5. *Nether Quartz Extraction*: Soul Sand extraction (Tier 1 Manual: 1×, Tier 2 Fan Splashing: 1× + 25% Gold, Tier 3 Crushing Wheels: 2–3× Quartz + 2× Gold + Cinder Flour).
+  6. *Coal Rods & Blaze Rods*: Polished Coal Rods (`kubejs:coal_rod`) via sandpaper, infused with sulfur and lava (Tier 1: 1×, Tier 2: 2×, Tier 3 Sequenced Assembly: 6×).
+  7. *Blaze Burners & Catalytic Awakening*: Burner cages (`create:empty_blaze_burner`) crafted from iron sheets and netherrack/sulfur, awakened in kinetic basins with sulfur, saltpeter, and lava (`create:blaze_burner`).
+  8. *Ghast Tears & Crying Obsidian*: Slimeball + Phantom Membrane + Saltpeter / Water (Tier 1: 1×, Tier 2: 2×, Tier 3 Heated Surge: 8×); Obsidian + Ghast Tear + Lava $\rightarrow$ Crying Obsidian.
+
+#### 2. Patchouli Book Layout Guardrails & Zero-Overflow Typography Engine
+- **Automated Layout Validator (`tools/validate_patchouli.py`)**: Strict typographic engine calculating font widths and wrapping boundaries (116px page width, ~20–21 characters/line).
+- **Enforced Budget Constraints**:
+  - Page 1 (Title header & decorative separator): **Max 10 lines**.
+  - Page 2+ (Standard text): **Max 13 lines**.
+  - Spotlight pages (Item render & title): **Max 8 lines**.
+- **Audit Results**: 270 total pages across client and server verified with **0 text overflows or border collisions**.
+- **New In-Game Book Entries**: Added `netherless_alchemy.json` and `blaze_burner_netherless.json` with illustrated step-by-step assembly diagrams.
+
+#### 3. Interactive In-Game Test Runner Expansion (`admin_test_runner.js`)
+- **16 Guided Scenarios**: Expanded from 14 steps to include:
+  - *Step 15*: Alchimia Netherless — Nivel 1 & 2 (Netherrack, Magmă, Foc, Nisip Suflet).
+  - *Step 16*: Alchimia Netherless — Nivel 3 (Tije de Văpaie, Cuarț, Supapă Blaze Burner & Lacrimi).
+- **New Subcommands & Ergonomics**:
+  - `/brass_test help`: Displays an in-game command cheat sheet.
+  - `/brass_test netherless` (or `/brass_test pyro`): Delivers the complete chemical and mechanical kit (Cobble, Redstone, Sulfur, Saltpeter, Slimeballs, Lava, Water, Basins, Mixers, Press, Fan, Crushing Wheels, Blaze Burners, Coal Rods).
+  - Support for targeting specific players via RCON and console: `/brass_test netherless [player]` and `/brass_test fakes [player]`.
+
+#### 4. Automated Test Suite 6 & Live Empirical Verification (`admin_straja_registry.js`)
+- Added **Test Suite 6: Netherless Industrial 3-Tier Synthesis Engine** querying `server.recipeManager.getRecipes()`.
+- **30/30 Assertions Passing (100%)**: Validates licensing, maturation queues, contraband scanners, 10,000-iteration Monte Carlo counterfeit distributions, patrol book formatting, and all 38 Netherless recipes across all 3 industrial tiers.
+
+### 🐛 Bug Fixes & Refinements
+- **Create 1.21.1 Item Compatibility**: Resolved `create:sand_paper` ID resolution (with underscore) across all recipe declarations and script references.
+- **KubeJS 1.21.1 Scope Compliance**: Eliminated illegal assignments to `global` (`global.xxx = ...`), adhering to KubeJS Rhino runtime sandbox rules.
+- **Recipe Parsing Robustness**: Removed deprecated `.ignoreNBT()` call on item stacks in shapeless recipes.
+- **Civilian Document Generation & Checkpoint Arrest**: Resolved logic bugs where civilians could not generate fake randomized documents and sentry checkpoints failed to trigger arrests for illegal contraband.
+
+---
+
 ## [v1.1.2] — 2026-10-05 (Garrison Weapons Registry, Inspector Licensing & "Papers, Please" Counterfeiting)
 
 This release introduces the Central Garrison Legal Weapons Registry, Authorized Personnel Licensing, the "Papers, Please" criminal firearm counterfeiting system, automated checkpoint contraband enforcement, and penal custody integration.

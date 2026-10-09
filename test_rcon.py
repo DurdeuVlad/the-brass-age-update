@@ -3,7 +3,7 @@ import struct
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 
-HOST, PORT, PW = '127.0.0.1', 12005, 'zKamper_|_'
+HOST, PORT, PW = '127.0.0.1', 12199, 'zKamper_|_'
 
 def packet(rid, ptype, payload):
     body = struct.pack('<ii', rid, ptype) + payload.encode('utf-8') + b'\x00\x00'

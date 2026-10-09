@@ -92,10 +92,6 @@ function getNextStrajaSerial(server) {
 function strajaIsAuthorizedInspector(player) {
     if (!player) return false
     try {
-        if (typeof player.hasPermissions === 'function' && player.hasPermissions(2)) return true
-        if (typeof player.hasPermission === 'function' && player.hasPermission(2)) return true
-    } catch (e) {}
-    try {
         var tags = player.tags
         if (tags && (tags.contains('inspector') || tags.contains('gunsmith') || tags.contains('armurier'))) return true
     } catch (e) {}
@@ -454,89 +450,125 @@ ItemEvents.rightClicked(event => {
         gunStack = offhand
     }
 
-    if (!gunStack || gunStack.isEmpty() || fpGetStackId(gunStack) !== 'tacz:modern_kinetic_gun') {
-        player.tell('§e[Permis] Ține o armă poansonată în cealaltă mână pentru a-i elibera permisul.')
-        return
-    }
-
-    var tag = fpGetGunCustomTag(gunStack)
-    var isProofed = false
-    try {
-        if (typeof tag.getBoolean === 'function') {
-            isProofed = tag.getBoolean('Proofed') || (tag.getInt && tag.getInt('Proofed') == 1) || String(tag.getString('Proofed')) === 'true'
-        } else if (tag && tag.Proofed) {
-            isProofed = true
-        }
-    } catch (e) {}
-
-    var serial = ''
-    try {
-        if (typeof tag.getString === 'function') {
-            serial = tag.getString('Serial') || tag.getString('GunSerial')
-        } else if (tag) {
-            serial = tag.Serial || tag.GunSerial || ''
-        }
-    } catch (e) {}
-    var hasSerial = serial && String(serial).length > 0 && String(serial).indexOf('#RC-') === 0
-
-    var isDefaced = false
-    try {
-        if (typeof tag.getBoolean === 'function') isDefaced = tag.getBoolean('Defaced')
-        else if (tag) isDefaced = !!tag.Defaced
-    } catch (e) {}
-
-    if (!tag || (!isProofed && !hasSerial) || !serial || isDefaced) {
-        player.tell('§c[Permis] Arma din mână nu poartă o serie de poansonare! Nu se poate emite permis.')
-        return
-    }
-
+    var isInspector = strajaIsAuthorizedInspector(player)
     var playerName = player.username ? String(player.username) : String(player.getName().getString())
     var server = player.getServer ? player.getServer() : (player.server || (player.level && player.level.getServer ? player.level.getServer() : null))
-    var isInspector = strajaIsAuthorizedInspector(player)
     var todayStr = new Date().toISOString().substring(0, 10)
     try {
         var $LocalDate = Java.loadClass('java.time.LocalDate')
         todayStr = String($LocalDate.now())
     } catch (e) {}
 
-    var permitAuthor = 'Gheorghe Comandantul'
-    var permitTitle = 'Permis Port-Arma ' + serial
-    var statusText = '§2LEGAL / ÎNREGISTRAT'
-    var watermarkText = '§8Cancelaria Garnizoanei Straja'
+    var tag = gunStack && !gunStack.isEmpty() ? fpGetGunCustomTag(gunStack) : null
+    var isProofed = false
+    var serial = ''
+    var isDefaced = false
+
+    if (tag) {
+        try {
+            if (typeof tag.getBoolean === 'function') {
+                isProofed = tag.getBoolean('Proofed') || (tag.getInt && tag.getInt('Proofed') == 1) || String(tag.getString('Proofed')) === 'true'
+                isDefaced = tag.getBoolean('Defaced')
+                serial = tag.getString('Serial') || tag.getString('GunSerial') || ''
+            } else {
+                isProofed = !!tag.Proofed
+                isDefaced = !!tag.Defaced
+                serial = tag.Serial || tag.GunSerial || ''
+            }
+        } catch (e) {}
+    }
+    var hasSerial = serial && String(serial).length > 0 && String(serial).indexOf('#RC-') === 0
 
     if (isInspector) {
-        // Authentic Imperial Permit
-        permitAuthor = 'Gheorghe Comandantul'
-        permitTitle = 'Permis Port-Arma ' + serial
-        statusText = '§2LEGAL / ÎNREGISTRAT'
-        watermarkText = '§8Cancelaria Garnizoanei Straja'
-    } else {
-        // Unlicensed Counterfeit Permit (Papers, Please RNG: 5% Near Perfect, 50% Common, 45% Botched)
-        var pRoll = Math.random()
-        if (pRoll < 0.05) {
-            // Tier 1: Near Perfect (Micro-tell in author name: missing 'n' -> Gheorghe Comandatul, subtle trailing period)
-            permitAuthor = 'Gheorghe Comandatul'
-            permitTitle = 'Permis Port-Arma ' + serial
-            statusText = '§2LEGAL / ÎNREGISTRAT'
-            watermarkText = '§8Cancelaria Garnizoanei Straja.'
-        } else if (pRoll < 0.55) {
-            // Tier 2: Common Fake (Wrong shade of green §a instead of §2)
-            permitAuthor = 'Gheorghe Comandantul'
-            permitTitle = 'Permis Port-Arma ' + serial
-            statusText = '§aLEGAL / ÎNREGISTRAT'
-            watermarkText = '§8Cancelaria Garnizoanei Straja'
-        } else {
-            // Tier 3: Botched / Crude (Wrong title, fake official name, red stamped status, ridiculous watermark)
-            permitAuthor = 'Comandant Gheorghe'
-            permitTitle = 'Permis ' + serial
-            statusText = '§cAPROBAT / STRAJA'
-            watermarkText = '§8Cancelaria Mahala'
+        // Official Inspector: Requires proofed, non-defaced weapon in hand
+        if (!gunStack || gunStack.isEmpty() || fpGetStackId(gunStack) !== 'tacz:modern_kinetic_gun') {
+            player.tell('§e[Permis Oficial] Ține o armă poansonată în cealaltă mână pentru a-i elibera permisul.')
+            return
         }
+        if (!tag || (!isProofed && !hasSerial) || !serial || isDefaced) {
+            player.tell('§c[Permis Oficial] Arma din mână nu poartă o serie de poansonare validă! Nu se poate emite permis.')
+            return
+        }
+
+        var permitAuthor = 'Gheorghe Comandantul'
+        var permitTitle = 'Permis Port-Arma ' + serial
+        var statusText = '§2LEGAL / ÎNREGISTRAT'
+        var watermarkText = '§8Cancelaria Garnizoanei Straja'
+
+        var page1Text = '§6§lPERMIS PORT-ARMĂ§r\n\n' +
+            '§0Posesor: §1' + playerName + '\n' +
+            '§0Serie: §2' + serial + '\n' +
+            '§0Model: §0Flintlock 16.5mm\n' +
+            '§0Statut: ' + statusText + '\n' +
+            '§0Emis: §8' + todayStr + '\n\n' +
+            watermarkText
+
+        var page2Text = '§6§lDISPOZIȚII LEGALE§r\n\n' +
+            '§0Prezentul act certifică înregistrarea armei în evidențele oficiale Straja.\n\n' +
+            '§8Neprezentarea la control atrage confiscarea armei și arestarea posesorului.'
+
+        var rawJson1 = JSON.stringify({ text: page1Text }).replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+        var rawJson2 = JSON.stringify({ text: page2Text }).replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+
+        var giveCmd = 'give ' + playerName +
+            ' minecraft:written_book[minecraft:written_book_content={title:\'' + permitTitle.replace(/'/g, "\\'") + '\',author:\'' + permitAuthor + '\',pages:[\'' + rawJson1 + '\',\'' + rawJson2 + '\']},' +
+            'minecraft:custom_data={PermitOfficial:1b,Serial:\'' + serial + '\'},' +
+            'minecraft:item_name=\'{"text":"Permis Port-Armă Oficial","color":"gold","bold":true,"italic":false}\',' +
+            'minecraft:lore=[\'{"text":"Serie: ' + serial + '","color":"gray","italic":false}\',\'{"text":"✔ Autentificat de Garnizoana Straja","color":"green","italic":false}\']] 1'
+
+        if (server) server.runCommandSilent(giveCmd)
+        if (typeof player.swing === 'function') player.swing()
+        if (!player.isCreative()) item.shrink(1)
+        player.tell('§a[Permis] A fost emis permisul oficial de port-armă pentru seria ' + serial + '!')
+        return
+    }
+
+    // Civilian / Counterfeiter: Papers, Please RNG (5% Tier 1, 50% Tier 2, 45% Tier 3)
+    // If not holding a valid serial, generate a plausible black market serial
+    var forgedSerial = serial && hasSerial ? String(serial) : ('#RC-15-' + Math.floor(1000 + Math.random() * 9000))
+    var pRoll = Math.random()
+    var fakeTier = 2
+    var permitAuthor = 'Gheorge Comandantul'
+    var permitTitle = 'Permis Armă ' + forgedSerial.replace('-', '_')
+    var statusText = '§aLEGAL / STRAJA'
+    var watermarkText = '§8Cancelaria Garnizoana Straja\n§8[Cerneală întinsă de calopur]'
+    var itemName = '{"text":"Permis Port-Armă [T2 Fals Comun]","color":"gold","bold":true,"italic":false}'
+    var loreArray = [
+        '\'{"text":"Serie: ' + forgedSerial + '","color":"gray","italic":false}\'',
+        '\'{"text":"⚠ [Document cu nereguli grafice]","color":"yellow","italic":false}\'',
+        '\'{"text":"Piața Neagră","color":"dark_gray","italic":true}\''
+    ]
+
+    if (pRoll < 0.05) {
+        // Tier 1: Near Perfect (5%) — subtle letter swap in author and trailing period
+        fakeTier = 1
+        permitAuthor = 'Gheorghe Comandatul'
+        permitTitle = 'Permis Port-Arma ' + forgedSerial
+        statusText = '§2LEGAL / ÎNREGISTRAT'
+        watermarkText = '§8Cancelaria Garnizoanei Straja.'
+        itemName = '{"text":"Permis Port-Armă [T1 Fals Subtil]","color":"aqua","bold":true,"italic":false}'
+        loreArray = [
+            '\'{"text":"Serie: ' + forgedSerial + '","color":"gray","italic":false}\'',
+            '\'{"text":"(Caligrafie imperială aproape identică)","color":"dark_gray","italic":true}\''
+        ]
+    } else if (pRoll >= 0.55) {
+        // Tier 3: Botched / Tinichea (45%) — comical author, misspelled title, red stamp
+        fakeTier = 3
+        permitAuthor = 'Comandant Gheorghe'
+        permitTitle = 'Hârtie de Armă ' + forgedSerial
+        statusText = '§cAPROBAT PE CINSTE'
+        watermarkText = '§8Atelier Mahala Obor\n§4FALS GROSOLAN'
+        itemName = '{"text":"Permis Port-Armă [T3 Fals Grosolan]","color":"red","bold":true,"italic":false}'
+        loreArray = [
+            '\'{"text":"Serie: ' + forgedSerial + '","color":"gray","italic":false}\'',
+            '\'{"text":"✖ [FALS GROSOLAN / IMITAȚIE RIDICOLĂ]","color":"dark_red","bold":true,"italic":false}\'',
+            '\'{"text":"Contrabandă Grad 3","color":"red","italic":false}\''
+        ]
     }
 
     var page1Text = '§6§lPERMIS PORT-ARMĂ§r\n\n' +
         '§0Posesor: §1' + playerName + '\n' +
-        '§0Serie: §2' + serial + '\n' +
+        '§0Serie: §2' + forgedSerial + '\n' +
         '§0Model: §0Flintlock 16.5mm\n' +
         '§0Statut: ' + statusText + '\n' +
         '§0Emis: §8' + todayStr + '\n\n' +
@@ -548,16 +580,15 @@ ItemEvents.rightClicked(event => {
 
     var rawJson1 = JSON.stringify({ text: page1Text }).replace(/\\/g, '\\\\').replace(/'/g, "\\'")
     var rawJson2 = JSON.stringify({ text: page2Text }).replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+
     var giveCmd = 'give ' + playerName +
-        ' minecraft:written_book[minecraft:written_book_content={title:\'' + permitTitle.replace(/'/g, "\\'") + '\',author:\'' + permitAuthor + '\',pages:[\'' + rawJson1 + '\',\'' + rawJson2 + '\']}] 1'
+        ' minecraft:written_book[minecraft:written_book_content={title:\'' + permitTitle.replace(/'/g, "\\'") + '\',author:\'' + permitAuthor + '\',pages:[\'' + rawJson1 + '\',\'' + rawJson2 + '\']},' +
+        'minecraft:custom_data={ForgedPermit:1b,FakeTier:' + fakeTier + 'b,Serial:\'' + forgedSerial + '\'},' +
+        'minecraft:item_name=\'' + itemName.replace(/'/g, "\\'") + '\',' +
+        'minecraft:lore=[' + loreArray.join(',') + ']] 1'
 
     if (server) server.runCommandSilent(giveCmd)
     if (typeof player.swing === 'function') player.swing()
     if (!player.isCreative()) item.shrink(1)
-
-    if (isInspector) {
-        player.tell('§a[Permis] A fost emis permisul oficial de port-armă pentru seria ' + serial + '!')
-    } else {
-        player.tell('§e[Piața Neagră] Ai plastografiat un permis de port-armă pentru seria ' + serial + '!')
-    }
+    player.tell('§e[Piața Neagră] Ai plastografiat un permis de port-armă falsificat (Nivel ' + fakeTier + ') pentru seria ' + forgedSerial + '!')
 })

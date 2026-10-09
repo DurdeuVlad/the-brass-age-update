@@ -1,0 +1,32 @@
+{
+  "name": "Netherless Synthesis",
+  "category": "patchouli:workshop",
+  "icon": "minecraft:blaze_rod",
+  "sortnum": 33,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The sealed Nether forces engineers to synthesize exotic materials on the surface.$(br2)Straja's mineral deposits power the entire 3-tier industrial chain."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)1. Soul Geology$()$(br2)• T1: Sand + Bone Meal + Coal (1x)$(br)• T2: Basin: 2 Sand + Bone + Lava (4x)$(br)• T3: Heated: 4 Sand + Saltpeter + Sulfur + Lava (16x!)"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)2. Nether Quartz$()$(br2)• T1: Soul Sand + Flint + Nugget (1x)$(br)• T2: Splashing Fan on Soul Sand (1x)$(br)• T3: Crushing Wheels on Soul Sand (2-3x + Gold Nuggets)"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Coal Rod Precursor$()$(br2)Polish Coal or Charcoal with Sandpaper in hand or via Deployer.$(br2)Produces dense carbon Coal Rods ready for thermal infusion."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)3. Blaze Rod Synthesis$()$(br2)• T1: Coal Rod + 2 Charges + Magma (1x)$(br)• T2: Basin: Coal Rod + 2 Sulfur + Lava (2x)$(br)• T3: Sequenced: Rod + Sulfur + Lava + Saltpeter (6x!)"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)4. Ghast Tears$()$(br2)• T1: Slime + Membrane + Saltpeter (1x)$(br)• T2: Basin: Slime + Membrane + Water (2x)$(br)• T3: Heated Basin Distillation (8x!)$(br2)Obsidian + Tear + Lava makes Crying Stone."
+    }
+  ]
+}

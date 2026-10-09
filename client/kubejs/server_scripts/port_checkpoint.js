@@ -827,10 +827,6 @@ function cpIsCb(id, site) {
 function cpIsAuthorizedInspector(player) {
   if (!player) return false
   try {
-    if (typeof player.hasPermissions === 'function' && player.hasPermissions(2)) return true
-    if (typeof player.hasPermission === 'function' && player.hasPermission(2)) return true
-  } catch (e) {}
-  try {
     var tags = player.tags
     if (tags && (tags.contains('inspector') || tags.contains('gunsmith') || tags.contains('armurier'))) return true
   } catch (e) {}
@@ -952,6 +948,33 @@ function cpScanContraband(player, site) {
         entry.count += stack.getCount()
         return
       }
+    }
+
+    // Check counterfeit document contraband
+    if (id === 'minecraft:written_book') {
+      try {
+        var tag = stack.get('minecraft:custom_data')
+        if (tag) {
+          var isForged = false
+          var fakeTier = 0
+          if (typeof tag.getBoolean === 'function') {
+            isForged = tag.getBoolean('ForgedPermit')
+            fakeTier = typeof tag.getInt === 'function' ? tag.getInt('FakeTier') : Number(tag.FakeTier || 0)
+          } else {
+            isForged = !!tag.ForgedPermit
+            fakeTier = Number(tag.FakeTier || 0)
+          }
+          if (isForged && fakeTier >= 3 && !cpIsAuthorizedInspector(player)) {
+            var entry = found['contraband_forged_permit']
+            if (entry === undefined) {
+              entry = { count: 0, name: 'Permis de port-armă falsificat grosolan (Piața Neagră)' }
+              found['contraband_forged_permit'] = entry
+            }
+            entry.count += stack.getCount()
+            return
+          }
+        }
+      } catch (e) {}
     }
 
     if (!cpIsCb(id, site)) {

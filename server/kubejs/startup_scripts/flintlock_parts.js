@@ -21,6 +21,7 @@ StartupEvents.registry('item', event => {
         ['ramrod', 'Steel Ramrod'],
 
         // Chemical, Nitrate & Powder Intermediates
+        ['coal_rod', 'Polished Coal Rod'],
         ['saltpeter', 'Purified Saltpeter'],
         ['crushed_dripstone', 'Crushed Dripstone'],
         ['crude_gunpowder_cake', 'Crude Gunpowder Cake'],

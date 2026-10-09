@@ -1,18 +1,18 @@
 {
-  "name": "Reinforced Rifle Stock",
+  "name": "Reinforced Stock",
   "category": "patchouli:stock",
   "icon": "kubejs:rifle_stock",
-  "sortnum": 21,
+  "sortnum": 2,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "For the shoulder arm, gather two further hardwood blanks and the bound pistol stock. Add leather, a screw and two brass bands. The resulting reinforced stock is reserved for the final long-gun assembly."
+      "text": "Gather two hardwood blanks and the pistol stock. Add leather, a screw and two brass bands to produce the reinforced shoulder stock."
     },
     {
       "type": "patchouli:spotlight",
       "item": "kubejs:rifle_stock",
       "link_recipe": false,
-      "text": "One finished Reinforced Rifle Stock. Keep this piece ready for the next assembly."
+      "text": "One finished Reinforced Stock. Keep this piece ready for the final assembly."
     },
     {
       "type": "patchouli:crafting",

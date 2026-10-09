@@ -1,18 +1,18 @@
 {
-  "name": "Bound Pistol Stock",
+  "name": "Pistol Stock",
   "category": "patchouli:stock",
   "icon": "kubejs:pistol_stock",
-  "sortnum": 20,
+  "sortnum": 1,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Bind the short stock with leather and furnish it with brass and screws. Its curved grip marks it as the pistol stock. The rifle also uses one such stock as an intermediate, so do not mistake it for a completed pistol."
+      "text": "Bind two hardwood blanks with leather and a gun screw.$(br2)Serves directly for the pistol and forms the base of the shoulder stock."
     },
     {
       "type": "patchouli:spotlight",
       "item": "kubejs:pistol_stock",
       "link_recipe": false,
-      "text": "One finished Bound Pistol Stock. Keep this piece ready for the next assembly."
+      "text": "One finished Pistol Stock. Keep this piece ready for the next assembly."
     },
     {
       "type": "patchouli:crafting",

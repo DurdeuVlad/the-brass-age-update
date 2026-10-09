@@ -2,17 +2,17 @@
   "name": "Reinforced Long Barrel",
   "category": "patchouli:barrel",
   "icon": "kubejs:rifle_barrel",
-  "sortnum": 12,
+  "sortnum": 1,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Lay the two finished short barrels at opposite ends of the grid. Tempered steel braces the corners, brass bands flank the centre, and a precision mechanism occupies the heart. Together these make the reinforced long barrel."
+      "text": "Lay two short barrels at opposite ends of the grid. Tempered steel braces corners, brass bands flank centre, and a precision mechanism joins them into the long barrel."
     },
     {
       "type": "patchouli:spotlight",
       "item": "kubejs:rifle_barrel",
       "link_recipe": false,
-      "text": "One finished Reinforced Long Barrel. Keep this piece ready for the next assembly."
+      "text": "One finished Reinforced Long Barrel. Keep this piece ready for final assembly."
     },
     {
       "type": "patchouli:crafting",

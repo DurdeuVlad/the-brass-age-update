@@ -1,7 +1,7 @@
 # ⚜ THE BRASS AGE UPDATE — TESTER & REVIEW GUIDE ⚜
 ### Ghid de Testare & Instalare pentru Testeri (Rustic Craft II)
 
-Versiune: `v1.1.2-Release`  
+Versiune: `v1.2.0-Release`  
 Platformă: `Minecraft 1.21.1` / `NeoForge 21.1.248`  
 Modpack: **Rustic Craft II**  
 Repository: `DurdeuVlad/the-brass-age-update`
@@ -9,13 +9,11 @@ Repository: `DurdeuVlad/the-brass-age-update`
 ---
 
 > [!IMPORTANT]
-> **NOUTĂȚI MAJORE ÎN v1.1.2**:
-> 1. **Registrul Central al Garnizoanei Straja**: Registru central de arme și posesori legali cu maturare pending de 24h pentru înregistrările noi.
-> 2. **Cărți Fizice de Patrulă Straja (`/straja book give`)**: Ghid de rol și registru tipărit pentru soldați, cu indicii subtile pentru depistarea falsurilor.
-> 3. **Licențiere Oficială Inspectori & Transportatori (`/straja inspector` & `/straja transporter`)**: Doar inspectorii autorizați pot ștanța arme și emite permise. Transportatorii și lăzile sigilate sunt scutiți la controale.
-> 4. **Sistem de Falsificare "Papers, Please" pe Piața Neagră**: Șanse calibrate la falsificare neautorizată (5% Nivel 1 Aproape Perfect, 50% Nivel 2 Comun Defectuos, 45% Nivel 3 Grosolan Eșuat).
-> 5. **Puncte de Control & Arest Penitenciar Automatizat**: Armele fără serie, pilite și falsurile de nivel 3 sunt confiscate imediat cu arestare la închisoare (`/straja checkpoint` & `/straja prison`).
-> 6. **Test Automatizat 26/26 Aserțiuni (`/straja test`)**: Rulare instantanee din RCON sau consolă cu verificare completă a tuturor mecanicilor.
+> **NOUTĂȚI MAJORE ÎN v1.2.0**:
+> 1. **Alchimia Netherless Create pe 3 Niveluri Industriale**: Sinteză completă a tuturor resurselor de Nether în Overworld urmând arhitectura industrială consacrată: Nivel 1 Desperare (Manual 1×) $\rightarrow$ Nivel 2 Cinetic Create (2×–4×) $\rightarrow$ Nivel 3 Surge Termic cu Sulf & Asamblare Secvențială (8×–16×, 400% surge).
+> 2. **Sistem de Tipografie Zero-Overflow pentru Cărțile Patchouli**: 270 pagini auditate și verificate împotriva depășirilor de chenar (zero text clipping, font wrap calibrated).
+> 3. **Ghid Interactiv Extins la 16 Pași (`/brass_test`)**: Pașii 15 și 16 introduc testarea completă a alchimiei Netherless, cu comenzi dedicate (`/brass_test help`, `/brass_test netherless`) și butoane interactive.
+> 4. **Suită Automatizată Extinsă la 30/30 Aserțiuni (`/straja test`)**: 100% rată de succes pe serverul dedicat live, inclusiv validarea celor 38 de rețete alchimice pe toate cele 3 niveluri.
 
 ---
 
@@ -26,11 +24,12 @@ Acest export conține sistemul complet al expansiunii **The Brass Age**:
 2. **Limită Realistă de Transport & Lăzi Militare**: Pe jos, ostașul poartă maxim 1 armă lungă (muschetă) pe spate și 2 arme scurte (pistoale) la brâu. Pentru transportul de mari cantități, armamentul se ambalează în **Lăzi Militare Sigilate** (`kubejs:crate_muskets` - 8 muschete, `kubejs:crate_pistols` - 8 pistoale, `kubejs:ammunition_crate` - 256 muniții), ideale pentru transportul în căruțe de povară (*Trotting Wagons*), vagoane de tren Create sau animale de povară.
 3. **Muniție & Război Supranatural**: Cartușe sfințite de argint (daune 4× împotriva strigoilor/nemorților și 2× împotriva vampirilor), Mitralii (Canister Shot - 8 alice) și Gloanțe Incendiare de sulf.
 4. **Economie Industrială pe 3 Niveluri (Factorio-Style)**: Rafinarea pulberii negre (Mojar manual -> Moară cu ciocane Create & Corning -> Linie chimică automatizată de asamblare secvențială).
-5. **5 Linii Civile P.U.L.A SRL**: Benzi de sulf pentru vinificație (Vinery), Îngrășământ mineral Super-Fosfat (creștere triplă a recoltelor), Săpun medicinal antiseptic de sulf, Chibrituri de siguranță, Piele grea tratată cu vitriol.
-6. **Mina Continentală Straja**: Integrare completă în motorul de mine `custom_mines` cu 4 zone de adâncime calibrate.
-7. **Sistem Legal de Poansonare & Piață Neagră**: Armele noi sunt contrabandă (`NEPOANSONAT`); baterea pe nicovală cu Sigiliul Imperial aplică serie unică `#RC-15-XXXX`; polizarea pe tocilă (grindstone) pilește seria pentru lumea interlopă.
-8. **UX Prietenos**: Comenzi universale `/flintlock` și `/arma`, comenzi de operator `/gunsmith book [player]`, HUD dinamic pe actionbar la reîncărcare (numărătoare inversă 20s, avertizare la sprint).
-9. **34 Texturi Pixel-Art Autentice 16x16**: Toate piesele, pulberile, lăzile și armele au artă completă stil Minecraft.
+5. **Alchimia Netherless Create (3 Niveluri)**: Sinteză completă pentru Netherrack, Magmă, Foc, Nisip Suflet, Cuarț, Tije de Văpaie, Blaze Burners și Lacrimi de Ghast.
+6. **5 Linii Civile P.U.L.A SRL**: Benzi de sulf pentru vinificație (Vinery), Îngrășământ mineral Super-Fosfat (creștere triplă a recoltelor), Săpun medicinal antiseptic de sulf, Chibrituri de siguranță, Piele grea tratată cu vitriol.
+7. **Mina Continentală Straja**: Integrare completă în motorul de mine `custom_mines` cu 4 zone de adâncime calibrate.
+8. **Sistem Legal de Poansonare & Piață Neagră**: Armele noi sunt contrabandă (`NEPOANSONAT`); baterea pe nicovală cu Sigiliul Imperial aplică serie unică `#RC-15-XXXX`; polizarea pe tocilă (grindstone) pilește seria pentru lumea interlopă.
+9. **UX Prietenos**: Comenzi universale `/flintlock` și `/arma`, comenzi de operator `/gunsmith book [player]`, HUD dinamic pe actionbar la reîncărcare (numărătoare inversă 20s, avertizare la sprint).
+10. **34 Texturi Pixel-Art Autentice 16x16**: Toate piesele, pulberile, lăzile și armele au artă completă stil Minecraft.
 
 ---
 
@@ -39,7 +38,7 @@ Acest export conține sistemul complet al expansiunii **The Brass Age**:
 ### Opțiunea A: Instalare Automată 1-Click (Recomandată)
 1. Deschide launcher-ul tău (Prism Launcher, CurseForge, Modrinth sau ATLauncher).
 2. Dă click-dreapta pe instanța **Rustic Craft II** și alege **Open Folder** / **Folder Instanță** (unde vezi folderele `mods`, `config`, `kubejs`).
-3. Descarcă și extrage **`TheBrassAge-Update-All-In-One-v1.1.2.zip`** direct în acel folder.
+3. Descarcă și extrage **`TheBrassAge-Update-All-In-One-v1.2.0.zip`** direct în acel folder.
 4. Dă dublu-click pe **`install_patch.bat`** (sau click-dreapta `Run with PowerShell` pe `install_patch.ps1`).
 5. Gata! Pornește jocul.
 
@@ -53,7 +52,7 @@ Dacă preferi să copiezi manual, extrage arhiva și suprascrie (Overwrite All) 
 
 ### Opțiunea C: Pentru Administratori de Server Dedicat
 1. Oprește serverul dedicat (`stop`).
-2. Descarcă **`TheBrassAge-Update-Server-v1.1.2.zip`** (sau `All-In-One`).
+2. Descarcă **`TheBrassAge-Update-Server-v1.2.0.zip`** (sau `All-In-One`).
 3. Extrage în rădăcina serverului dedicat (sau rulează `install_patch.bat`).
 4. Repornește serverul.
 
@@ -64,13 +63,18 @@ Dacă preferi să copiezi manual, extrage arhiva și suprascrie (Overwrite All) 
 Pentru a testa rapid fără a mina resursele manual, deschide chat-ul și folosește următoarele comenzi:
 
 ### 🎮 Ghid Interactiv de Testare Pas-cu-Pas (Recomandat — 1-Click Dumbproof)
-- `/brass_test` (sau `/gunsmith test` / `/testguide`)  
-  *§c[ADMIN ONLY, OP Level 2] §aDeschide ghidul interactiv pas-cu-pas în chat! Te ghidează prin fiecare din cele 9 teste, oferă butoane clickabile pentru echiparea automată a kitului de testare (`[📦 Dă-mi Kitul]`), spawnare de ținte (`[👾 Spawn Zombie]`) și confirmare pas cu pas (`[✔ Confirmă & Pasul Următor]`). Nu mai trebuie să tastezi manual nicio comandă `/give`!*
+- `/brass_test help`  
+  *Afișează ghidul complet al comenzilor de testare in-game.*
+- `/brass_test` (sau `/gunsmith_test` / `/testguide`)  
+  *§c[ADMIN ONLY, OP Level 2] §aDeschide ghidul interactiv pas-cu-pas în chat! Te ghidează prin fiecare din cele 16 teste, oferă butoane clickabile pentru echiparea automată a kitului de testare (`[📦 Dă-mi Kitul]`), spawnare de ținte (`[👾 Spawn Zombie]`) și confirmare pas cu pas (`[✔ Confirmă & Pasul Următor]`). Nu mai trebuie să tastezi manual nicio comandă `/give`!*
 - `/brass_test next` - Confirmă testul curent și trece la pasul următor.
 - `/brass_test prev` - Se întoarce la pasul anterior.
 - `/brass_test give` - Echipează kitul de materiale pentru pasul curent.
-- `/brass_test goto <1..9>` - Sare direct la un pas specific (ex: `/brass_test 4`).
+- `/brass_test netherless` (sau `/brass_test pyro`) - Echipează kitul complet de alchimie Netherless (ingrediente + utilaje Create).
+- `/brass_test fakes` - Echipează pachetul de arme și permise contrafăcute.
+- `/brass_test goto <1..16>` - Sare direct la un pas specific (ex: `/brass_test 15`).
 - `/brass_test reset` - Resetează ghidul la Pasul 1 și curăță efectele negative.
+- `/straja test` - Rulează suita completă de 30 teste automate empirice.
 
 ### Manual & Ghiduri Clasice
 - `/flintlock` sau `/arma`  
@@ -357,7 +361,40 @@ Pentru a testa rapid fără a mina resursele manual, deschide chat-ul și folose
   - Eliberarea prin `/brass_test release` sau `/brass_test unjail` funcționează **întotdeauna** pentru OP Level 2, indiferent de lista `SP_JAILERS`.
   - Modul de joc revine la Survival, persistentData de arest (`cpJailed`, `cpFugitive`, `strajaThief`) este curățat complet.
   - Nu există niciun scenariu în care testerul rămâne blocat în Adventure permanent.
-> ⏩ **Validare Finală**: Apasă `[ ✔ CONFIRMĂ & FINALIZEAZĂ TESTUL! ]` pentru a vedea ecranul de succes și a curăța efectele temporare.
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
+
+---
+
+### ✅ Testul 15: Alchimia Netherless — Nivel 1 & 2 (Netherrack, Magmă, Foc, Nisip Suflet) *(NOU în v1.2.0)*
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 15`, apasă `[ 📦 DĂ-MI KITUL DE TEST ]` (sau `/brass_test netherless`) pentru a primi toate ingredientele minerale și bazinele Create!
+- **Ce testezi**: Sinteza mineralelor de bază din Nether în Overworld prin rețete de banc de lucru (Nivel 1) și mixare cinetică neîncălzită în bazin Create (Nivel 2).
+- **Cum testezi**:
+  1. **Nivel 1 (Manual)**: Deschide masa de lucru și combină Cobblestone + Redstone + Găleată de Lavă $\rightarrow$ obții **1x Netherrack** (găleata goală este returnată).
+  2. **Nivel 1 (Manual)**: Combină Slimeball + Sulf Karstic $\rightarrow$ obții **1x Magma Cream**.
+  3. **Nivel 1 (Manual)**: Combină Nisip + Oase măcinate + Cărbune + Pământ $\rightarrow$ obții **1x Nisip al Sufletelor** (sau Nisip al Pământului).
+  4. **Nivel 2 (Cinetic)**: Plasează un Bazin Create cu mixer mecanic (neîncălzit) alimentat prin rotație. Pune 1 Cobble + 1 Redstone + 100 mB Lavă $\rightarrow$ mixerul produce **2x Netherrack** (randament dublu).
+  5. **Nivel 2 (Cinetic)**: Pune 2x Slimeball + 100 mB Lavă în bazin neîncălzit $\rightarrow$ produce **3x Magma Cream**.
+- **Rezultat Așteptat**:
+  - Rețetele manuale funcționează direct în masa de lucru fără nicio sursă de energie externă.
+  - Mixarea cinetică Create dublează sau triplează randamentul resurselor.
+  - Nu este necesar niciun acces sau portal în Nether!
+> ⏩ **Validare Pas**: Apasă `[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]` în chat pentru a avansa.
+
+---
+
+### ✅ Testul 16: Alchimia Netherless — Nivel 3 (Tije de Văpaie, Cuarț, Supapă Blaze Burner & Lacrimi) *(NOU în v1.2.0)*
+> 💡 **Comandă Rapidă 1-Click**: Rulează `/brass_test 16`, apasă `[ 📦 DĂ-MI KITUL DE TEST ]` pentru șmirghel, ventilatoare, prese, cuști de burner și roți de măcinare!
+- **Ce testezi**: Spălarea cu ventilator, șlefuirea tijelor de cărbune, asamblarea secvențială, trezirea catalitică a arzătorului Blaze Burner și saltul termic de 400% (Nivel 3 Surge).
+- **Cum testezi**:
+  1. **Test Cuarț Nivel 2**: Plasează un Nisip al Sufletelor în fața unui ventilator Create suflând prin apă (Splashing) $\rightarrow$ obții **1x Cuarț Nether + 25% Pepite de Aur**.
+  2. **Test Tije de Văpaie**: Lustruiește un cărbune cu șmirghel (`create:sand_paper`) $\rightarrow$ obții o **Tijă de Cărbune** (`kubejs:coal_rod`). Infuzează tija cu sulf și lavă în bazin sau pe bandă de asamblare secvențială $\rightarrow$ obții **Tije de Văpaie**.
+  3. **Test Trezire Blaze Burner (Nivel 2)**: Pune într-un bazin neîncălzit cu mixer o Cușcă Burner (`create:empty_blaze_burner`) + 4 Sulf + 2 Salpetru + Magmă + 1000 mB Lavă $\rightarrow$ se trezește un nou **Blaze Burner activ** (`create:blaze_burner`)!
+  4. **Test Nivel 3 Surge Termic (400%)**: Aprinde un Blaze Burner sub un bazin Create. Amestecă 4 Nisip + 2 Salpetru + 1 Sulf + 250 mB Lavă $\rightarrow$ mixerul produce **16 Nisip al Sufletelor** (salt masiv de 400%)!
+  5. **Test Lacrimi Ghast Nivel 3**: Distilează termic 4 Slimeball + 2 Salpetru + 1 Sulf + 500 mB Apă $\rightarrow$ obții **8 Lacrimi de Ghast**.
+- **Rezultat Așteptat**:
+  - Economia de Nether este 100% regenerabilă și integrată perfect cu mașinăriile Create.
+  - Producția industrială avansată este răsplătită cu randamente masive (400%+ surge cu încălzire și sulf).
+> ⏩ **Validare Finală**: Apasă `[ ✔ CONFIRMĂ & FINALIZEAZĂ TESTUL! ]` pentru a vedea ecranul festiv de completare a suitei de 16 scenarii!
 
 ---
 

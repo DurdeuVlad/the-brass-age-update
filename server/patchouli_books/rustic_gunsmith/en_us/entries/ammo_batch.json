@@ -6,19 +6,19 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Cut two Iron or Zinc Nuggets into twenty large cores. Run the wad sequence once with four Paper to make thirty Wads."
+      "text": "$(bold)Skirmish Lot (16)$()$(br)• Cores: 2 Nuggets (20 Cores)$(br)• Wads: 4 Paper (30 Wads)$(br)• Powder: 1 Basin mix (4 Charges)$(br2)Run crafter 4 times for 16 rounds."
     },
     {
       "type": "patchouli:text",
-      "text": "Mix two Gunpowder, one Charcoal and 250 mB Water into ten cakes. Smoke just one cake, then press it into four charges.$(br2)Run the ammunition pattern four times."
+      "text": "$(bold)Company Lot (64)$()$(br)• Cores: 7 Nuggets (70 Cores)$(br)• Wads: 12 Paper (90 Wads)$(br)• Powder: 1 Surge (16 Charges)$(br2)Crafter runs 16 times for a full load of 64 rounds."
     },
     {
       "type": "patchouli:text",
-      "text": "The lot yields sixteen rounds. Four cores, fourteen wads and nine undried cakes remain.$(br2)Fuel and machine construction are additional. Four rounds require one assembly cycle; sixty-four rounds require sixteen cycles."
+      "text": "$(bold)Regiment Crate (256)$()$(br2)For long overland marches, assemble 256 rounds (4 Tier 3 surges, 26 nuggets, 9 wad passes).$(br2)Surround a Wooden Chest with 8x32 rounds to seal an $(bold)Ammunition Crate$()."
     },
     {
       "type": "patchouli:text",
-      "text": "Carry the finished ammo in your inventory. Hold either gun and use the configured TaCZ Reload key. Both guns hold one round. Wait for the reload animation to finish."
+      "text": "$(bold)Firing & Reloading$()$(br2)Carry ammo in inventory. Press [R] while holding a firearm.$(br2)Weapons hold 1 round. Put special ammunition (Silver, Canister, Incendiary) in your $(italic)offhand$() to chamber it first."
     }
   ]
 }

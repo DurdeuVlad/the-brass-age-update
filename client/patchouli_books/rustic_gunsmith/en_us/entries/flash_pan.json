@@ -2,11 +2,11 @@
   "name": "Brass Flash Pan",
   "category": "patchouli:lock",
   "icon": "kubejs:flash_pan",
-  "sortnum": 16,
+  "sortnum": 2,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Prepare the brass pan from four brass sheets, a tempered piece and a screw. Its golden bowl distinguishes it from the hammer and trigger. Store these small lock parts together to avoid confusing the later assembly."
+      "text": "Beat brass sheets into the shallow priming pan.$(br2)One pan is required for each lock. Brass resists fouling of powder."
     },
     {
       "type": "patchouli:spotlight",

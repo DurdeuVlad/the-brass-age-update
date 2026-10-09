@@ -1,0 +1,32 @@
+{
+  "name": "Overworld Blaze Burners",
+  "category": "patchouli:workshop",
+  "icon": "create:blaze_burner",
+  "sortnum": 32,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "On Straja's frontier, the Nether is sealed.$(br2)Through karst mineral alchemy, gunsmiths awaken eternal Blaze Burners in the Overworld without captured Blazes."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)1. Netherrack Alchemy$()$(br2)• T1: Cobble + Redstone + Lava (1x)$(br)• T2: Basin: 100mB Lava (2x)$(br)• T3: Heated Basin + Karst Sulfur (8x!)$(br2)Milling yields Cinder Flour."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)2. Magma Cream$()$(br2)• T1: Slime + Karst Sulfur (1x)$(br)• T2: Basin: Slime + Sulfur + Lava (3x)$(br)• T3: Heated: 4 Slime + 2 Sulfur + Saltpeter (12x!)"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)3. Fire Charges$()$(br2)• T1: Powder + Coal + Saltpeter (3x)$(br)• T2: Basin: Powder + Coal + Lava (8x)$(br)• T3: Sequenced on Coal (16x!)"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Empty Burner Cage$()$(br2)Craft in workbench:$(br)• Top, Left, Right, Bot: Iron Sheet$(br)• Center: Netherrack or Sulfur$(br2)Provides housing for eternal flame."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Burner Awakening$()$(br2)• T1: Cage + 8 Charges + 4 Magma + Lava Bucket$(br)• T2: Unheated Basin: Cage + 4 Sulfur + 2 Saltpeter + Magma + Lava$(br)• T3: Sequenced Assembly with Rod"
+    }
+  ]
+}

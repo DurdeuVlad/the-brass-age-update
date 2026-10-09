@@ -2,17 +2,17 @@
   "name": "Mainspring Blank",
   "category": "patchouli:forge",
   "icon": "kubejs:mainspring_blank",
-  "sortnum": 13,
+  "sortnum": 4,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "A lock begins with its spring. Arrange five iron sheets in the open, bent pattern shown on this plate. Do not fill the empty squares. The resulting blank still requires the furnace before it belongs in the trigger assembly."
+      "text": "Wind iron nuggets in a ring to form the coiled spring blank.$(br2)One serves for the lock, another for the trigger group."
     },
     {
       "type": "patchouli:spotlight",
       "item": "kubejs:mainspring_blank",
       "link_recipe": false,
-      "text": "One finished Mainspring Blank. Keep this piece ready for the next assembly."
+      "text": "One untempered spring. It must be tempered in a blast furnace before it can be used."
     },
     {
       "type": "patchouli:crafting",

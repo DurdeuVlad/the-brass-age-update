@@ -1,5 +1,5 @@
-// Interactive Step-by-Step In-Game Test Guide for The Brass Age (v1.1.0)
-// OP-only command system that handhelds admins through all 9 test scenarios.
+// Interactive Step-by-Step In-Game Test Guide for The Brass Age (v1.2.0)
+// OP-only command system that handhelds admins through all 16 test scenarios.
 // Features clickable chat buttons: [Equip Kit], [Confirm & Next], [Previous], [Spawn Mob].
 //
 // Commands:
@@ -324,11 +324,51 @@ const TEST_STEPS = [
         ],
         expected: [
             "§e• Jucătorul este plasat în celulă, în modul Aventură, iar tentativa de evadare îl declară FUGITIV.",
-            "§e• Butonul de eliberare §a[🔓 Eliberează-mă Imediat]§e funcționează garantat pentru orice tester.",
-            "§e• Toate cele 14 sisteme The Brass Age sunt validate 100% complet în joc!"
+            "§e• Butonul de eliberare §a[🔓 Eliberează-mă Imediat]§e funcționează garantat pentru orice tester."
         ],
         kitCommands: [
             "brass_test setup"
+        ]
+    },
+    {
+        num: 15,
+        title: "Alchimia Netherless — Nivel 1 & 2 (Netherrack, Magmă, Foc, Nisip Suflet)",
+        subtitle: "Producția Minerală În Lumea Reală (Crafting Table & Bazin Cinetic)",
+        desc: [
+            "§71. Folosește butonul §a[📦 Dă-mi Kitul de Test]§7 pentru a primi ingredientele minerale.",
+            "§72. Test Nivel 1 (Manual): Combină Cobblestone + Redstone + Găleată de Lavă în masa de lucru -> §f1 Netherrack§7.",
+            "§73. Test Nivel 1 (Manual): Combină Slimeball + Sulf Karstic în masa de lucru -> §f1 Magma Cream§7.",
+            "§74. Test Nivel 1 (Manual): Combină Nisip + Făină de Oase + Cărbune + Pământ -> §f1 Nisip al Sufletelor§7.",
+            "§75. Test Nivel 2 (Cinetic): Pune într-un Bazin Create cu mixer (neîncălzit) 1 Cobble + 1 Redstone + 100mB Lavă -> §f2 Netherrack§7."
+        ],
+        expected: [
+            "§e• Masa de lucru generează componentele de bază chiar și fără forță mecanică (rețete de urgență).",
+            "§e• Bazinul Create neîncălzit dublează producția (2x Netherrack, 3x Magma Cream, 4x Soul Sand).",
+            "§e• Nu este necesar niciun acces în Nether pentru a demara producția!"
+        ],
+        kitCommands: [
+            "brass_test netherless"
+        ]
+    },
+    {
+        num: 16,
+        title: "Alchimia Netherless — Nivel 3 (Tije de Văpaie, Cuarț, Supapă Blaze Burner & Lacrimi)",
+        subtitle: "Surge Termic cu Sulf, Spălare cu Ventilator & Asamblare Secvențială",
+        desc: [
+            "§71. Dă click pe butonul de kit pentru utilaje avansate, șmirghel și sulf.",
+            "§72. Test Cuarț Nivel 2: Plasează Nisip al Sufletelor în fața unui ventilator cu apă (Splashing) -> §fCuarț + Pepite de Aur§7.",
+            "§73. Test Tije Văpaie: Lustruiește un cărbune cu șmirghel pentru a obține Tijă de Cărbune, apoi infuzează cu sulf și lavă -> §fTije de Văpaie§7.",
+            "§74. Test Trezire Blaze Burner (Nivel 2): Amestecă într-un bazin neîncălzit Cușcă Burner + 4 Sulf + 2 Salpetru + Magmă + 1000mB Lavă -> §acreate:blaze_burner§7!",
+            "§75. Test Nivel 3 Surge Termic: Pornește un Blaze Burner sub bazin cu 4 Nisip + 2 Salpetru + 1 Sulf + 250mB Lavă -> §616 Nisip al Sufletelor (400% surge)§7!"
+        ],
+        expected: [
+            "§e• Ventilatorul spală Cuarț Nether din nisipul de suflete creat în Overworld.",
+            "§e• Tija de cărbune și sulful karstic sintetizează tije de văpaie (Blaze Rods) fără niciun Blaze.",
+            "§e• Bazinul neîncălzit aprinde un nou Blaze Burner etern, deblocând tehnologia termică Create!",
+            "§e• Nivelul 3 (Heated Surge) oferă saltul industrial masiv de 400% pe toate resursele de Nether."
+        ],
+        kitCommands: [
+            "brass_test netherless"
         ]
     }
 ]
@@ -336,7 +376,7 @@ const TEST_STEPS = [
 function getPlayerStep(player) {
     if (!player) return 1
     const s = player.persistentData.getInt('BrassTestStep')
-    return (s >= 1 && s <= 14) ? s : 1
+    return (s >= 1 && s <= 16) ? s : 1
 }
 
 function setPlayerStep(player, step) {
@@ -346,12 +386,12 @@ function setPlayerStep(player, step) {
 
 function sendInteractiveStep(server, player, stepNum) {
     if (stepNum < 1) stepNum = 1
-    if (stepNum > 14) stepNum = 14
+    if (stepNum > 16) stepNum = 16
     
     const step = TEST_STEPS[stepNum - 1]
     
     player.sendSystemMessage(Text.literal('§6§l╔════════════════════════════════════════════════════════╗'))
-    player.sendSystemMessage(Text.literal(`§6§l║   GHID TESTARE THE BRASS AGE: PASUL ${step.num}/14            ║`))
+    player.sendSystemMessage(Text.literal(`§6§l║   GHID TESTARE THE BRASS AGE: PASUL ${step.num}/16            ║`))
     player.sendSystemMessage(Text.literal(`§e§l   ${step.title}`))
     player.sendSystemMessage(Text.literal(`§7   ${step.subtitle}`))
     player.sendSystemMessage(Text.literal('§6§l╠════════════════════════════════════════════════════════╣'))
@@ -462,12 +502,36 @@ function sendInteractiveStep(server, player, stepNum) {
                                  .hover(Text.literal('§aClick pentru a fi eliberat instant și a-ți recupera modul de joc și libertatea!'))
         } catch (e) {}
         row1 = row1.append(btnArrest).append(btnUnjail)
+    } else if (stepNum === 15) {
+        let btnNether = Text.literal('  §6§l[ 🌋 KIT NETHERLESS T1 & T2 ]')
+        try {
+            btnNether = btnNether.clickRunCommand('/brass_test netherless')
+                                 .hover(Text.literal('§eClick pentru a primi resursele de sinteză chimică (Netherrack, Magmă, Nisip Suflete).'))
+        } catch (e) {}
+        let btnBasin = Text.literal('  §e§l[ ⚙️ UTILAJ CREATE ]')
+        try {
+            btnBasin = btnBasin.clickRunCommand('/give @s create:basin 1')
+                               .hover(Text.literal('§eClick pentru a primi un Bazin Create suplimentar.'))
+        } catch (e) {}
+        row1 = row1.append(btnNether).append(btnBasin)
+    } else if (stepNum === 16) {
+        let btnSurge = Text.literal('  §c§l[ 🔥 KIT SURGE & BURNER T3 ]')
+        try {
+            btnSurge = btnSurge.clickRunCommand('/brass_test netherless')
+                               .hover(Text.literal('§eClick pentru a primi tije, cuarț, șmirghel, burner și componente industriale.'))
+        } catch (e) {}
+        let btnBurner = Text.literal('  §6§l[ ♨️ BLAZE BURNER ACTIV ]')
+        try {
+            btnBurner = btnBurner.clickRunCommand('/give @s create:blaze_burner 1')
+                                 .hover(Text.literal('§eClick pentru un Blaze Burner gata aprins pentru testarea surge-ului termic.'))
+        } catch (e) {}
+        row1 = row1.append(btnSurge).append(btnBurner)
     }
     
     player.displayClientMessage(row1, false)
     
     // Row 2: Navigation & Confirmation buttons
-    let nextLabel = (stepNum === 14) ? '§6§l[ ✔ CONFIRMĂ & FINALIZEAZĂ TESTUL! ]' : '§6§l[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]'
+    let nextLabel = (stepNum === 16) ? '§6§l[ ✔ CONFIRMĂ & FINALIZEAZĂ TESTUL! ]' : '§6§l[ ✔ CONFIRMĂ & PASUL URMĂTOR ▶ ]'
     let btnNext = Text.literal(nextLabel)
     try {
         btnNext = btnNext.clickRunCommand('/brass_test next')
@@ -502,7 +566,7 @@ function sendTestCompleteScreen(server, player) {
     player.sendSystemMessage(Text.literal('§a§l╔════════════════════════════════════════════════════════╗'))
     player.sendSystemMessage(Text.literal('§a§l║       🎉 SUITA DE TESTARE A FOST FINALIZATĂ! 🎉        ║'))
     player.sendSystemMessage(Text.literal('§a§l╠════════════════════════════════════════════════════════╣'))
-    player.sendSystemMessage(Text.literal('§e✔ Toate cele 14 scenarii de testare au fost confirmate cu succes!'))
+    player.sendSystemMessage(Text.literal('§e✔ Toate cele 16 scenarii de testare au fost confirmate cu succes!'))
     player.sendSystemMessage(Text.literal('§7  • 1. Create Mechanical Crafter 3×3 & Secretizare Rețete'))
     player.sendSystemMessage(Text.literal('§7  • 2. Manualul Patchouli al Armurierului (/gunsmith book)'))
     player.sendSystemMessage(Text.literal('§7  • 3. Limită Realistă de Transport & Drop pe Pământ'))
@@ -517,6 +581,8 @@ function sendTestCompleteScreen(server, player) {
     player.sendSystemMessage(Text.literal('§7  • 12. Falsificare "Papers, Please" (5% T1, 50% T2, 45% T3)'))
     player.sendSystemMessage(Text.literal('§7  • 13. Punctul de Control Straja & Scaner Contrabandă'))
     player.sendSystemMessage(Text.literal('§7  • 14. Arest Penitenciar Automatizat & Eliberare Garantată'))
+    player.sendSystemMessage(Text.literal('§7  • 15. Alchimia Netherless N1 & N2 (Netherrack, Magmă, Suflete)'))
+    player.sendSystemMessage(Text.literal('§7  • 16. Alchimia Netherless N3 (Tije Văpaie, Surge Termic & Burner)'))
     player.sendSystemMessage(Text.literal('§a§l╠════════════════════════════════════════════════════════╣'))
     player.sendSystemMessage(Text.literal('§fDacă dorești să reiei testele: §b/brass_test reset'))
     player.sendSystemMessage(Text.literal('§a§l╚════════════════════════════════════════════════════════╝'))
@@ -536,6 +602,8 @@ function giveStepKit(server, player, stepNum) {
             giveFakesPack(server, player)
         } else if (cmd === 'brass_test setup') {
             runTesterSetup(server, player)
+        } else if (cmd === 'brass_test netherless') {
+            giveNetherlessKit(server, player)
         } else {
             const fullCmd = cmd.replace(/{player}/g, pName)
             server.runCommandSilent(fullCmd)
@@ -626,6 +694,11 @@ function runTesterSetup(server, playerOrName) {
     } catch (e) {
         console.error('[TesterSetup] SP config error: ' + e)
     }
+
+    try {
+        if (typeof spCfgLoad === 'function') spCfgLoad(server)
+        if (typeof cpJailLoad === 'function') cpJailLoad(server)
+    } catch (e) {}
 
     // 3. Clear any existing jail or fugitive tags if player is online
     if (player) {
@@ -728,8 +801,17 @@ function giveFakesPack(server, player) {
     // 6. Authentic Gun
     server.runCommandSilent(`give ${pName} tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p",Proofed:1b,Serial:"#RC-15-0105",GunSerial:"#RC-15-0105"},minecraft:item_name='{"text":"Pistol FK15-P [Legal #RC-15-0105]","color":"green","bold":true,"italic":false}'] 1`)
 
+    // 7. Counterfeit Permit Documents (T1, T2, T3) + Authentic Permit
+    server.runCommandSilent(`give ${pName} minecraft:written_book[minecraft:written_book_content={title:'Permis Port-Arma #RC-1S-9012',author:'Gheorghe Comandatul',pages:['{"text":"§6§lPERMIS PORT-ARMĂ§r\\n\\n§0Posesor: §1${pName}\\n§0Serie: §2#RC-1S-9012\\n§0Model: §0Flintlock 16.5mm\\n§0Statut: §2LEGAL / ÎNREGISTRAT\\n§0Emis: §82026-10-08\\n\\n§8Cancelaria Garnizoanei Straja."}','{"text":"§6§lDISPOZIȚII LEGALE§r\\n\\n§0Prezentul act certifică înregistrarea armei în evidențele oficiale Straja."}']},minecraft:custom_data={ForgedPermit:1b,FakeTier:1b,Serial:"#RC-1S-9012"},minecraft:item_name='{"text":"Permis Port-Armă [T1 Fals Subtil]","color":"aqua","bold":true,"italic":false}',minecraft:lore=['{"text":"Serie: #RC-1S-9012","color":"gray","italic":false}','{"text":"(Caligrafie imperială aproape identică)","color":"dark_gray","italic":true}']] 1`)
+
+    server.runCommandSilent(`give ${pName} minecraft:written_book[minecraft:written_book_content={title:'Permis Armă #RC-15_4481',author:'Gheorge Comandantul',pages:['{"text":"§6§lPERMIS PORT-ARMĂ§r\\n\\n§0Posesor: §1${pName}\\n§0Serie: §2#RC-15_4481\\n§0Model: §0Flintlock 16.5mm\\n§0Statut: §aLEGAL / STRAJA\\n§0Emis: §82026-10-08\\n\\n§8Cancelaria Garnizoana Straja\\n§8[Cerneală întinsă de calopur]"}','{"text":"§6§lDISPOZIȚII LEGALE§r\\n\\n§0Prezentul act certifică înregistrarea armei în evidențele oficiale Straja."}']},minecraft:custom_data={ForgedPermit:1b,FakeTier:2b,Serial:"#RC-15_4481"},minecraft:item_name='{"text":"Permis Port-Armă [T2 Fals Comun]","color":"gold","bold":true,"italic":false}',minecraft:lore=['{"text":"Serie: #RC-15_4481","color":"gray","italic":false}','{"text":"⚠ [Document cu nereguli grafice]","color":"yellow","italic":false}','{"text":"Piața Neagră","color":"dark_gray","italic":true}']] 1`)
+
+    server.runCommandSilent(`give ${pName} minecraft:written_book[minecraft:written_book_content={title:'Hârtie de Armă #RUSTY-GUN-99',author:'Comandant Gheorghe',pages:['{"text":"§6§lPERMIS PORT-ARMĂ§r\\n\\n§0Posesor: §1${pName}\\n§0Serie: §2#RUSTY-GUN-99\\n§0Model: §0Flintlock 16.5mm\\n§0Statut: §cAPROBAT PE CINSTE\\n§0Emis: §82026-10-08\\n\\n§8Atelier Mahala Obor\\n§4FALS GROSOLAN"}','{"text":"§6§lDISPOZIȚII LEGALE§r\\n\\n§0Prezentul act certifică înregistrarea armei în evidențele oficiale Straja."}']},minecraft:custom_data={ForgedPermit:1b,FakeTier:3b,Serial:"#RUSTY-GUN-99"},minecraft:item_name='{"text":"Permis Port-Armă [T3 Fals Grosolan]","color":"red","bold":true,"italic":false}',minecraft:lore=['{"text":"Serie: #RUSTY-GUN-99","color":"gray","italic":false}','{"text":"✖ [FALS GROSOLAN / IMITAȚIE RIDICOLĂ]","color":"dark_red","bold":true,"italic":false}','{"text":"Contrabandă Grad 3","color":"red","italic":false}']] 1`)
+
+    server.runCommandSilent(`give ${pName} minecraft:written_book[minecraft:written_book_content={title:'Permis Port-Arma #RC-15-0105',author:'Gheorghe Comandantul',pages:['{"text":"§6§lPERMIS PORT-ARMĂ§r\\n\\n§0Posesor: §1${pName}\\n§0Serie: §2#RC-15-0105\\n§0Model: §0Flintlock 16.5mm\\n§0Statut: §2LEGAL / ÎNREGISTRAT\\n§0Emis: §82026-10-08\\n\\n§8Cancelaria Garnizoanei Straja"}','{"text":"§6§lDISPOZIȚII LEGALE§r\\n\\n§0Prezentul act certifică înregistrarea armei în evidențele oficiale Straja."}']},minecraft:custom_data={PermitOfficial:1b,Serial:"#RC-15-0105"},minecraft:item_name='{"text":"Permis Port-Armă Oficial","color":"gold","bold":true,"italic":false}',minecraft:lore=['{"text":"Serie: #RC-15-0105","color":"gray","italic":false}','{"text":"✔ Autentificat de Garnizoana Straja","color":"green","italic":false}']] 1`)
+
     player.playSound('minecraft:entity.item.pickup', 1.0, 1.2)
-    player.sendSystemMessage(Text.literal('§a✔ [Pachet Falsuri Livrat] Ai primit mostre gata create: Tier 1, Tier 2, Tier 3, Pilit, Nepoansonat și Legal!'))
+    player.sendSystemMessage(Text.literal('§a✔ [Pachet Falsuri Livrat] Ai primit mostre gata create: Arme (T1, T2, T3, Pilit, Nepoansonat, Legal) + Permise (T1, T2, T3 și Oficial)!'))
 }
 
 function runTesterCheckpointTest(server, player, mode) {
@@ -746,7 +828,49 @@ function runTesterCheckpointTest(server, player, mode) {
 
 function runTesterArrestSim(server, player) {
     var pName = player.name.string
-    server.runCommandSilent(`strajaprison arrest ${pName} Testare Sistem Custodie Straja v1.1.2`)
+    server.runCommandSilent(`gamemode survival ${pName}`)
+    server.runCommandSilent(`strajaprison arrest ${pName} Testare Sistem Custodie Straja v1.2.0`)
+    player.sendSystemMessage(Text.literal('§4⛓️ [Simulare Arest Lansată] Vei fi teleportat în celulă și trecut în modul Aventură!'))
+}
+
+function giveNetherlessKit(server, player) {
+    var pName = player.name.string
+
+    // Tier 1 & Precursors
+    server.runCommandSilent(`give ${pName} minecraft:cobblestone 16`)
+    server.runCommandSilent(`give ${pName} minecraft:redstone 16`)
+    server.runCommandSilent(`give ${pName} butchery:sulfur 32`)
+    server.runCommandSilent(`give ${pName} kubejs:saltpeter 16`)
+    server.runCommandSilent(`give ${pName} minecraft:slime_ball 16`)
+    server.runCommandSilent(`give ${pName} minecraft:sand 16`)
+    server.runCommandSilent(`give ${pName} minecraft:dirt 16`)
+    server.runCommandSilent(`give ${pName} minecraft:bone_meal 16`)
+    server.runCommandSilent(`give ${pName} minecraft:coal 16`)
+    server.runCommandSilent(`give ${pName} minecraft:charcoal 16`)
+    var powderId = Item.exists('tacz_c:gunpowder_charge') ? 'tacz_c:gunpowder_charge' : 'minecraft:gunpowder'
+    server.runCommandSilent(`give ${pName} ${powderId} 16`)
+    server.runCommandSilent(`give ${pName} minecraft:flint 16`)
+    server.runCommandSilent(`give ${pName} minecraft:iron_nugget 16`)
+    server.runCommandSilent(`give ${pName} minecraft:phantom_membrane 4`)
+    server.runCommandSilent(`give ${pName} minecraft:glass_bottle 8`)
+    server.runCommandSilent(`give ${pName} minecraft:obsidian 8`)
+    server.runCommandSilent(`give ${pName} create:iron_sheet 8`)
+    server.runCommandSilent(`give ${pName} minecraft:lava_bucket 2`)
+    server.runCommandSilent(`give ${pName} minecraft:water_bucket 2`)
+
+    // Create Machines & Tooling for T2/T3
+    server.runCommandSilent(`give ${pName} create:sand_paper 1`)
+    server.runCommandSilent(`give ${pName} create:basin 2`)
+    server.runCommandSilent(`give ${pName} create:mechanical_mixer 1`)
+    server.runCommandSilent(`give ${pName} create:mechanical_press 1`)
+    server.runCommandSilent(`give ${pName} create:encased_fan 1`)
+    server.runCommandSilent(`give ${pName} create:crushing_wheel 2`)
+    server.runCommandSilent(`give ${pName} create:empty_blaze_burner 2`)
+    server.runCommandSilent(`give ${pName} create:blaze_burner 1`)
+    server.runCommandSilent(`give ${pName} kubejs:coal_rod 8`)
+
+    player.playSound('minecraft:entity.item.pickup', 1.0, 1.2)
+    player.sendSystemMessage(Text.literal('§6✔ [Kit Alchimie Netherless Livrat]§f Ai primit toate ingredientele de sinteză (Cobble, Redstone, Sulf, Salpetru, Slime, Cărbune, Lavă, Apă, Bazine Create, Burner și Șmirghel)!'))
 }
 
 ServerEvents.commandRegistry(event => {
@@ -773,7 +897,7 @@ ServerEvents.commandRegistry(event => {
                         try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
                         if (!player) return 0
                         const current = getPlayerStep(player)
-                        if (current >= 14) {
+                        if (current >= 16) {
                             sendTestCompleteScreen(ctx.source.server, player)
                             return 1
                         }
@@ -935,14 +1059,116 @@ ServerEvents.commandRegistry(event => {
                         )
                     )
                 )
+                .then(Commands.literal('help')
+                    .executes(ctx => {
+                        ctx.source.sendSystemMessage(Text.literal('§6§l╔════════════════════════════════════════════════════════╗'))
+                        ctx.source.sendSystemMessage(Text.literal('§6§l║      GHID COMENZI TESTARE IN-GAME (BRASS TEST)         ║'))
+                        ctx.source.sendSystemMessage(Text.literal('§6§l╠════════════════════════════════════════════════════════╣'))
+                        ctx.source.sendSystemMessage(Text.literal('§b/brass_test [1..16]       §7- Deschide pasul de testare specificat'))
+                        ctx.source.sendSystemMessage(Text.literal('§b/brass_test next | prev    §7- Navighează înainte/înapoi între pași'))
+                        ctx.source.sendSystemMessage(Text.literal('§b/brass_test give           §7- Echipează kitul pentru pasul curent'))
+                        ctx.source.sendSystemMessage(Text.literal('§b/brass_test reset          §7- Resetează progresul la Pasul 1'))
+                        ctx.source.sendSystemMessage(Text.literal('§b/brass_test netherless     §7- Kit complet alchimie Netherless (T1-T3)'))
+                        ctx.source.sendSystemMessage(Text.literal('§b/brass_test fakes          §7- Pachet arme & permise contrafăcute'))
+                        ctx.source.sendSystemMessage(Text.literal('§b/brass_test setup          §7- Construiește celula de testare'))
+                        ctx.source.sendSystemMessage(Text.literal('§b/brass_test release        §7- Eliberează imediat din închisoare'))
+                        ctx.source.sendSystemMessage(Text.literal('§b/straja test               §7- Rulează suita completă de 30 teste automate'))
+                        ctx.source.sendSystemMessage(Text.literal('§6§l╚════════════════════════════════════════════════════════╝'))
+                        return 1
+                    })
+                )
                 .then(Commands.literal('fakes')
                     .executes(ctx => {
                         let player = null
                         try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
-                        if (!player) return 0
-                        giveFakesPack(ctx.source.server, player)
-                        return 1
+                        if (player) {
+                            giveFakesPack(ctx.source.server, player)
+                            return 1
+                        }
+                        var list = ctx.source.server.getPlayerList().getPlayers()
+                        if (list.size() > 0) {
+                            giveFakesPack(ctx.source.server, list.get(0))
+                            ctx.source.sendSystemMessage(Text.literal('§a✔ Pachet falsuri oferit jucătorului ' + list.get(0).name.string))
+                            return 1
+                        }
+                        ctx.source.sendSystemMessage(Text.literal('§cNu există niciun jucător online.'))
+                        return 0
                     })
+                    .then(Commands.argument('target', $Test_StringArgument.word())
+                        .executes(ctx => {
+                            var target = $Test_StringArgument.getString(ctx, 'target')
+                            var targetPlayer = ctx.source.server.getPlayerList().getPlayerByName(target)
+                            if (targetPlayer) {
+                                giveFakesPack(ctx.source.server, targetPlayer)
+                                ctx.source.sendSystemMessage(Text.literal('§a✔ Pachet falsuri oferit jucătorului ' + target))
+                                return 1
+                            }
+                            ctx.source.sendSystemMessage(Text.literal('§cJucătorul ' + target + ' nu este online.'))
+                            return 0
+                        })
+                    )
+                )
+                .then(Commands.literal('netherless')
+                    .executes(ctx => {
+                        let player = null
+                        try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
+                        if (player) {
+                            giveNetherlessKit(ctx.source.server, player)
+                            return 1
+                        }
+                        var list = ctx.source.server.getPlayerList().getPlayers()
+                        if (list.size() > 0) {
+                            giveNetherlessKit(ctx.source.server, list.get(0))
+                            ctx.source.sendSystemMessage(Text.literal('§a✔ Kit Netherless oferit jucătorului ' + list.get(0).name.string))
+                            return 1
+                        }
+                        ctx.source.sendSystemMessage(Text.literal('§cNu există niciun jucător online.'))
+                        return 0
+                    })
+                    .then(Commands.argument('target', $Test_StringArgument.word())
+                        .executes(ctx => {
+                            var target = $Test_StringArgument.getString(ctx, 'target')
+                            var targetPlayer = ctx.source.server.getPlayerList().getPlayerByName(target)
+                            if (targetPlayer) {
+                                giveNetherlessKit(ctx.source.server, targetPlayer)
+                                ctx.source.sendSystemMessage(Text.literal('§a✔ Kit Netherless oferit jucătorului ' + target))
+                                return 1
+                            }
+                            ctx.source.sendSystemMessage(Text.literal('§cJucătorul ' + target + ' nu este online.'))
+                            return 0
+                        })
+                    )
+                )
+                .then(Commands.literal('pyro')
+                    .executes(ctx => {
+                        let player = null
+                        try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
+                        if (player) {
+                            giveNetherlessKit(ctx.source.server, player)
+                            return 1
+                        }
+                        var list = ctx.source.server.getPlayerList().getPlayers()
+                        if (list.size() > 0) {
+                            giveNetherlessKit(ctx.source.server, list.get(0))
+                            ctx.source.sendSystemMessage(Text.literal('§a✔ Kit Netherless oferit jucătorului ' + list.get(0).name.string))
+                            return 1
+                        }
+                        ctx.source.sendSystemMessage(Text.literal('§cNu există niciun jucător online.'))
+                        return 0
+                    })
+                    .then(Commands.argument('target', $Test_StringArgument.word())
+                        .executes(ctx => {
+                            var target = $Test_StringArgument.getString(ctx, 'target')
+                            var targetPlayer = ctx.source.server.getPlayerList().getPlayerByName(target)
+                            if (targetPlayer) {
+                                giveNetherlessKit(ctx.source.server, targetPlayer)
+                                ctx.source.sendSystemMessage(Text.literal('§a✔ Kit Netherless oferit jucătorului ' + target))
+                                return 1
+                            }
+                            ctx.source.sendSystemMessage(Text.literal('§cJucătorul ' + target + ' nu este online.'))
+                            return 0
+                        })
+                    )
                 )
                 .then(Commands.literal('checkpoint_test')
                     .then(Commands.argument('mode', $Test_StringArgument.word())
@@ -976,7 +1202,7 @@ ServerEvents.commandRegistry(event => {
                     })
                 )
                 .then(Commands.literal('goto')
-                    .then(Commands.argument('step', $Test_IntegerArgument.integer(1, 14))
+                    .then(Commands.argument('step', $Test_IntegerArgument.integer(1, 16))
                         .executes(ctx => {
                             let player = null
                             try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}
@@ -988,7 +1214,7 @@ ServerEvents.commandRegistry(event => {
                         })
                     )
                 )
-                .then(Commands.argument('step', $Test_IntegerArgument.integer(1, 14))
+                .then(Commands.argument('step', $Test_IntegerArgument.integer(1, 16))
                     .executes(ctx => {
                         let player = null
                         try { player = ctx.source.player || ctx.source.getPlayer() } catch (e) {}

@@ -2,11 +2,11 @@
   "name": "Barrel Blank",
   "category": "patchouli:barrel",
   "icon": "kubejs:barrel_blank",
-  "sortnum": 10,
+  "sortnum": 0,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Now attend to the barrel stock. Six tempered pieces form the sides of the pattern, while two iron sheets occupy its ends. Leave the middle square empty. This rough part must still pass through the finishing recipe."
+      "text": "Draw tempered gun steel with brass into the heavy tube.$(br2)Two blanks make the pistol barrel; four make the rifle barrel."
     },
     {
       "type": "patchouli:spotlight",

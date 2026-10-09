@@ -2,22 +2,23 @@
   "name": "Tempered Mainspring",
   "category": "patchouli:forge",
   "icon": "kubejs:tempered_mainspring",
-  "sortnum": 14,
+  "sortnum": 5,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Give the spring blank its turn in the blast furnace. The finished spring is the dark, curved piece shown here. One serves the trigger assembly of either firearm; reserve it for that work."
+      "text": "Heat alone frees the wound spring to store its force without snapping. The blast furnace tempers the steel to an elastic temper. The pistol and rifle each take one."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:mainspring_blank",
+      "link_recipe": true,
+      "text": "The soft coil before the heat."
     },
     {
       "type": "patchouli:spotlight",
       "item": "kubejs:tempered_mainspring",
       "link_recipe": false,
-      "text": "One finished Tempered Mainspring. Keep this piece ready for the next assembly."
-    },
-    {
-      "type": "patchouli:spotlight",
-      "item": "kubejs:mainspring_blank",
-      "text": "Place one of these blanks in a blast furnace with fuel. The result is one Tempered Mainspring. Time: 15 seconds at 20 TPS. An ordinary furnace will not perform this recipe."
+      "text": "Smelt blank in a blast furnace with fuel.$(br2)Time: 15s. An ordinary furnace will not perform this recipe."
     }
   ]
 }

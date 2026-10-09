@@ -1,18 +1,18 @@
 {
-  "name": "Complete Flintlock Mechanism",
+  "name": "Flintlock Mechanism",
   "category": "patchouli:lock",
   "icon": "kubejs:flintlock_mechanism",
-  "sortnum": 18,
+  "sortnum": 4,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Gather hammer, pan and trigger before the lock is assembled. Lay them around the central precision mechanism with tempered steel and screws. The completed lock is common to both pistol and rifle."
+      "text": "Gather hammer, flash pan, and trigger group. Secure with four screws and tempered plate.$(br2)One lock is fitted to each weapon."
     },
     {
       "type": "patchouli:spotlight",
       "item": "kubejs:flintlock_mechanism",
       "link_recipe": false,
-      "text": "One finished Complete Flintlock Mechanism. Keep this piece ready for the next assembly."
+      "text": "One finished Flintlock Mechanism. Keep this piece ready for the next assembly."
     },
     {
       "type": "patchouli:crafting",

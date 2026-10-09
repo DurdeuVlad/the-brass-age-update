@@ -2,11 +2,11 @@
   "name": "Trigger Assembly",
   "category": "patchouli:lock",
   "icon": "kubejs:trigger_assembly",
-  "sortnum": 17,
+  "sortnum": 3,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Set the tempered spring above the precision mechanism, flank the mechanism with screws, and place the tripwire hook below. The hook is a Minecraft ingredient; this pattern is the workshop's game recipe."
+      "text": "Set tempered spring above precision mechanism, flank with screws, and place tripwire hook below."
     },
     {
       "type": "patchouli:spotlight",

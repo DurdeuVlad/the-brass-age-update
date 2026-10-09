@@ -1,20 +1,32 @@
 {
   "name": "Firearm Proofing & Legality",
   "category": "patchouli:assembly",
-  "icon": "kubejs:item/proof_stamp",
+  "icon": "kubejs:proof_stamp",
   "sortnum": 35,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "$(bold)Imperial Firearm Registry$()$(br2)Under Straja municipal law, firearms crafted in private workshops are considered $(c)unproofed contraband$() until inspected by an official armorer.$(br2)Unregistered weapons risk immediate confiscation upon inspection by the gendarmerie."
+      "text": "Privately crafted weapons are considered $(c)unproofed contraband$().$(br2)Unregistered guns risk confiscation and arrest at border checkpoints."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)The Proofing Ritual$()$(br2)Place an unproofed musket or pistol upon an $(bold)Anvil$() alongside an $(6)Imperial Proof Stamp$().$(br2)For a fee of 5 experience levels, the stamp will strike a unique, permanent serial number ($(2)#RC-15-XXXX$()) onto the breech block."
+      "text": "$(bold)Imperial Proof Stamp$()$(br2)Crafting table pattern:$(br)• Top: 1 Gold Ingot$(br)• Mid: Brass, Gun Steel, Brass$(br)• Bot: 1 Stick$(br2)Indestructible master tool used for serial stamping."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Permits & The Black Market$()$(br2)Officers issue formal permits by right-clicking a $(e)Permit Blank$() with a proofed weapon in hand.$(br2)$(bold)Warning:$() Scraping a proofed weapon upon a $(4)Grindstone$() will permanently file away its serial, turning it into a $(c)Defaced Black Market Gun$()."
+      "text": "$(bold)Permit Blanks (x4)$()$(br2)Crafting table pattern:$(br)• Top: 1 Gold Nugget$(br)• Mid: 1 Paper$(br)• Bot: 1 Red Dye$(br2)Produces 4 Permit Blanks ready for armorer stamping."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)The Proofing Ritual$()$(br2)Place firearm + $(6)Imperial Proof Stamp$() in an $(bold)Anvil$().$(br2)Costs 5 experience levels.$(br)Strikes a permanent serial ($(2)#RC-15-XXXX$()) onto the breech block."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Permit Issuance$()$(br2)Hold proofed gun and right-click a $(e)Permit Blank$().$(br2)Inspectors issue an authentic Permit ($(2)LEGAL / ÎNREGISTRAT$()).$(br2)Carry permits at checkpoints!"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Underworld Trade$()$(br2)• $(4)Grindstone:$() Grinds off serial into $(c)Defaced Gun$().$(br)• $(e)Forgeries:$() Civilians create fake permits (Tier 1-3).$(br2)Tier 3 botched fakes trigger immediate checkpoint arrest!"
     }
   ]
 }

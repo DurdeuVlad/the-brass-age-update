@@ -6,7 +6,7 @@ import hashlib
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 EXPORTS_DIR = os.path.join(BASE_DIR, "exports")
 STAGING_DIR = os.path.join(BASE_DIR, "staging")
-VERSION = "v1.1.2"
+VERSION = "v1.2.0"
 
 os.makedirs(EXPORTS_DIR, exist_ok=True)
 if os.path.exists(STAGING_DIR):

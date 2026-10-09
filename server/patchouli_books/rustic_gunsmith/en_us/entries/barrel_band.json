@@ -6,7 +6,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "The brass band binds the larger assemblies together. Arrange three brass sheets about the open centre and place a screw below. The rifle consumes six bands throughout its construction; the pistol requires one."
+      "text": "Arrange three brass sheets about the centre and place a screw below.$(br2)The rifle consumes six bands; the pistol requires one."
     },
     {
       "type": "patchouli:spotlight",

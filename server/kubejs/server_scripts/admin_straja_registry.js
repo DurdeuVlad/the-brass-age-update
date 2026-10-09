@@ -70,10 +70,6 @@ StrajaWeapons.isWeaponsTransporterByName = function(server, name) {
 
 StrajaWeapons.isAuthorizedInspector = function(player) {
     if (!player) return false
-    try {
-        if (typeof player.hasPermissions === 'function' && player.hasPermissions(2)) return true
-        if (typeof player.hasPermission === 'function' && player.hasPermission(2)) return true
-    } catch (e) {}
 
     try {
         var tags = player.tags
@@ -1100,6 +1096,99 @@ function runStrajaAutomatedTests(server, src) {
         book.pages[1].indexOf('NBT') === -1 &&
         book.pages[1].indexOf('crafting') === -1
     )
+
+    // --- TEST SUITE 6: Netherless Industrial 3-Tier Synthesis Engine ---
+    log('§e▶ 6. Verificare Rețete Industriale Alchimie Netherless (3 Niveluri)')
+    var rm = null
+    try { rm = server.recipeManager || server.getRecipeManager() } catch (e) {}
+
+    var netherlessIds = [
+        'kubejs:alchemy/netherrack_tier1_manual',
+        'kubejs:alchemy/netherrack_tier2_kinetic',
+        'kubejs:alchemy/netherrack_tier3_sulfur_surge',
+        'kubejs:alchemy/cinder_flour_crushing',
+        'kubejs:alchemy/magma_cream_tier1_manual',
+        'kubejs:alchemy/magma_cream_tier2_kinetic',
+        'kubejs:alchemy/magma_cream_tier3_sulfur_surge',
+        'kubejs:alchemy/fire_charge_tier1_manual_powder',
+        'kubejs:alchemy/fire_charge_tier1_manual_sulfur',
+        'kubejs:alchemy/fire_charge_tier2_kinetic',
+        'kubejs:alchemy/fire_charge_tier3_sequenced',
+        'kubejs:alchemy/soul_sand_tier1_manual',
+        'kubejs:alchemy/soul_soil_tier1_manual',
+        'kubejs:alchemy/soul_sand_tier2_kinetic',
+        'kubejs:alchemy/soul_soil_tier2_kinetic',
+        'kubejs:alchemy/soul_sand_tier3_sulfur_surge',
+        'kubejs:alchemy/soul_soil_tier3_sulfur_surge',
+        'kubejs:alchemy/quartz_tier1_manual',
+        'kubejs:alchemy/quartz_tier2_washing',
+        'kubejs:alchemy/quartz_tier3_crushing',
+        'kubejs:alchemy/coal_rod_polishing_coal',
+        'kubejs:alchemy/coal_rod_polishing_charcoal',
+        'kubejs:alchemy/coal_rod_manual_coal',
+        'kubejs:alchemy/coal_rod_manual_charcoal',
+        'kubejs:alchemy/blaze_rod_tier1_manual',
+        'kubejs:alchemy/blaze_rod_tier2_kinetic',
+        'kubejs:alchemy/blaze_rod_tier3_sequenced',
+        'kubejs:alchemy/blaze_powder_crushing',
+        'kubejs:alchemy/empty_blaze_burner_netherrack',
+        'kubejs:alchemy/empty_blaze_burner_sulfur',
+        'kubejs:alchemy/blaze_burner_tier1_manual',
+        'kubejs:alchemy/blaze_burner_tier2_magma',
+        'kubejs:alchemy/blaze_burner_tier2_firecharge',
+        'kubejs:alchemy/blaze_burner_tier3_sequenced',
+        'kubejs:alchemy/ghast_tear_tier1_manual',
+        'kubejs:alchemy/ghast_tear_tier2_kinetic',
+        'kubejs:alchemy/ghast_tear_tier3_sulfur_surge',
+        'kubejs:alchemy/crying_obsidian_thermal'
+    ]
+
+    var foundCount = 0
+    var t1Found = 0, t2Found = 0, t3Found = 0
+    if (rm) {
+        var recipesById = {}
+        try {
+            if (typeof rm.getRecipes === 'function') {
+                var all = rm.getRecipes()
+                var it = all.iterator()
+                while (it.hasNext()) {
+                    var rHolder = it.next()
+                    var idStr = String(rHolder.id ? rHolder.id() : (rHolder.getId ? rHolder.getId() : ''))
+                    if (idStr) recipesById[idStr] = true
+                }
+            }
+        } catch (e) {
+            log('§7[RecipeCheck Exception: ' + e + ']')
+        }
+
+        var missing = []
+        netherlessIds.forEach(function(rId) {
+            var exists = !!recipesById[rId]
+            if (!exists) {
+                try {
+                    var resLoc = Utils.id(rId)
+                    var opt = (typeof rm.byKey === 'function') ? rm.byKey(resLoc) : null
+                    if (opt && opt.isPresent && opt.isPresent()) exists = true
+                } catch (e2) {}
+            }
+            if (exists) {
+                foundCount++
+                if (rId.indexOf('tier1') !== -1 || rId.indexOf('manual') !== -1) t1Found++
+                else if (rId.indexOf('tier2') !== -1 || rId.indexOf('kinetic') !== -1 || rId.indexOf('washing') !== -1) t2Found++
+                else if (rId.indexOf('tier3') !== -1 || rId.indexOf('surge') !== -1 || rId.indexOf('sequenced') !== -1 || rId.indexOf('crushing') !== -1 || rId.indexOf('thermal') !== -1) t3Found++
+            } else {
+                missing.push(rId)
+            }
+        })
+        if (missing.length > 0) {
+            log('§7[Lipsește: ' + missing.join(', ') + ']')
+        }
+    }
+
+    assertTest('Rețete Netherless 3-Tier înregistrate (' + netherlessIds.length + ' rețete)', foundCount === netherlessIds.length, foundCount + '/' + netherlessIds.length + ' active în catalog')
+    assertTest('Nivel 1: Rețete Manuale de Urgență active', t1Found >= 8, t1Found + ' rețete de banc/șmirghel')
+    assertTest('Nivel 2: Rețete Cinetice Create active', t2Found >= 8, t2Found + ' rețete de mixer/bazin/spălare')
+    assertTest('Nivel 3: Surge Termic cu Sulf & Asamblare Secvențială active', t3Found >= 10, t3Found + ' rețete de mare randament')
 
     log('§6§l╠════════════════════════════════════════════════════════╣')
     log('§6§l║ REZULTAT FINAL: ' + (passed === total ? '§a§lTOATE TESTELE AU TRECUT (' + passed + '/' + total + ')' : '§c§lEȘECURI DETECTATE (' + passed + '/' + total + ')') + ' §6§l║')

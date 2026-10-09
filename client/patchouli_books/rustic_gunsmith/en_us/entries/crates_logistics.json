@@ -6,15 +6,19 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "$(bold)Overland Military Logistics$()$(br2)Due to physical carry limits (1 long arm, 2 sidearms), armed regiments cannot march with armories in backpacks.$(br2)Heavy oak and brass crates allow moving arms in bulk across the realm via Trotting Wagons, Pack Mules, and Create Trains."
+      "text": "Carry limits restrict foot soldiers to 1 rifle and 2 pistols.$(br2)Heavy crates move bulk arms via Trotting Wagons, Pack Mules, and Create Trains."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Packing Recipes (Crafting Bench)$()$(br2)$(bold)Musket Crate:$() 8 FK15 Muskets + 1 Brass Sheet + 1 Oak Chest.$(br)$(bold)Pistol Crate:$() 8 FK15-P Pistols + 1 Brass Sheet + 1 Oak Chest.$(br)$(bold)Ammo Crate:$() 4x 64 Ammunition (256 rounds) + 1 Brass Sheet + 1 Oak Chest."
+      "text": "$(bold)Sealing Crates$()$(br2)Craft in Crafting Table:$(br)• $(bold)Musket Crate:$() 8 Muskets + 1 Wooden Chest$(br)• $(bold)Pistol Crate:$() 8 Pistols + 1 Wooden Chest$(br)• $(bold)Ammo Crate:$() 8x 32 Ammo (256 rounds) + 1 Wooden Chest"
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Unpacking in the Field$()$(br2)To unseal a logistics crate:$(br)• Place it into any crafting table to retrieve the contents, OR$(br)• Hold Shift and Right-Click the ground to instantly deploy the weapons at your feet.$(br2)Crates bypass personal carry limits until unsealed."
+      "text": "$(bold)Unpacking in Field$()$(br2)To unseal a logistics crate:$(br)• Place in crafting table to extract contents, OR$(br)• $(bold)Shift + Right-Click$() the ground to deploy weapons at your feet.$(br2)Crates bypass carry limits."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Field Guidelines$()$(br2)Keep crates sealed in wagon cargo chests until reaching the front.$(br2)Unsealing excess firearms into personal inventory triggers encumbrance drops immediately."
     }
   ]
 }

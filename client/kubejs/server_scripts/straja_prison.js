@@ -1385,7 +1385,13 @@ function cpJailSpot(name) {
 function cpTpJail(server, player) {
   var jt = cpJailSpot(cpPlayerName(player))
   if (jt === null || jt === undefined) {
-    return false
+    // Safe fallback detention coordinate: player's current location in holding
+    try {
+      var dim = String(player.level.dimension)
+      jt = { dim: dim, x: Math.floor(player.x), y: Math.floor(player.y), z: Math.floor(player.z), yaw: 0 }
+    } catch (e) {
+      return false
+    }
   }
   var yaw = jt.yaw === undefined ? 0 : jt.yaw
   server.runCommandSilent(
@@ -2282,9 +2288,15 @@ function spArrestCmd(ctx, reasonArg) {
     ctx.source.sendSystemMessage(Text.literal('§c[Prison] jucătorul nu e online.'))
     return 0
   }
-  if (spIsExempt(player)) {
-    ctx.source.sendSystemMessage(Text.literal('§c[Prison] ' + cpPlayerName(player) + ' e exempt — nu poate fi arestat.'))
+  var isExemptListed = spIsExemptListed(cpPlayerName(player))
+  if (isExemptListed) {
+    ctx.source.sendSystemMessage(Text.literal('§c[Prison] ' + cpPlayerName(player) + ' este pe lista de scutiri — nu poate fi arestat.'))
     return 0
+  }
+  var mode = cpGameModeName(player)
+  if (mode !== 'survival' && mode !== 'adventure') {
+    // Admin explicit arrest or test simulation: switch to survival mode
+    cpSetGameMode(player, 'survival')
   }
   var server = ctx.source.server
   var name = cpPlayerName(player)
@@ -2507,3 +2519,4 @@ ServerEvents.loaded(event => {
   }
   console.info('[Prison] loaded — ' + Object.keys(CP_JAIL.jailed).length + ' in register, ' + SP_CFG.jcells.length + ' cells, ' + SP_CFG.pcells.length + ' personal chests')
 })
+

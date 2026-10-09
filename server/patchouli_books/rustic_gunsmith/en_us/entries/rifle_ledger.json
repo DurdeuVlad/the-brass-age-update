@@ -1,20 +1,20 @@
 {
-  "name": "Rifle Ledger",
-  "category": "patchouli:workshop",
+  "name": "The Rifle Ledger",
+  "category": "patchouli:ledgers",
   "icon": "minecraft:paper",
-  "sortnum": 2,
+  "sortnum": 1,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Reckon these finished supplies before beginning the rifle. Totals include every custom intermediate.$(br2)Sheets, alloys and precision mechanisms are counted as finished supplies. Their upstream materials, machines, ammunition and fuel are additional."
+      "text": "Reckon these finished supplies before beginning the rifle.$(br2)Totals include every custom intermediate, sheet, alloy and mechanism."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Stores$()$(br2)24 Brass Sheet$(br)40 Iron Nugget$(br)125 Iron Sheet$(br)96 Charcoal$(br)28 Andesite Alloy"
+      "text": "$(bold)Raw Materials$()$(br2)Iron Nuggets: 124$(br)Brass Sheets: 22$(br)Iron Ingots: 8$(br)Iron Sheets: 5$(br)Zinc Ingots: 2$(br)Copper Ingots: 2$(br)Leather: 2$(br)Sticks: 1"
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Stores$()$(br2)6 Precision Mechanism$(br)2 Flint$(br)1 Tripwire Hook$(br)18 Stripped Dark Oak Log$(br)5 Leather"
+      "text": "$(bold)Stock & Mechanism$()$(br2)Stripped Oak Wood: 2$(br)Gold Sheet: 2$(br)Cogwheel: 10$(br)Large Cogwheel: 10$(br)Tripwire Hook: 1"
     }
   ]
 }

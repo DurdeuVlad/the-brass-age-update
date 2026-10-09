@@ -1,20 +1,24 @@
 {
   "name": "FK15-R Jaeger Rifled Musket",
   "category": "patchouli:barrel",
-  "icon": "kubejs:item/rifled_barrel",
+  "icon": "kubejs:rifled_barrel",
   "sortnum": 40,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "$(bold)Master Marksman Rifle$()$(br2)The elite marksman variant of the FK15. Combines a spiral-rifled precision barrel with calibrated lock tolerances, reducing shot dispersion by $(a)65%$().$(br2)$(c)Requires powered Create Mechanical Crafters.$() This state-level firearm cannot be made on a crafting table."
+      "text": "The elite marksman variant of the FK15. Spiral-rifled barrel reduces dispersion by $(a)65%$().$(br2)$(c)Requires Create Crafters.$()"
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Mechanical Crafter Grid (3x3)$()$(br2)B B R$(br)M W S$(br)T I P$(br2)$(bold)Legend:$()$(br)B: Barrel Band$(br)R: $(6)Rifled Barrel (Spiral Cut)$()$(br)M: Flintlock Mechanism$(br)W: Rifle Stock$(br)S: Gun Screws$(br)T: Ramrod$(br)I: Tempered Gun Steel$(br)P: Precision Mechanism"
+      "text": "$(bold)Rifling Lathe$()$(br2)Bored on Create mechanical drill bench:$(br)• Drill + Rifle Barrel + Precision Mechanism.$(br2)Produces the spiral-cut Rifled Barrel required for master craftsmanship."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Precision Rifling Lathe$()$(br2)The Rifled Barrel is bored on a Create mechanical drill bench:$(br)$(bold)Pattern:$() Drill + Rifle Barrel + Precision Mechanism.$(br2)Assembled in Mechanical Crafters, it produces the prestigious gold-trimmed FK15-R Jaeger Musket."
+      "text": "$(bold)Crafter Grid (3x3)$()$(br2)• Top: Band, Band, Barrel$(br)• Mid: Lock, Stock, Screws$(br)• Bot: Ramrod, Steel, Precision Mechanism$(br2)Assembles the prestigious FK15-R Jaeger."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Ballistics Doctrine$()$(br2)The FK15-R excels at long-range sniper engagements.$(br2)Pairs excellently with Consecrated Silver Cartridges for hunting fiends at extreme distances."
     }
   ]
 }

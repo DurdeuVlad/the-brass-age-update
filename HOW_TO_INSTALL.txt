@@ -1,5 +1,5 @@
 =====================================================================
-  ⚜ THE BRASS AGE UPDATE — INSTRUCTIUNI RAPIDE DE INSTALARE v1.1.2 ⚜
+  ⚜ THE BRASS AGE UPDATE — INSTRUCTIUNI RAPIDE DE INSTALARE v1.2.0 ⚜
 =====================================================================
 
 ATENȚIE PENTRU TESTERI:
@@ -32,29 +32,21 @@ peste folderul instanței voastre Rustic Craft II:
   - config/           (actualizează setările de rucsac și unelte)
 
 ---------------------------------------------------------------------
-CE ESTE NOU ÎN v1.1.2 (Garrison Registry, Licensing & Counterfeits):
+CE ESTE NOU ÎN v1.2.0 (Netherless Create 3-Tier Engine & Book Guardrails):
 ---------------------------------------------------------------------
-1. Registrul Central al Garnizoanei Straja:
-   Bază centrală de date pentru toate armele și posesorii legali.
-   Armele nou înregistrate au nevoie de o zi reală de maturare (pending)
-   înainte de a deveni oficial legale.
-2. Cărți Fizice de Patrulă Straja (/straja book give):
-   Soldații primesc copii fizice ale registrului curent care NU se
-   actualizează automat în teren. Conține indicii subtile de joc de rol
-   (cues) pentru detectarea falsurilor fără a dezvălui mecanica completă.
-3. Licențiere Inspectori & Transportatori (/straja inspector / transporter):
-   Doar inspectorii autorizați pot poansona legal arme și emite permise.
-   Transportatorii autorizați și lăzile militare sigilate sunt scutiți
-   de confiscarea armelor.
-4. Falsificare "Papers, Please" pe Piața Neagră:
-   Jucătorii neautorizați care poansonează arme generează falsuri cu șanse
-   calibrate: 5% Nivel 1 (Aproape Perfect), 50% Nivel 2 (Comun Defectuos),
-   45% Nivel 3 (Grosolan Eșuat).
-5. Puncte de Control & Sistem Penitenciar Automatizat:
-   Punctele de control confiscă imediat armele neînregistrate, pilite și
-   falsurile de Nivel 3, trimițând infractorii direct la închisoare fără
-   avertisment (/straja checkpoint & /straja prison).
-6. Arbore Unificat de Comenzi & Test Automatizat (/straja test):
-   26/26 aserțiuni verificate empiric direct pe serverul dedicat.
+1. Alchimia Netherless Create pe 3 Niveluri Industriale:
+   Arhitectură completă pe 3 niveluri (Manual 1x -> Cinetic Create 2-4x ->
+   Surge Termic cu Sulf / Asamblare Secvențială 8-16x / 400% surge) pentru
+   toate cele 8 linii de Nether (Netherrack, Magmă, Foc, Nisip Suflet,
+   Cuarț, Tije de Văpaie, Blaze Burner și Lacrimi de Ghast).
+2. Sistem de Guardrails & Tipografie Zero-Overflow pentru Cărți:
+   Toate cele 270 de pagini din cărțile Patchouli au fost verificate și
+   optimizate fără nicio depășire de margine (zero text clipping).
+3. Ghid Interactiv de Testare Extins (/brass_test):
+   Scenarii extinse la 16 pași (Pasul 15: Netherless T1/T2, Pasul 16: T3
+   & Burners), suport comenzi rapide (/brass_test help, /brass_test netherless)
+   și butoane interactive de kit.
+4. Suită de Testare Automatizată 30/30 Aserțiuni (/straja test):
+   30/30 aserțiuni verificate empiric direct pe serverul dedicat (100% pass).
 =====================================================================
 

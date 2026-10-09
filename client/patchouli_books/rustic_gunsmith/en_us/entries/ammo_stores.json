@@ -6,32 +6,42 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "The two guns share 16.5mm ammunition, whose gun-pack ID is qkl:16mm. Prepare the large cores, paper wads and charges separately before final assembly."
+      "text": "Both guns use 16.5mm ammunition (qkl:16mm).$(br2)Prepare cores, wads, and powder before crafter assembly.$(br2)Powder has 3 refining tiers."
     },
     {
       "type": "patchouli:spotlight",
       "item": "tacz_c:large_bullet_core",
-      "text": "A Mechanical Saw cuts one Iron or Zinc Nugget into ten Large Bullet Cores. Use the large cores, not ordinary cores or finished bullets."
+      "text": "A Mechanical Saw cuts 1 Iron or Zinc Nugget into 10 Large Cores.$(br2)Use large cores, not ordinary cores or finished bullets."
     },
     {
       "type": "patchouli:spotlight",
       "item": "tacz_c:wad",
-      "text": "Begin with one Paper. Deploy another Paper three times, then press and saw the in-progress item. One pass uses four Paper and yields thirty Wads."
+      "text": "Sequenced assembly: Start Paper, deploy Paper 3x, press, and saw.$(br2)Consumes 4 Paper and yields 30 Wads per cycle."
     },
     {
       "type": "patchouli:spotlight",
-      "item": "tacz_c:gunpowder_cake",
-      "text": "Mix two Minecraft Gunpowder, one Charcoal and 250 mB Water in a Basin. This yields ten cakes. No heat is required for the mixing step."
+      "item": "kubejs:saltpeter",
+      "text": "Crush Dripstone with wheels, then splash with a fan.$(br2)Yields purified Saltpeter for powder."
     },
     {
       "type": "patchouli:spotlight",
-      "item": "tacz_c:gunpowder_cake_dry",
-      "text": "Smoke a cake with fuel to obtain one dry cake. Recipe time: 50 ticks, or 2.5 seconds at normal server speed."
+      "item": "kubejs:crude_gunpowder_cake",
+      "text": "$(bold)Tier 1: Desperation$()$(br2)Craft 4 Bone Meal, 4 Charcoal, 1 Water in table.$(br)Smoke in Smoker or Campfire to yield 1 Powder Charge."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "kubejs:wet_powder_mass",
+      "text": "Mix 2 Saltpeter, 2 Coal, 250mB Water in Basin.$(br2)Press wet mass with Press to yield 4 Charges."
     },
     {
       "type": "patchouli:spotlight",
       "item": "tacz_c:gunpowder_charge",
-      "text": "Press one dry cake to obtain four charges. Alternatively craft five Creatified Gunpowder Pellets shapelessly into one charge. The final ammo pattern requires this charge."
+      "text": "Mix 4 Saltpeter, 2 Coal, 1 Sulfur, 500mB Water in $(6)Heated Basin$().$(br2)Yields $(6)16 Charges$() (400% surge!)."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "butchery:sulfur",
+      "text": "Mined from Straja's mineral karst strata.$(br2)Catalyzes Tier 3 surges, ignites incendiary rounds, and feeds civilian chemical industries."
     }
   ]
 }

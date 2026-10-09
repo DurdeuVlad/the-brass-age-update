@@ -6,15 +6,19 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Set the ammunition work before nine powered Mechanical Crafters. Place large bullet cores in the four corners, wads at the four edges, and one gunpowder charge at the centre. Each completed pattern delivers four game rounds."
+      "text": "Set ammunition work before nine powered Mechanical Crafters.$(br2)Place large bullet cores in the four corners, wads at the four edges, and one gunpowder charge at the centre."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Nine Mechanical Crafters$()$(br2)C W C$(br)W G W$(br)C W C$(br2)C: Large Bullet Core$(br)W: Wad$(br)G: Gunpowder Charge$(br2)Fill all nine slots. Each cycle produces four rounds."
+      "text": "$(bold)Crafter Grid (3x3)$()$(br2)• Corners: Large Bullet Core (4)$(br)• Edges: Wad (4)$(br)• Centre: Gunpowder Charge (1)$(br2)Fill all nine slots. Each cycle produces four rounds."
     },
     {
       "type": "patchouli:text",
-      "text": "Power a 3x3 face of Mechanical Crafters. Set their output routes with a wrench so they converge on one final output.$(br2)Use four cores, four wads and one charge per cycle. A crafting table will not work."
+      "text": "$(bold)Kinetic Configuration$()$(br2)Power a 3x3 face of Mechanical Crafters.$(br2)Set their output routes with a wrench so they converge on one final output slot."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Production Advice$()$(br2)Use four cores, four wads and one charge per cycle.$(br2)A crafting table will not work. Automated crafters ensure balanced powder loads."
     }
   ]
 }

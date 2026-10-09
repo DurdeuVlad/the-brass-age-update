@@ -2,17 +2,17 @@
   "name": "Gun Steel Blank",
   "category": "patchouli:forge",
   "icon": "kubejs:gun_steel_blank",
-  "sortnum": 5,
+  "sortnum": 2,
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Begin with the stock of the forge. Lay iron sheets about charcoal and an andesite-alloy heart, following the nine-square pattern. The rough billet is but a beginning; set it aside for the blast furnace before using it in the finer work."
+      "text": "Forge iron nuggets about an iron ingot to shape the rough billet.$(br2)Prepare a generous supply for barrels, locks, and fittings."
     },
     {
       "type": "patchouli:spotlight",
       "item": "kubejs:gun_steel_blank",
       "link_recipe": false,
-      "text": "One finished Gun Steel Blank. Keep this piece ready for the next assembly."
+      "text": "One rough billet. It must be tempered in a blast furnace before it can be used."
     },
     {
       "type": "patchouli:crafting",

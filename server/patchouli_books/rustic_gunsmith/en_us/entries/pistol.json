@@ -6,15 +6,19 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "$(bold)Cavalry Officer's Pistol$()$(br2)A compact 16.5mm sidearm designed for fast engagement. While it has higher dispersion than a long musket, a cavalryman can carry up to two pistols at the hip.$(br2)$(c)Requires powered Create Mechanical Crafters.$() Standard crafting benches lack the precision to fit lock, barrel, and stock."
+      "text": "A compact 16.5mm sidearm for rapid engagement. Soldiers can carry up to two pistols at the hip.$(br2)$(c)Requires Create Crafters.$()"
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Mechanical Crafter Grid (3x3)$()$(br2)B M R$(br)S W T$(br)  I L$(br2)$(bold)Legend:$()$(br)B: Pistol Barrel$(br)M: Flintlock Mechanism$(br)R: Ramrod$(br)S: Gun Screws$(br)W: Pistol Stock$(br)T: Barrel Band$(br)I: Tempered Gun Steel$(br)L: Leather"
+      "text": "$(bold)Mechanical Crafter (3x3)$()$(br2)• Top: Barrel, Lock, Ramrod$(br)• Mid: Screws, Stock, Band$(br)• Bot: [Empty], Steel, Leather$(br2)Place 8 Crafters matching the grid (bottom-left empty)."
     },
     {
       "type": "patchouli:text",
-      "text": "$(bold)Assembly Instructions$()$(br2)1. Place 8 Mechanical Crafters matching the grid (bottom-left empty).$(br)2. Connect rotational kinetic power (min 16 RPM).$(br)3. Wrench crafter arrows converging on the output.$(br)4. Insert ingredients and collect the finished, unloaded FK15-P."
+      "text": "$(bold)Kinetic Power$()$(br2)Connect rotational power (min 16 RPM) to crafters.$(br2)Wrench crafter arrows converging on the output slot.$(br2)Insert parts to complete the weapon."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(bold)Firing & Maintenance$()$(br2)Chambers 16.5mm standard or tactical rounds.$(br2)Requires proofing at an anvil with an Imperial Proof Stamp before legal field carry."
     }
   ]
 }
