@@ -24,9 +24,15 @@ Versiunea minoră **v1.3.0** aduce transformarea completă a modpack-ului într-
      - **Tier 3 (45% Fals Grotesc / Tinichea)**: Cerneală gălbuie de chihlimbar (`§6`), ștanță descentrată cu bavuri aspre și greșeli grosolane de ortografie (`POASONAT` fără `N`, `Garnisoana`).
      - **Arme Pilite (Piața Neagră)**: Urme adânci de tocilă mecanică și ștergerea completă a marcajului imperial de pe culată (`§4⚠ SERIE PILITĂ DE PE CULATĂ`).
 
-3. **Puncte de Control de Mare Tensiune la Hotar („Butt-Wrenching Moments”)**:
-   - Inspecție în două etape: soldatul din avanpost bate cu pumnul în desagă, cere socoteală pentru marfă și face un semn discret către lada de descărcare de la perete, oferind călătorului șansa de a scăpa înainte de a da ochii cu sergentul la poarta a doua.
-   - Vameși și pontonieri de rol (*Portărel*, *Vameș Ponton*) care ștampilează tichetele de călătorie la ambarcațiuni.
+3. **Puncte de Control de Mare Tensiune la Hotar & Bătăi de Inimă („Butt-Wrenching Moments”)**:
+   - **Motor Fiziologic de Tensiune la Graniță**: Jucătorii care se apropie de un punct de control sau poartă de graniță purtând **arme evident ilegale / automat prinse** (arme nemarcate, arme pilite de pe culată sau falsuri grosolane Tier 3) aud în căști propriile bătăi de inimă (`warden.heartbeat`), care accelerează treptat:
+     - *18–28m (Apropiere)*: Bătăi lente și înfundate (la fiecare 40 ticks / 2s) și whisper pe ecran: *„(Inima începe să-ți bată cu putere în piept... Simți privirile gărzilor apropiindu-se.)”*.
+     - *10–18m (Alertă Medie)*: Tahicardie accelerată și grea (la fiecare 24 ticks / 1.2s).
+     - *0–10m (Alertă Maximă)*: Puls violent (la fiecare 12 ticks / 0.6s) și zăngănit discret de armură de strajă la sub 6 metri (`item.armor.equip_iron`), cu avertisment pe actionbar: *„• Fierul ascuns la brâu pare tot mai greu... Încă un pas și ești pierdut. •”*.
+   - **Fără False Alarme**: Armele legale și falsurile subtile (Tier 1 & 2 care trec de porți) nu declanșează bătăi de inimă.
+   - **Salvare la Limită**: Retragerea dincolo de 28m sau aruncarea armei într-o ladă oprește imediat pulsul.
+   - **Inspecție în Două Etape**: Soldatul din avanpost bate cu pumnul în desagă, cere socoteală pentru marfă și face un semn discret către lada de descărcare de la perete, oferind călătorului șansa de a scăpa înainte de a da ochii cu sergentul la poarta a doua.
+   - **Vameși și Pontonieri de Rol** (*Portărel*, *Vameș Ponton*) care ștampilează tichetele de călătorie la ambarcațiuni.
 
 4. **Dramă Penitenciară & Evadări Spectaculoase („Close Escapes”)**:
    - **Arest Cinematic**: Sergentul ordonă predarea armelor, ecranul se întunecă și se aud cătușele de fier.
@@ -41,7 +47,7 @@ Versiunea minoră **v1.3.0** aduce transformarea completă a modpack-ului într-
    - Notificarea mecanică a fost înlocuită cu replica miliției: *„[Miliție] Povara e prea mare! Cureaua nu poate ține mai mult de o pușcă pe spate și două pistoale la brâu.”* însoțită de sunet de curea de piele.
 
 7. **Verificare Empirică Completă**:
-   - **30/30 Teste Automate Trecute (100% PASS)** pe serverul dedicat live NeoForge 21.1.248.
+   - **37/37 Teste Automate Trecute (100% PASS)** pe serverul dedicat live NeoForge 21.1.248.
    - **270 Pagini Patchouli** verificate fără depășiri de text.
 
 ---

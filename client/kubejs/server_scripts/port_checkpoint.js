@@ -444,6 +444,7 @@ ServerEvents.tick(function (event) {
   if (cpJailSweepTicks % 5 === 0) {
     cpGateScan(event.server)
     cpBoardScan(event.server)
+    cpHeartbeatScan(event.server)
   }
 })
 
@@ -452,6 +453,12 @@ ServerEvents.tick(function (event) {
 PlayerEvents.loggedIn(function (event) {
   var name = cpPlayerName(event.player)
   if (cpGatePrev[name] !== undefined) delete cpGatePrev[name]
+})
+
+PlayerEvents.loggedOut(function (event) {
+  var name = cpPlayerName(event.player)
+  if (cpGatePrev[name] !== undefined) delete cpGatePrev[name]
+  if (cpHeartbeatTracker[name] !== undefined) delete cpHeartbeatTracker[name]
 })
 
 function cpPickMode(player) {
@@ -2406,6 +2413,277 @@ function cpBoardScan(server) {
   }
 }
 
+// ============================================================================
+// BORDER PROXIMITY SUSPENSE ENGINE (Heartbeats on Auto-Caught Illegal Weapons)
+// ----------------------------------------------------------------------------
+// When a player approaches a checkpoint or border gate carrying an obviously
+// illegal firearm (unmarked gun, defaced gun, or Tier 3 botched fake):
+//   18-28m: slow distant heartbeat (every 40 ticks, vol 0.65, pitch 0.8)
+//   10-18m: heavy accelerating heartbeat (every 24 ticks, vol 0.95, pitch 0.95)
+//    0-10m: rapid pounding panic (every 12 ticks, vol 1.3, pitch 1.15)
+//           plus occasional guard armor rustle at <=6m.
+// Backing away or dropping the weapon immediately stops the heartbeat.
+// ============================================================================
+
+function cpDistToSegment(px, pz, ax, az, bx, bz) {
+  var l2 = (bx - ax) * (bx - ax) + (bz - az) * (bz - az)
+  if (l2 === 0) {
+    var dx = px - ax, dz = pz - az
+    return Math.sqrt(dx * dx + dz * dz)
+  }
+  var t = ((px - ax) * (bx - ax) + (pz - az) * (bz - az)) / l2
+  t = Math.max(0, Math.min(1, t))
+  var projX = ax + t * (bx - ax)
+  var projZ = az + t * (bz - az)
+  var dx = px - projX, dz = pz - projZ
+  return Math.sqrt(dx * dx + dz * dz)
+}
+
+function cpSiteMinDistance(player, site) {
+  if (!player || !player.level || !site) return 999999
+  var dim = String(player.level.dimension)
+  var minDist = 999999
+
+  // 1. denyTarget
+  if (site.denyTarget && site.denyTarget.dim === dim) {
+    var dx = player.x - site.denyTarget.x
+    var dy = player.y - site.denyTarget.y
+    var dz = player.z - site.denyTarget.z
+    var d = Math.sqrt(dx * dx + dy * dy + dz * dz)
+    if (d < minDist) minDist = d
+  }
+
+  // 2. doors
+  if (site.doors && site.doors.length > 0) {
+    for (var i = 0; i < site.doors.length; i++) {
+      var door = site.doors[i]
+      if (door.dim === dim) {
+        var dx = player.x - door.x
+        var dy = player.y - door.y
+        var dz = player.z - door.z
+        var d = Math.sqrt(dx * dx + dy * dy + dz * dz)
+        if (d < minDist) minDist = d
+      }
+    }
+  }
+
+  // 3. gates
+  if (site.gates && site.gates.length > 0) {
+    for (var gi = 0; gi < site.gates.length; gi++) {
+      var g = site.gates[gi]
+      if (g.dim === dim && g.a && g.b) {
+        var d = cpDistToSegment(player.x, player.z, g.a.x, g.a.z, g.b.x, g.b.z)
+        if (d < minDist) minDist = d
+      }
+    }
+  }
+
+  // 4. board zone
+  if (site.board && site.board.dim === dim) {
+    var bx = (site.board.x1 + site.board.x2) / 2
+    var bz = (site.board.z1 + site.board.z2) / 2
+    var by = site.board.y
+    var dx = player.x - bx
+    var dy = player.y - by
+    var dz = player.z - bz
+    var d = Math.sqrt(dx * dx + dy * dy + dz * dz)
+    if (d < minDist) minDist = d
+  }
+
+  // 5. evidence chests
+  if (minDist === 999999 && site.evidence && site.evidence.length > 0) {
+    for (var ei = 0; ei < site.evidence.length; ei++) {
+      var ev = site.evidence[ei]
+      if (ev.dim === dim) {
+        var dx = player.x - ev.x
+        var dy = player.y - ev.y
+        var dz = player.z - ev.z
+        var d = Math.sqrt(dx * dx + dy * dy + dz * dz)
+        if (d < minDist) minDist = d
+      }
+    }
+  }
+
+  return minDist
+}
+
+function cpNearestBorderDistance(player) {
+  var bestDist = 999999
+  var bestSite = null
+  for (var sn in CP_CFG.sites) {
+    var site = CP_CFG.sites[sn]
+    var d = cpSiteMinDistance(player, site)
+    if (d < bestDist) {
+      bestDist = d
+      bestSite = site
+    }
+  }
+  return { dist: bestDist, site: bestSite }
+}
+
+function cpFindAutoCaughtWeapon(player) {
+  if (!player || cpIsWeaponsTransporter(player)) return null
+
+  function checkStack(stack, depth) {
+    if (!stack || stack.isEmpty() || depth > 2) return null
+    var id = cpItemId(stack)
+    if (id === 'tacz:modern_kinetic_gun') {
+      var wCheck = cpEvaluateWeaponContraband(stack, player)
+      if (wCheck !== null) return wCheck
+    }
+    var subs = cpSubStacks(stack)
+    for (var s = 0; s < subs.length; s++) {
+      var subHit = checkStack(subs[s], depth + 1)
+      if (subHit !== null) return subHit
+    }
+    return null
+  }
+
+  var inv = player.getInventory()
+  var size = inv.getContainerSize ? inv.getContainerSize() : (inv.size || 36)
+  for (var i = 0; i < size; i++) {
+    var hit = checkStack(inv.getItem(i), 0)
+    if (hit !== null) return hit
+  }
+
+  try {
+    if ($CP_CuriosApi !== null) {
+      var invOpt = $CP_CuriosApi.getCuriosInventory(player)
+      if (invOpt && invOpt.isPresent()) {
+        var cHandler = invOpt.get()
+        var equips = cHandler.getEquippedCurios()
+        var cSize = equips.getSlots()
+        for (var ci = 0; ci < cSize; ci++) {
+          var cHit = checkStack(equips.getStackInSlot(ci), 0)
+          if (cHit !== null) return cHit
+        }
+      }
+    }
+  } catch (e) {}
+
+  return null
+}
+
+var cpHeartbeatTracker = {}
+
+function cpHeartbeatScan(server) {
+  var players = server.getPlayerList().getPlayers()
+  var now = cpJailSweepTicks
+
+  for (var pi = 0; pi < players.size(); pi++) {
+    var p = players.get(pi)
+    try {
+      var gm = cpGameModeName(p)
+      if (gm !== 'survival' && gm !== 'adventure') continue
+
+      var name = cpPlayerName(p)
+      if (cpIsExempt(p, null) || cpIsWeaponsTransporter(p)) {
+        if (cpHeartbeatTracker[name]) delete cpHeartbeatTracker[name]
+        continue
+      }
+
+      var border = cpNearestBorderDistance(p)
+      if (border.dist > 28) {
+        if (cpHeartbeatTracker[name] && cpHeartbeatTracker[name].wasInZone) {
+          cpHeartbeatTracker[name].wasInZone = false
+          if (cpIsDebug(server)) {
+            p.tell(Text.literal('§a[DEBUG-STRAJA] Bătăi de inimă oprite (distanță sigură: ' + border.dist.toFixed(1) + 'm)'))
+          }
+        }
+        continue
+      }
+
+      var fakeGun = cpFindAutoCaughtWeapon(p)
+      if (fakeGun === null) {
+        if (cpHeartbeatTracker[name] && cpHeartbeatTracker[name].wasInZone) {
+          cpHeartbeatTracker[name].wasInZone = false
+          if (cpIsDebug(server)) {
+            p.tell(Text.literal('§a[DEBUG-STRAJA] Bătăi de inimă oprite (fără armă de contrabandă)'))
+          }
+        }
+        continue
+      }
+
+      // Calculate tension stage & pulse interval
+      var interval = 40
+      var vol = 0.65
+      var pitch = 0.80
+      var isExtreme = false
+
+      if (border.dist <= 10) {
+        interval = 12
+        vol = 1.30
+        pitch = 1.15
+        isExtreme = true
+      } else if (border.dist <= 18) {
+        interval = 24
+        vol = 0.95
+        pitch = 0.95
+      }
+
+      var trk = cpHeartbeatTracker[name]
+      if (!trk) {
+        trk = { lastTick: 0, lastWarnTick: 0, wasInZone: false, stage: '' }
+        cpHeartbeatTracker[name] = trk
+      }
+
+      if (now - trk.lastTick >= interval) {
+        trk.lastTick = now
+        // Personal sound: warden heartbeat
+        server.runCommandSilent('playsound minecraft:entity.warden.heartbeat player ' + cpQuoted(p) + ' ~ ~ ~ ' + vol + ' ' + pitch)
+
+        // Close proximity guard rustle
+        if (border.dist <= 6 && (now % 48 < 12)) {
+          server.runCommandSilent('playsound minecraft:item.armor.equip_iron player ' + cpQuoted(p) + ' ~ ~ ~ 0.4 0.9')
+        }
+
+        // Atmospheric narrative cue on actionbar
+        var newStage = isExtreme ? 'EXTREME' : 'WARN'
+        if (!trk.wasInZone || trk.stage !== newStage || (now - trk.lastWarnTick >= 200)) {
+          trk.lastWarnTick = now
+          trk.wasInZone = true
+          trk.stage = newStage
+
+          if (cpIsDebug(server)) {
+            p.tell(Text.literal('§c[DEBUG-STRAJA] Bătăi de inimă: Dist=' + border.dist.toFixed(1) + 'm | Pas=' + interval + 't | ' + fakeGun.name))
+          } else {
+            if (isExtreme) {
+              p.displayClientMessage(Text.literal('§4§l• §8Fierul ascuns la brâu pare tot mai greu... Încă un pas și ești pierdut. §4§l•'), true)
+            } else {
+              p.displayClientMessage(Text.literal('§8(Inima începe să-ți bată cu putere în piept... Simți privirile gărzilor apropiindu-se.)'), true)
+            }
+          }
+        }
+      }
+    } catch (e) {
+      /* one player check never breaks the scan loop */
+    }
+  }
+}
+
+function cpCmdHeartbeatStatus(ctx, targetPlayer) {
+  var p = targetPlayer || cpCmdSourcePlayer(ctx)
+  if (!p) {
+    ctx.source.sendSystemMessage(Text.literal('§cTrebuie să specifici un jucător.'))
+    return 0
+  }
+  var border = cpNearestBorderDistance(p)
+  var fakeGun = cpFindAutoCaughtWeapon(p)
+  var siteName = border.site ? border.site.name : 'niciunul'
+  var distStr = border.dist < 9999 ? border.dist.toFixed(1) + 'm' : 'infinit'
+
+  ctx.source.sendSystemMessage(Text.literal('§6§l[Straja Heartbeat Diagnostic]§r ' + p.name.string))
+  ctx.source.sendSystemMessage(Text.literal('§7• Punct de control cel mai apropiat: §e' + siteName + ' §7(la §b' + distStr + '§7)'))
+  if (fakeGun !== null) {
+    ctx.source.sendSystemMessage(Text.literal('§c• Armă ilegală detectată: §f' + fakeGun.name + ' §8[' + fakeGun.key + ']'))
+  } else {
+    ctx.source.sendSystemMessage(Text.literal('§a• Nicio armă automat-detectabilă în inventar.'))
+  }
+  var active = border.dist <= 28 && fakeGun !== null
+  ctx.source.sendSystemMessage(Text.literal('• Stare bătăi de inimă: ' + (active ? '§c§lACTIVĂ (Tensiune Hotar)' : '§aINACTIVĂ')))
+  return 1
+}
+
 ServerEvents.commandRegistry(event => {
   var Commands = event.commands
 
@@ -2425,6 +2703,10 @@ ServerEvents.commandRegistry(event => {
       .then(Commands.literal('inspect')
         .then(Commands.argument('player', $CP_EntityArgument.player())
           .executes(ctx => cpInspect(ctx))))
+      .then(Commands.literal('heartbeat')
+        .executes(ctx => cpCmdHeartbeatStatus(ctx, null))
+        .then(Commands.argument('player', $CP_EntityArgument.player())
+          .executes(ctx => cpCmdHeartbeatStatus(ctx, cpResolvePlayer(ctx)))))
       .then(Commands.literal('arrest')
         .then(Commands.argument('player', $CP_EntityArgument.player())
           .executes(ctx => cpArrest(ctx))))

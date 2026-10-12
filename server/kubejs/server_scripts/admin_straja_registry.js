@@ -356,6 +356,53 @@ StrajaWeapons.evaluateWeaponLegality = function(stack, player) {
     }
 }
 
+// 3b. Border Proximity Heartbeat Evaluator (Suspense & Tension Engine)
+StrajaWeapons.evaluateBorderHeartbeat = function(player, distance, carriedGun) {
+    if (!player || StrajaWeapons.isWeaponsTransporter(player)) {
+        return { active: false, reason: 'Exempt / Transporter' }
+    }
+    if (distance > 28) {
+        return { active: false, reason: 'Distanță prea mare (>28m)' }
+    }
+    if (!carriedGun) {
+        return { active: false, reason: 'Fără armă ilegală' }
+    }
+
+    var legality = StrajaWeapons.evaluateWeaponLegality(carriedGun, player)
+    // Only auto-caught contraband weapons trigger the panic heartbeat!
+    if (!legality.isContraband) {
+        return { active: false, reason: 'Armă legală sau fals subtil (trece de poartă)' }
+    }
+
+    var interval = 40
+    var volume = 0.65
+    var pitch = 0.80
+    var stage = 'APPROACH'
+
+    if (distance <= 10) {
+        interval = 12
+        volume = 1.30
+        pitch = 1.15
+        stage = 'EXTREME_DANGER'
+    } else if (distance <= 18) {
+        interval = 24
+        volume = 0.95
+        pitch = 0.95
+        stage = 'CLOSE_DANGER'
+    }
+
+    return {
+        active: true,
+        stage: stage,
+        distance: distance,
+        interval: interval,
+        volume: volume,
+        pitch: pitch,
+        reason: legality.reason,
+        contrabandKey: legality.contrabandKey
+    }
+}
+
 // ----------------------------------------------------------------------------
 // 4. Physical Immutable Patrol Book ("Registrul de Arme Straja")
 // ----------------------------------------------------------------------------
@@ -1103,6 +1150,28 @@ function runStrajaAutomatedTests(server, src) {
 
     var resExemptCrate = StrajaWeapons.evaluateWeaponLegality(gunUnmarked, mockPlayerCrate)
     assertTest('Transportator cu ladă militară sigilată -> SCUTIT', !resExemptCrate.isContraband && resExemptCrate.isExempt)
+
+    // Sub-teste: Bătăi de Inimă la Hotar (Border Proximity Heartbeat Suspense)
+    var hbCloseDefaced = StrajaWeapons.evaluateBorderHeartbeat(mockPlayerRegular, 8, gunDefaced)
+    assertTest('Bătăi Inimă: Armă pilită la 8m -> ACTIV (Alertă Maximă, Pas 12t)', hbCloseDefaced.active && hbCloseDefaced.interval === 12 && hbCloseDefaced.stage === 'EXTREME_DANGER')
+
+    var hbMidTier3 = StrajaWeapons.evaluateBorderHeartbeat(mockPlayerRegular, 15, gunTier3)
+    assertTest('Bătăi Inimă: Fals Tinichea la 15m -> ACTIV (Alertă Medie, Pas 24t)', hbMidTier3.active && hbMidTier3.interval === 24 && hbMidTier3.stage === 'CLOSE_DANGER')
+
+    var hbFarUnmarked = StrajaWeapons.evaluateBorderHeartbeat(mockPlayerRegular, 25, gunUnmarked)
+    assertTest('Bătăi Inimă: Armă nemarcată la 25m -> ACTIV (Apropiere, Pas 40t)', hbFarUnmarked.active && hbFarUnmarked.interval === 40 && hbFarUnmarked.stage === 'APPROACH')
+
+    var hbPassTier2 = StrajaWeapons.evaluateBorderHeartbeat(mockPlayerRegular, 8, gunTier2)
+    assertTest('Bătăi Inimă: Fals Comun (T2) la 8m -> INACTIV (Trece poarta mecanică)', !hbPassTier2.active)
+
+    var hbLegal = StrajaWeapons.evaluateBorderHeartbeat(mockPlayerRegular, 8, gunAuthentic)
+    assertTest('Bătăi Inimă: Armă legală la 8m -> INACTIV (Complet sigur)', !hbLegal.active)
+
+    var hbOutOfRange = StrajaWeapons.evaluateBorderHeartbeat(mockPlayerRegular, 50, gunDefaced)
+    assertTest('Bătăi Inimă: Armă pilită la 50m -> INACTIV (În afara graniței)', !hbOutOfRange.active)
+
+    var hbExemptTransporter = StrajaWeapons.evaluateBorderHeartbeat(mockPlayerCrate, 8, gunDefaced)
+    assertTest('Bătăi Inimă: Transportator autorizat la 8m -> INACTIV (Scutit)', !hbExemptTransporter.active)
 
     // --- TEST SUITE 4: RNG Distribution Simulation (10,000 rolls) ---
     log('§e▶ 4. Verificare Distribuție RNG Falsificare (10.000 iterații)')

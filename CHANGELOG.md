@@ -27,7 +27,14 @@ This minor release completely transforms the player and server experience into a
   - **Black Market Defaced Guns**: Scraped steel marks, polished breech, completely obliterated imperial stamp (`§4⚠ SERIE PILITĂ DE PE CULATĂ`, `Metal polizat mecanic cu tocila`).
   - **Unproofed Civilian Guns**: Neutral physical description (`§e⚠ FĂRĂ POANSON — Arma nu poartă nicio ștanță sau număr de înregistrare pe culată`).
 
-#### 3. High-Stakes Border Checkpoints ("Butt-Wrenching Moments") (`port_checkpoint.js`)
+#### 3. High-Stakes Border Checkpoints & Proximity Heartbeats ("Butt-Wrenching Moments") (`port_checkpoint.js`)
+- **Dynamic Border Proximity Heartbeat Engine**:
+  - Approaching a checkpoint or border gate with an **automatically caught illegal firearm** (unmarked gun, defaced gun, or Tier 3 botched fake) triggers real-time physiological dread:
+    - *Apropiere (18–28m)*: Bătăi lente și înfundate ale inimii (`warden.heartbeat`, la fiecare 40 ticks / 2 secunde, vol 0.65, pitch 0.8) și un fior pe ecran: *„(Inima începe să-ți bată cu putere în piept... Simți privirile gărzilor apropiindu-se.)”*.
+    - *Alertă Medie (10–18m)*: Bătăi accelerate și grele (la fiecare 24 ticks / 1.2 secunde, vol 0.95, pitch 0.95).
+    - *Alertă Maximă (0–10m)*: Panic Frantic / Tahicardie violentă (la fiecare 12 ticks / 0.6 secunde, vol 1.3, pitch 1.15) și zăngănit discret de armură de strajă la sub 6 metri (`item.armor.equip_iron`), alături de mesajul tensionat de actionbar: *„• Fierul ascuns la brâu pare tot mai greu... Încă un pas și ești pierdut. •”*.
+  - **Fără Alerte False**: Armele poansonate legal și falsurile subtile de Nivel 1 și 2 (care trec de porțile mecanice) nu declanșează bătăi de inimă.
+  - **Ușurare Imediată**: Întoarcerea din drum dincolo de 28m sau aruncarea armei într-o ladă oprește imediat bătăile inimii.
 - **Atmospheric Two-Stage Inspection**:
   - *Stage 1 (Outer Gate)*: Sentry hears footsteps, steps forward, and inspects bags with knocking audio. Warns travelers via authentic dialogue (`[Soldat de Strajă] „Stai puțin pe loc, călătorule...”`) and discreetly gestures towards the wall deposit chest: *„Dacă nu vrei să dai socoteală sergentului la poarta a doua, descarcă-le în ladă acum.”*
   - *Stage 2 (Inner Iron Gate)*: Crossing without resolving contraband drops the iron portcullis behind the traveler and triggers arrest by the sergeant.
@@ -56,7 +63,7 @@ This minor release completely transforms the player and server experience into a
 - Replaced mechanical notifications with authentic militia dialogue: *„[Miliție] Povara e prea mare! Cureaua nu poate ține mai mult de o pușcă pe spate și două pistoale la brâu.”* with leather strap dropping audio.
 
 #### 7. Empirical Test Suite & Release Verification
-- **Automated Test Suite (`/straja test`)**: 30/30 empirical proof tests verified passing (100% PASS) live on NeoForge 21.1.248 dedicated server via RCON.
+- **Automated Test Suite (`/straja test`)**: 37/37 empirical proof tests verified passing (100% PASS) live on NeoForge 21.1.248 dedicated server via RCON.
 - **Patchouli Typographic Audit**: 270 pages verified across client and server with 0 overflows.
 
 ---
