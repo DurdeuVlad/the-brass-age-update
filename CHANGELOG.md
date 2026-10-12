@@ -4,6 +4,63 @@ All notable changes to **The Brass Age** modpack expansion for **Rustic Craft II
 
 ---
 
+## [v1.3.0] — 2026-10-12 (100% In-Universe Roleplay Immersive Overhaul, Sensory "Papers, Please" Cues, High-Stakes Checkpoints & Prison Escapes)
+
+This minor release completely transforms the player and server experience into a **100% In-Universe Medieval Roleplay environment**. All technical meta alerts, blunt system broadcasts (`[Server]`, `[DEBUG]`, `NBT`, `Ilegal`), and item IDs have been completely eradicated from player view in favor of tactile audio cues, guard dialogues, physical inspections, and high-stakes drama. It introduces calibrated sensory tells for forged and defaced firearms, atmospheric two-stage border checkpoints with heart-pounding audio cues, cinematic arrests, bailiff arrest warrants, and dynamic fortress jailbreaks with ringing alarm bells and hunting horns. For server administrators, a persistent `/straja debug on|off|status` toggle allows full diagnostic transparency on demand.
+
+### ✨ New Features & Systems
+
+#### 1. 100% In-Universe Roleplay Audio-Visual Engine & Zero Meta Spoilers
+- **Full Meta Purge**: Eliminated all technical jargon, debug tags, raw registry IDs (`[minecraft:gold_block]`), and blunt announcements across the entire modpack.
+- **Layered Audio Cues**:
+  - Heartbeat of Dread (`minecraft:entity.warden.heartbeat`): Triggers when guards notice uninspected cargo or illicit goods at checkpoints.
+  - Sentry Armor Clinking (`minecraft:item.armor.equip_iron`): Plays as checkpoint guards draw closer to inspect travel packs.
+  - Iron Handcuffs & Heavy Doors (`minecraft:item.armor.equip_chain`, `minecraft:block.iron_door.close`): Accompanies arrests and cell confinement.
+  - Fortress Watchtower Alarm Bells (`minecraft:block.bell.use`) & Hunting Horns (`minecraft:item.goat_horn.sound.0`): Ring across the bastion during fugitive prison breaks.
+  - Prison Release Clink (`minecraft:block.iron_door.open`, `minecraft:item.armor.equip_leather`): Plays upon pardon when personal effects are returned.
+
+#### 2. Sensory "Papers, Please" Cues for Forged & Defaced Firearms (`flintlock_tooltips.js`, `flintlock_proofing_legal.js`)
+- **No Direct "Illegal" Labels**: Illicit weapons no longer spoil their status with meta warnings. Players and officers deduce provenance from physical tells:
+  - **Tier 1 (5% Near-Perfect Fakes)**: Micro-tell in serial typography (`#RC-1S-XXXX` or `#RC-I5-XXXX` instead of `15-`) and subtle period at the end of the imperial proofing lore (`Registrul Imperial Straja.`).
+  - **Tier 2 (50% Common Fakes)**: Copper vitriol ink oxidation (`§2` dark green lettering) and missing letter in register name (`Registru Imperial Straja` without `-l`).
+  - **Tier 3 (45% Botched Crude Fakes)**: Amber/iron ink (`§6`), typo on stamp (`POASONAT` missing the `N`), or crude spelling (`Garnisoana` with `s`), with rough burrs and uneven strike depth.
+  - **Black Market Defaced Guns**: Scraped steel marks, polished breech, completely obliterated imperial stamp (`§4⚠ SERIE PILITĂ DE PE CULATĂ`, `Metal polizat mecanic cu tocila`).
+  - **Unproofed Civilian Guns**: Neutral physical description (`§e⚠ FĂRĂ POANSON — Arma nu poartă nicio ștanță sau număr de înregistrare pe culată`).
+
+#### 3. High-Stakes Border Checkpoints ("Butt-Wrenching Moments") (`port_checkpoint.js`)
+- **Atmospheric Two-Stage Inspection**:
+  - *Stage 1 (Outer Gate)*: Sentry hears footsteps, steps forward, and inspects bags with knocking audio. Warns travelers via authentic dialogue (`[Soldat de Strajă] „Stai puțin pe loc, călătorule...”`) and discreetly gestures towards the wall deposit chest: *„Dacă nu vrei să dai socoteală sergentului la poarta a doua, descarcă-le în ladă acum.”*
+  - *Stage 2 (Inner Iron Gate)*: Crossing without resolving contraband drops the iron portcullis behind the traveler and triggers arrest by the sergeant.
+- **Roleplay Dockmasters & Wharf Customs**: Replaced automated border prompts with authentic dialogues from *Portărel* and *Vameș Ponton*, stamping travel slips at boat boarding zones.
+
+#### 4. Penal Custody, Royal Arrest Warrants & Prison Escapes (`straja_prison.js`)
+- **Cinematic Arrest**: Sergeant of the Guard commands the suspect to drop weapons (`[Sergent de Gardă] „Jos armele și mâinile la vedere!”`), darkens the screen, and snaps iron shackles.
+- **In-Cell Reception & Summons**: Heavy iron door slams shut with stone echoes; jailer delivers in-universe welcome dialogue.
+- **Wax-Sealed Bailiff Summons ("Pergament de Arestare")**:
+  - Handed to the prisoner as an in-game written book from `Garnizoana Straja` with a red wax seal header.
+  - In normal RP mode, lists confiscated evidence with clean merchant names (raw IDs hidden unless admin debug is enabled).
+- **Fortress Jailbreak & Manhunt ("Close Escapes")**:
+  - When an inmate breaches the cell perimeter, the watchtower bell tolls incessantly and hunting horns blow.
+  - The fugitive receives a dramatic banner: `EVADARE! Alarma a fost dată în garnizoană! Fugi!`
+  - Realm-wide chat broadcast alerts all players: `[CLOPOTE DE ALARMĂ] Clopotul din turn bate neîncetat! Deținutul [Nume] a evadat din temniță! Gărzile atacă la vedere!`
+- **Recapture & Pardon Mechanics**:
+  - Recaptured fugitives are locked back in with guard dialogue: *„Credeai că ai scăpat? Înapoi în celulă!”*
+  - Official releases restore personal lockers, clear wanted records, and play unlocking sounds.
+
+#### 5. Persistent Administrator Debug Switch (`/straja debug on|off|status`)
+- **Admin Control**: Restricted to OP level 2.
+- **Default State**: OFF (`DEZACTIVAT — Regim 100% RP`).
+- **On Demand**: When enabled, technical diagnostics and registry IDs (`[minecraft:item_id]`) are appended to checkpoint and prison readouts for administrative auditing without altering client files.
+
+#### 6. Militia Weapon Carry Limit Roleplay Voice (`flintlock_carry_limits.js`)
+- Replaced mechanical notifications with authentic militia dialogue: *„[Miliție] Povara e prea mare! Cureaua nu poate ține mai mult de o pușcă pe spate și două pistoale la brâu.”* with leather strap dropping audio.
+
+#### 7. Empirical Test Suite & Release Verification
+- **Automated Test Suite (`/straja test`)**: 30/30 empirical proof tests verified passing (100% PASS) live on NeoForge 21.1.248 dedicated server via RCON.
+- **Patchouli Typographic Audit**: 270 pages verified across client and server with 0 overflows.
+
+---
+
 ## [v1.2.0] — 2026-10-09 (Netherless Create 3-Tier Industrial Engine & Book Typography Guardrails)
 
 This minor release introduces the complete 3-Tier Industrial Netherless Create progression, establishes an automated typography validation engine that guarantees zero text overflow across all 270 Patchouli book pages, expands the guided in-game test runner to 16 full scenarios, and adds automated Test Suite 6 verifying 30/30 empirical assertions live on dedicated servers.

@@ -1,5 +1,5 @@
 =====================================================================
-  ⚜ THE BRASS AGE UPDATE — INSTRUCTIUNI RAPIDE DE INSTALARE v1.2.0 ⚜
+  ⚜ THE BRASS AGE UPDATE — INSTRUCTIUNI RAPIDE DE INSTALARE v1.3.0 ⚜
 =====================================================================
 
 ATENȚIE PENTRU TESTERI:
@@ -32,21 +32,23 @@ peste folderul instanței voastre Rustic Craft II:
   - config/           (actualizează setările de rucsac și unelte)
 
 ---------------------------------------------------------------------
-CE ESTE NOU ÎN v1.2.0 (Netherless Create 3-Tier Engine & Book Guardrails):
+CE ESTE NOU ÎN v1.3.0 (Imersiune 100% Roleplay & "Papers, Please"):
 ---------------------------------------------------------------------
-1. Alchimia Netherless Create pe 3 Niveluri Industriale:
-   Arhitectură completă pe 3 niveluri (Manual 1x -> Cinetic Create 2-4x ->
-   Surge Termic cu Sulf / Asamblare Secvențială 8-16x / 400% surge) pentru
-   toate cele 8 linii de Nether (Netherrack, Magmă, Foc, Nisip Suflet,
-   Cuarț, Tije de Văpaie, Blaze Burner și Lacrimi de Ghast).
-2. Sistem de Guardrails & Tipografie Zero-Overflow pentru Cărți:
-   Toate cele 270 de pagini din cărțile Patchouli au fost verificate și
-   optimizate fără nicio depășire de margine (zero text clipping).
-3. Ghid Interactiv de Testare Extins (/brass_test):
-   Scenarii extinse la 16 pași (Pasul 15: Netherless T1/T2, Pasul 16: T3
-   & Burners), suport comenzi rapide (/brass_test help, /brass_test netherless)
-   și butoane interactive de kit.
-4. Suită de Testare Automatizată 30/30 Aserțiuni (/straja test):
-   30/30 aserțiuni verificate empiric direct pe serverul dedicat (100% pass).
+1. Imersiune 100% Medieval Roleplay & Zero Spoilere Meta:
+   Eliminat complet orice text tehnic, alerte de sistem sau ID-uri de iteme.
+   Adăugate 6 straturi de efecte audio senzoriale (bătăi de inimă, zăngănit
+   de armură de strajă, cătușe grele, clopote de alarmă, corn de vânătoare).
+2. Indicii Fizice pentru Arme Falsificate ("Papers, Please"):
+   Falsurile se recunosc după detalii de epocă (cerneală verde de vitriol,
+   ștanțe descentrate cu bavuri, erori tipografice în serie `#RC-1S-XXXX`),
+   iar armele pilite prezintă urme adânci de tocilă mecanică.
+3. Puncte de Control & Tensiune la Hotar:
+   Soldații cercetează desagii și bat în căptușeală, oferind șansa de a lăsa
+   marfa în cufărul de descărcare înainte de sergentul de la poarta a doua.
+4. Temniță, Proces-Verbal cu Ceară & Evadări Spectaculoase:
+   Arest cinematic, celule de piatră cu ecou, pergament de arestare oficial.
+   Evadarea declanșează clopotele de alarmă din turn și cornul de vânătoare
+   cu alertă generală de urmărire pe tot serverul.
+5. Comutator Admin Debug (/straja debug on|off|status):
+   Permite administratorilor activarea diagnosticelor tehnice la nevoie.
 =====================================================================
-

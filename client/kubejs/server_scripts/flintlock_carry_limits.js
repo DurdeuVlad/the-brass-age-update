@@ -69,7 +69,12 @@ function flintlockCarryMessage(player) {
     var next = player.persistentData.getLong('flintlockCarryNextMessage')
     if (now < next) return
     player.persistentData.putLong('flintlockCarryNextMessage', now + 60)
-    player.tell('§e[Arsenal] Limită de transport: maxim 1 pușcă și 2 pistoale. Armele în plus rămân pe sol.')
+    player.tell('§6[Miliție] §7„Povara e prea mare! Cureaua nu poate ține mai mult de o pușcă pe spate și două pistoale la brâu.”')
+    player.tell('§8(Arma în plus îți alunecă din mâini pe caldarâm...)')
+    try {
+        var srv = player.getServer ? player.getServer() : player.server
+        if (srv) srv.runCommandSilent('playsound minecraft:item.armor.equip_leather player ' + player.getName().getString() + ' ~ ~ ~ 1.0 0.8')
+    } catch (e) {}
 }
 
 function flintlockEnforce(player) {

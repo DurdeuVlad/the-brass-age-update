@@ -132,9 +132,8 @@ ServerEvents.commandRegistry(event => {
                     src.sendSystemMessage(Text.literal('   §7• Glonț de Plumb:      §f40–55 Daune grele de penetrare'))
                     src.sendSystemMessage(Text.literal('   §6• Mitralii (Canister): §fÎmprăștiere largă pentru luptă la distanță mică'))
                     src.sendSystemMessage(Text.literal('   §c• Glonț Incendiar:     §fAprinde ținta pentru 8 secunde'))
-                    src.sendSystemMessage(Text.literal('§e▶ Limită Transport: §fMaxim 1 pușcă și 2 pistoale (excesul cade pe sol)'))
-                    src.sendSystemMessage(Text.literal('§e▶ Legea Armelor: §fArmele nepoansonate (§cNEPOANSONAT§f) sunt ilegale!'))
-                    src.sendSystemMessage(Text.literal('   §aAplică pe nicovală cu Sigiliul Imperial pentru serie legală (#RC-15-XXXX).'))
+                    src.sendSystemMessage(Text.literal('§e▶ Legea Armelor: §fArmele fără poanson imperial sunt oprite la porțile garnizoanei!'))
+                    src.sendSystemMessage(Text.literal('   §aMergi la un armurier autorizat sau la nicovală cu Sigiliul Imperial pentru ștanțare legală (#RC-15-XXXX).'))
                     src.sendSystemMessage(Text.literal('§6══════════════════════════════════════════════════════════'))
                     return 1
                 })

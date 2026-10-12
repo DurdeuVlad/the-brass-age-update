@@ -169,8 +169,18 @@ if ($AnvilUpdateEvent && typeof NativeEvents !== 'undefined') {
         console.info('[AnvilUpdate] gunId=' + gunId)
         if (gunId !== 'qkl:fk15' && gunId !== 'qkl:fk15p') return
 
+        var player = event.getPlayer()
+        if (!player) return
+        var isInspector = strajaIsAuthorizedInspector(player)
+
         // Cannot re-proof an already legal gun
         if (tag.getBoolean('Proofed')) {
+            event.setOutput($FP_ItemStack.EMPTY)
+            return
+        }
+
+        // Unlicensed civilians cannot re-stamp an already forged gun to re-roll tiers
+        if (!isInspector && tag.getBoolean('Forged')) {
             event.setOutput($FP_ItemStack.EMPTY)
             return
         }
@@ -182,13 +192,9 @@ if ($AnvilUpdateEvent && typeof NativeEvents !== 'undefined') {
         }
 
         var output = left.copy()
-        var player = event.getPlayer()
-        if (!player) return
         var server = player.getServer()
         if (!server) return
         var serial = getNextStrajaSerial(server)
-
-        var isInspector = strajaIsAuthorizedInspector(player)
 
         var newTag = tag.copy()
         var loreList = new $FP_ArrayList()
@@ -228,10 +234,15 @@ if ($AnvilUpdateEvent && typeof NativeEvents !== 'undefined') {
                 lore1 = '§2✔ POANSONAT: ' + serial
                 lore2 = '§7Registru Imperial Straja' // missing '-l'
             } else {
-                // Tier 3: Botched / Crude (Red/yellow ink, typo POASONAT without N, crude lore)
+                // Tier 3: Botched / Crude (Amber/iron ink, typo POASONAT without N, misspelled Garnisoana)
                 tier = 3
-                lore1 = (Math.random() < 0.5 ? '§c✔ POASONAT: ' : '§e✔ POANSONAT?: ') + serial
-                lore2 = '§7Atelier Nereglementat'
+                if (Math.random() < 0.5) {
+                    lore1 = '§6✔ POASONAT: ' + serial // Missing 'N' as noted in Semnele Adevarului
+                    lore2 = '§8Cancelaria Garnisoana Straja' // 's' instead of 'z'
+                } else {
+                    lore1 = '§7✔ POANSON: ' + serial // Missing '-AT'
+                    lore2 = '§8Registru Garnizoana Straja' // Missing '-l' and district style
+                }
             }
 
             newTag.putBoolean('Proofed', false)
@@ -279,8 +290,9 @@ function fpCreateDefacedGun(gunStack) {
 
     var nativeStack = (typeof output.getItemStack === 'function') ? output.getItemStack() : output
     var loreList = new $FP_ArrayList()
-    loreList.add($FP_Component.literal('§4⚠ [SERIE PILITĂ / DEFACED]'))
-    loreList.add($FP_Component.literal('§cArmă de contrabandă!'))
+    loreList.add($FP_Component.literal('§4⚠ SERIE PILITĂ DE PE CULATĂ'))
+    loreList.add($FP_Component.literal('§7Metal polizat mecanic cu tocila, marcajul imperial este distrus.'))
+    loreList.add($FP_Component.literal('§8(Urme adânci de pilire mecanică pe oțel)'))
 
     try {
         if (nativeStack && typeof nativeStack.set === 'function') {
@@ -375,7 +387,7 @@ if ($GrindstoneTakeEvent && typeof NativeEvents !== 'undefined') {
                 var z = player.z.toFixed(1)
                 server.runCommandSilent('playsound minecraft:block.grindstone.use player @a ' + x + ' ' + y + ' ' + z + ' 1.0 1.0')
             }
-            player.tell('§c[Piața Neagră] Ai pilit seria armei la tocilă! Arma a devenit ilegală.')
+            player.tell('§c[Atelier Clandestin] Piatra tocilei a șters orice urmă de serie de pe culată.')
         }
     })
 }
@@ -423,7 +435,7 @@ BlockEvents.rightClicked(event => {
             if (server) {
                 server.runCommandSilent('playsound minecraft:block.grindstone.use player @a ' + Number(px).toFixed(1) + ' ' + Number(py).toFixed(1) + ' ' + Number(pz).toFixed(1) + ' 1.0 1.0')
             }
-            player.tell('§c[Piața Neagră] Ai pilit seria armei la tocilă! Arma a devenit ilegală (Defaced).')
+            player.tell('§c[Atelier Clandestin] Piatra tocilei a șters orice urmă de serie de pe culată.')
         } catch (err) {
             console.error('[GrindstoneClick] Error applying defaced gun: ' + err)
         }
@@ -529,14 +541,14 @@ ItemEvents.rightClicked(event => {
     var pRoll = Math.random()
     var fakeTier = 2
     var permitAuthor = 'Gheorge Comandantul'
-    var permitTitle = 'Permis Armă ' + forgedSerial.replace('-', '_')
-    var statusText = '§aLEGAL / STRAJA'
+    var permitTitle = 'Permis Port-Arma ' + forgedSerial.replace('-', '_')
+    var statusText = '§2LEGAL / STRAJA'
     var watermarkText = '§8Cancelaria Garnizoana Straja\n§8[Cerneală întinsă de calopur]'
-    var itemName = '{"text":"Permis Port-Armă [T2 Fals Comun]","color":"gold","bold":true,"italic":false}'
+    var itemName = '{"text":"Permis Port-Armă","color":"gold","bold":true,"italic":false}'
     var loreArray = [
         '\'{"text":"Serie: ' + forgedSerial + '","color":"gray","italic":false}\'',
-        '\'{"text":"⚠ [Document cu nereguli grafice]","color":"yellow","italic":false}\'',
-        '\'{"text":"Piața Neagră","color":"dark_gray","italic":true}\''
+        '\'{"text":"Pecete: §7Ceară cu bule de aer și amprentă parțială","color":"gray","italic":false}\'',
+        '\'{"text":"(Cerneală pe alocuri ștearsă la margini)","color":"dark_gray","italic":true}\''
     ]
 
     if (pRoll < 0.05) {
@@ -544,25 +556,26 @@ ItemEvents.rightClicked(event => {
         fakeTier = 1
         permitAuthor = 'Gheorghe Comandatul'
         permitTitle = 'Permis Port-Arma ' + forgedSerial
-        statusText = '§2LEGAL / ÎNREGISTRAT'
+        statusText = '§aLEGAL / ÎNREGISTRAT'
         watermarkText = '§8Cancelaria Garnizoanei Straja.'
-        itemName = '{"text":"Permis Port-Armă [T1 Fals Subtil]","color":"aqua","bold":true,"italic":false}'
+        itemName = '{"text":"Permis Port-Armă","color":"gold","bold":true,"italic":false}'
         loreArray = [
             '\'{"text":"Serie: ' + forgedSerial + '","color":"gray","italic":false}\'',
-            '\'{"text":"(Caligrafie imperială aproape identică)","color":"dark_gray","italic":true}\''
+            '\'{"text":"Pecete: §7Ceară roșie cu timbru sec","color":"gray","italic":false}\'',
+            '\'{"text":"(Caligrafie îngrijită, aliniere precisă a slovei)","color":"dark_gray","italic":true}\''
         ]
     } else if (pRoll >= 0.55) {
-        // Tier 3: Botched / Tinichea (45%) — comical author, misspelled title, red stamp
+        // Tier 3: Botched / Tinichea (45%) — inverted title order, coarse paper, crude wax
         fakeTier = 3
         permitAuthor = 'Comandant Gheorghe'
-        permitTitle = 'Hârtie de Armă ' + forgedSerial
-        statusText = '§cAPROBAT PE CINSTE'
-        watermarkText = '§8Atelier Mahala Obor\n§4FALS GROSOLAN'
-        itemName = '{"text":"Permis Port-Armă [T3 Fals Grosolan]","color":"red","bold":true,"italic":false}'
+        permitTitle = 'Permis Port-Arma ' + forgedSerial
+        statusText = '§6APROBAT CU DREPT DE PORT'
+        watermarkText = '§8Cancelaria Districtuală Straja\n§8[Pecete bătută stângaci]'
+        itemName = '{"text":"Permis Port-Armă","color":"gold","bold":true,"italic":false}'
         loreArray = [
             '\'{"text":"Serie: ' + forgedSerial + '","color":"gray","italic":false}\'',
-            '\'{"text":"✖ [FALS GROSOLAN / IMITAȚIE RIDICOLĂ]","color":"dark_red","bold":true,"italic":false}\'',
-            '\'{"text":"Contrabandă Grad 3","color":"red","italic":false}\''
+            '\'{"text":"Pecete: §7Smoală brună amestecată cu ceară","color":"gray","italic":false}\'',
+            '\'{"text":"(Hârtie aspră de cânepă, slove inegale tăiate la toc)","color":"dark_gray","italic":true}\''
         ]
     }
 
@@ -590,5 +603,5 @@ ItemEvents.rightClicked(event => {
     if (server) server.runCommandSilent(giveCmd)
     if (typeof player.swing === 'function') player.swing()
     if (!player.isCreative()) item.shrink(1)
-    player.tell('§e[Piața Neagră] Ai plastografiat un permis de port-armă falsificat (Nivel ' + fakeTier + ') pentru seria ' + forgedSerial + '!')
+    player.tell('§e[Piața Neagră] Ai primit un duplicat de permis pentru seria ' + forgedSerial + '. Verifică caligrafia și sigiliul înainte de a trece pe la gardă!')
 })

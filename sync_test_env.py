@@ -53,4 +53,11 @@ book_srv_dst = [os.path.join(s, "patchouli_books") for s in SERVER_DIRS]
 sync_folder(book_srv_src, book_srv_dst)
 sync_folder(book_cli_src, [os.path.join(CLIENT_DIR, "patchouli_books")])
 
+print("=== 5. Syncing kubejs assets ===")
+assets_src = os.path.join(BASE, "client", "kubejs", "assets")
+assets_dst = [os.path.join(s, "kubejs", "assets") for s in SERVER_DIRS] + [
+    os.path.join(CLIENT_DIR, "kubejs", "assets")
+]
+sync_folder(assets_src, assets_dst)
+
 print("=== Sync Complete! All files mirrored successfully. ===")

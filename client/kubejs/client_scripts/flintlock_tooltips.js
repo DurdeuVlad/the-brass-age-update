@@ -186,16 +186,50 @@ if ($ItemTooltipEvent && typeof NativeEvents !== 'undefined') {
                 else isDefaced = !!tag.Defaced
             } catch (e) {}
 
-            // Provenance & Serial Status
-            if (isProofed && serial && serial.indexOf('#RC-') === 0 && !isDefaced) {
-                text.add($Component.literal('§a✔ Serie Legală: §f' + serial))
-                text.add($Component.literal('§7Status: §aÎnregistrat în Registrul Imperial Straja'))
-            } else if (isDefaced) {
-                text.add($Component.literal('§4⚠ SERIE PILITĂ / DEFACED'))
-                text.add($Component.literal('§cArmă de contrabandă! Conține modificări ilegale de piață neagră.'))
+            var isForged = false
+            try {
+                if (typeof tag.getBoolean === 'function') {
+                    isForged = tag.getBoolean('Forged') || (tag.getInt && tag.getInt('Forged') == 1) || String(tag.getString('Forged')) === 'true'
+                } else {
+                    isForged = !!tag.Forged
+                }
+            } catch (e) {}
+
+            // Provenance & Serial Status (Roleplay-Grounded Physical Tells)
+            var forgeryTier = 0
+            try {
+                if (typeof tag.getInt === 'function') forgeryTier = tag.getInt('ForgeryTier') || tag.getInt('FakeTier')
+                else forgeryTier = Number(tag.ForgeryTier || tag.FakeTier || 0)
+            } catch (e) {}
+
+            if (isDefaced) {
+                text.add($Component.literal('§4⚠ SERIE PILITĂ DE PE CULATĂ'))
+                text.add($Component.literal('§7Metal polizat mecanic cu tocila, marcajul imperial este complet distrus.'))
+                text.add($Component.literal('§8(Urme adânci de pilire mecanică pe oțel)'))
+            } else if (isProofed && serial && serial.indexOf('#RC-') === 0) {
+                text.add($Component.literal('§a✔ Marcaj Oficial: §f' + serial))
+                text.add($Component.literal('§7Pecete: §aAmprentă curată a Cancelariei Garnizoanei'))
+                text.add($Component.literal('§8(Înscris în evidențele oficiale Straja)'))
+            } else if (isForged) {
+                // Civilian / unlicensed anvil stamp: physical roleplay cues without meta spoilers
+                if (forgeryTier === 1) {
+                    text.add($Component.literal('§a✔ Marcaj Poanson: §f' + (serial || 'Nedeterminat')))
+                    text.add($Component.literal('§7Pecete: §fAmprentă mecanică uniformă, contur îngrijit'))
+                    text.add($Component.literal('§8(Prezintă timbru aplicat pe culată)'))
+                } else if (forgeryTier === 2) {
+                    text.add($Component.literal('§2✔ Marcaj Poanson: §f' + (serial || 'Nedeterminat')))
+                    text.add($Component.literal('§7Pecete: §2Oxid verde-închis vizibil la marginile literelor'))
+                    text.add($Component.literal('§8(Urme de reacție la soluția de calopur)'))
+                } else {
+                    // Tier 3 or unclassified forged
+                    text.add($Component.literal('§6✔ Marcaj Poanson: §f' + (serial || 'Nedeterminat')))
+                    text.add($Component.literal('§7Pecete: §6Bavuri aspre pe metal, ștanță bătută descentrat'))
+                    text.add($Component.literal('§8(Amprentă superficială cu adâncime inegală)'))
+                }
             } else {
-                text.add($Component.literal('§c✖ NEPOANSONAT (Ilegal)'))
-                text.add($Component.literal('§eAplică pe nicovală cu §6Sigiliul Imperial §epentru legalizare.'))
+                text.add($Component.literal('§e⚠ FĂRĂ POANSON'))
+                text.add($Component.literal('§7Arma nu poartă nicio ștanță sau număr de înregistrare pe culată.'))
+                text.add($Component.literal('§8(Poate fi prezentată la Garnizoană cu Sigiliul Imperial pentru legalizare)'))
             }
 
             // Chambered Ammunition / Offhand Reload Tip

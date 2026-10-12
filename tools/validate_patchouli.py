@@ -76,6 +76,14 @@ def audit_directory(entries_dir):
         entry_name = data.get('name', filename)
         pages = data.get('pages', [])
 
+        # Check category existence
+        cat = data.get('category', '')
+        cat_id = cat.replace('patchouli:', '') if cat.startswith('patchouli:') else cat
+        cat_path = os.path.join(os.path.dirname(entries_dir), 'categories', f'{cat_id}.json')
+        if not cat or not os.path.exists(cat_path):
+            overflow_count += 1
+            print(f"[INVALID CATEGORY] {filename}: category='{cat}' (Expected file: {cat_path})")
+
         # Check entry icon
         icon = data.get('icon', '')
         if 'item/' in icon or not icon:

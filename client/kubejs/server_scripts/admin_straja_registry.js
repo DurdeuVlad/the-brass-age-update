@@ -17,6 +17,20 @@ var $SR_IntegerArgument = Java.loadClass('com.mojang.brigadier.arguments.Integer
 // Initialize Global API for future Straja Mod integration
 var StrajaWeapons = {}
 
+function strajaIsDebug(server) {
+    if (!server || !server.persistentData) return false
+    return !!server.persistentData.getBoolean('StrajaDebugMode')
+}
+
+StrajaWeapons.isDebug = function(server) {
+    return strajaIsDebug(server)
+}
+
+StrajaWeapons.setDebug = function(server, enabled) {
+    if (!server || !server.persistentData) return
+    server.persistentData.putBoolean('StrajaDebugMode', !!enabled)
+}
+
 // ----------------------------------------------------------------------------
 // 1. Licensing & Exemption Helpers
 // ----------------------------------------------------------------------------
@@ -294,7 +308,7 @@ StrajaWeapons.evaluateWeaponLegality = function(stack, player) {
             isContraband: true,
             tier: 0,
             serial: serial,
-            reason: 'Armă de contrabandă cu seria pilită (Piața Neagră)',
+            reason: 'Armă cu seria pilită de pe culată (ștergere mecanică)',
             contrabandKey: 'contraband_defaced_gun'
         }
     }
@@ -305,7 +319,7 @@ StrajaWeapons.evaluateWeaponLegality = function(stack, player) {
             isContraband: true,
             tier: 0,
             serial: '',
-            reason: 'Armă de foc nemarcată / neînregistrată',
+            reason: 'Armă de foc fără poanson pe culată',
             contrabandKey: 'contraband_unmarked_gun'
         }
     }
@@ -316,7 +330,7 @@ StrajaWeapons.evaluateWeaponLegality = function(stack, player) {
             isContraband: true,
             tier: 3,
             serial: serial,
-            reason: 'Armă falsificată grosolan (Nivel 3 / Tinichea de mahala)',
+            reason: 'Armă cu ștanță neconformă (bavuri și defecte vizibile de matriță)',
             contrabandKey: 'contraband_tier3_gun'
         }
     }
@@ -328,7 +342,7 @@ StrajaWeapons.evaluateWeaponLegality = function(stack, player) {
             isSubtleFake: true,
             tier: forgeryTier,
             serial: serial,
-            reason: 'Fals subtil (Nivel ' + forgeryTier + ' — necesită inspecție de gardă)'
+            reason: 'Armă cu ștanță dubioasă (Nivel ' + forgeryTier + ' — necesită inspecție de gardă)'
         }
     }
 
@@ -363,9 +377,9 @@ function formatPatrolBook(server) {
 
     // Page 2: Cues de Rol (Papers, Please Protocol)
     var p2 = '§4§lSEMNELE ADEVĂRULUI§r\n' +
-        '§81. Cerneala:§r Adevărata pecete sclipește verde ca smaraldul (§a). Cocleala de aramă dă un verde întunecat și mort (§2).\n\n' +
-        '§82. Slova:§r Matrița regală bate mereu «Registrul». Falsul de târg scapă slova «-l» («Registru») sau «N» din «POASONAT».\n\n' +
-        '§83. Cifre Măsluite:§r Caută litere furișate în serie («1S» sau «I5» în loc de «15»).\n\n' +
+        '§81. Cerneala:§r Adevărata pecete sclipește verde ca smaraldul (§a). Cocleala de aramă dă un verde întunecat și mort (§2). Arătura de alamă arsă dă tonuri ruginii (§6).\n\n' +
+        '§82. Slova:§r Matrița regală bate mereu «Registrul». Falsul de târg scapă slova «-l» («Registru»), «N» din «POASONAT» sau bate «Garnisoana» cu «s».\n\n' +
+        '§83. Cifre Măsluite:§r Caută litere furișate în serie («1S» sau «I5» în loc de «15» sau separatori strâmbi «_»).\n\n' +
         '§84. Regula de 24h:§r Arma de azi intră în carte mâine. Cel de azi trebuie să aibă permis semnat azi!'
     pages.push(p2)
 
@@ -832,6 +846,34 @@ ServerEvents.commandRegistry(function(event) {
                         } catch (e) {
                             ctx.source.server.runCommandSilent('brass_test ' + args)
                         }
+                        return 1
+                    })))
+
+            // 12. Admin Debug Mode Command (OP 2)
+            .then(Commands.literal('debug')
+                .requires(function(src) { return src.hasPermission(2) })
+                .executes(function(ctx) {
+                    var isDbg = strajaIsDebug(ctx.source.server)
+                    ctx.source.sendSystemMessage(Text.literal('§7[Straja Debug] Stare curentă: ' + (isDbg ? '§aACTIVAT' : '§cDEZACTIVAT (Regim 100% RP)')))
+                    ctx.source.sendSystemMessage(Text.literal('§8Folosește §b/straja debug on §8sau §b/straja debug off§8.'))
+                    return 1
+                })
+                .then(Commands.literal('on')
+                    .executes(function(ctx) {
+                        StrajaWeapons.setDebug(ctx.source.server, true)
+                        ctx.source.sendSystemMessage(Text.literal('§a✔ [Straja Debug] Modul diagnostic este acum ACTIVAT (Vizibil pentru administratori).'))
+                        return 1
+                    }))
+                .then(Commands.literal('off')
+                    .executes(function(ctx) {
+                        StrajaWeapons.setDebug(ctx.source.server, false)
+                        ctx.source.sendSystemMessage(Text.literal('§6✔ [Straja Debug] Modul diagnostic a fost DEZACTIVAT. Imersiune 100% RP activă.'))
+                        return 1
+                    }))
+                .then(Commands.literal('status')
+                    .executes(function(ctx) {
+                        var isDbg = strajaIsDebug(ctx.source.server)
+                        ctx.source.sendSystemMessage(Text.literal('§7[Straja Debug] Stare curentă: ' + (isDbg ? '§aACTIVAT' : '§cDEZACTIVAT (Regim 100% RP)')))
                         return 1
                     })))
     )

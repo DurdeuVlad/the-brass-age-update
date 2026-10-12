@@ -477,25 +477,30 @@ function cpCmdSourcePlayer(ctx) {
   return ent
 }
 
-// Messages (Romanian, § colour codes)
-const CP_AGGRO_TITLE = '§4§lSTOP! MARFĂ ILEGALĂ!'
-const CP_AGGRO_SUBTITLE = '§cAi încercat să treci punctul de control cu marfă interzisă!'
-const CP_INFO_HEADER = '§cMarfă ilegală detectată în bagaj:'
-const CP_INFO_FOOTER = '§eLasă marfa interzisă în urmă sau pred-o — nu treci cu ea peste hotar.'
-const CP_INFO_CLEAN = '§aVerificare încheiată — nu ai nimic ilegal. Treci liber.'
-const CP_DENY_TITLE = '§4§lACCES INTERZIS'
-const CP_DENY_SUBTITLE = '§cPunctul de control nu te lasă să treci cu marfă ilegală.'
+function cpIsDebug(server) {
+  if (!server || !server.persistentData) return false
+  return !!server.persistentData.getBoolean('StrajaDebugMode')
+}
+
+// Messages (Romanian, § colour codes - 100% In-Universe Roleplay)
+const CP_AGGRO_TITLE = '§4§lALARMĂ LA HOTAR!'
+const CP_AGGRO_SUBTITLE = '§c„Pluton, blocați trecerea! Nu lăsați suspectul să scape!”'
+const CP_INFO_HEADER = '§6[Inspecție Vamală]§7 Soldatul notează în catastiful de control:'
+const CP_INFO_FOOTER = '§e„Descarcă bunurile suspecte în lada de la intrare sau te întorci din drum!”'
+const CP_INFO_CLEAN = '§2[Strajer]§7 „Actele și desaga sunt în regulă. Drum bun pe cărările imperiale!”'
+const CP_DENY_TITLE = '§c§lOPRIȚI-VĂ!'
+const CP_DENY_SUBTITLE = '§7Grilajul de fier coboară cu zgomot greu în fața ta.'
 const CP_DENY_SOUND = 'minecraft:block.iron_door.close'
 const CP_AGGRO_SOUND = 'minecraft:entity.ravager.roar'
 
-const CP_BANNED_SUBTITLE = '§cEști interzis la acest punct de control.'
-const CP_WARN_TITLE = '§e§lMARFA E INTERZISĂ'
-const CP_WARN_SUBTITLE = '§eLas-o în cufărul de lângă poartă — la punctul următor riști arestarea.'
-const CP_WARN_SOUND = 'minecraft:block.note_block.bass'
-const CP_ARREST_TITLE = '§4§lAI FOST ARESTAT'
-const CP_ARREST_SUBTITLE = '§cPentru contraband. Bunurile suspecte au fost reținute.'
-const CP_FREE_TITLE = '§a§lEȘTI LIBER'
-const CP_FREE_SUBTITLE = '§7Numele ți-a fost șters. Nu te mai întoarce cu contrabandă.'
+const CP_BANNED_SUBTITLE = '§cEști pe lista de interdicție a Garnizoanei.'
+const CP_WARN_TITLE = '§6§lOCHIUL GĂRZII'
+const CP_WARN_SUBTITLE = '§eSoldatul îți cercetează bănuitor încărcătura...'
+const CP_WARN_SOUND = 'minecraft:entity.warden.heartbeat'
+const CP_ARREST_TITLE = '§4§lZĂNGĂNIT DE CĂTUȘE'
+const CP_ARREST_SUBTITLE = '§c„În numele Garnizoanei, ești reținut!”'
+const CP_FREE_TITLE = '§a§lSCÂRȚÂIT DE LACĂT'
+const CP_FREE_SUBTITLE = '§fUșa celulei se deschide larg. Drum bun, călătorule.'
 
 // ============================================================================
 // Jail register — server-side roster, works while the player is offline.
@@ -915,13 +920,13 @@ function cpEvaluateWeaponContraband(stack, player) {
   } catch (e) {}
 
   if (isDefaced) {
-    return { key: 'contraband_defaced_gun', name: 'Armă de contrabandă cu seria pilită (Piața Neagră)' }
+    return { key: 'contraband_defaced_gun', name: 'Armă cu seria pilită de pe culată' }
   }
   if (!isProofed && !isForged && (!serial || serial.length === 0)) {
-    return { key: 'contraband_unmarked_gun', name: 'Armă de foc nemarcată / neînregistrată' }
+    return { key: 'contraband_unmarked_gun', name: 'Armă de foc fără poanson pe culată' }
   }
   if (forgeryTier === 3 || (isForged && forgeryTier >= 3)) {
-    return { key: 'contraband_tier3_gun', name: 'Armă falsificată grosolan (Nivel 3 / Tinichea)' }
+    return { key: 'contraband_tier3_gun', name: 'Armă cu ștanță neconformă (bavuri și defecte vizibile de matriță)' }
   }
   return null
 }
@@ -967,7 +972,7 @@ function cpScanContraband(player, site) {
           if (isForged && fakeTier >= 3 && !cpIsAuthorizedInspector(player)) {
             var entry = found['contraband_forged_permit']
             if (entry === undefined) {
-              entry = { count: 0, name: 'Permis de port-armă falsificat grosolan (Piața Neagră)' }
+              entry = { count: 0, name: 'Permis cu sigiliu neconform (hârtie și caligrafie măsluită)' }
               found['contraband_forged_permit'] = entry
             }
             entry.count += stack.getCount()
@@ -1103,6 +1108,7 @@ function cpInfo(ctx) {
   }
   var found = cpScanContraband(player, cps)
   var server = ctx.source.server
+  var debug = cpIsDebug(server)
   if (cpIsEmpty(found)) {
     if (CP_INFO_CONFIRM_CLEAN) {
       player.tell(Text.literal(CP_INFO_CLEAN))
@@ -1112,7 +1118,11 @@ function cpInfo(ctx) {
   player.tell(Text.literal(CP_INFO_HEADER))
   for (var id in found) {
     var entry = found[id]
-    player.tell(Text.literal('§7- §f' + entry.count + 'x ' + entry.name + ' §8(' + id + ')'))
+    if (debug) {
+      player.tell(Text.literal('§7- §f' + entry.count + 'x ' + entry.name + ' §8[' + id + ']'))
+    } else {
+      player.tell(Text.literal('§7- §f' + entry.count + 'x ' + entry.name))
+    }
   }
   player.tell(Text.literal(CP_INFO_FOOTER))
   console.info('[Checkpoint] ' + cpPlayerName(player) + ' checkpoint scan (info)')
@@ -1173,12 +1183,14 @@ function cpInspect(ctx) {
     cpTitle(server, player, CP_DENY_TITLE, CP_BANNED_SUBTITLE)
     cpSound(server, player, CP_DENY_SOUND)
     cpPushBack(server, player, site)
+    player.tell(Text.literal('§c[Strajer]§7 „Ordinul e clar: ești pe lista de interdicție a Garnizoanei. Fă cale întoarsă până nu chemăm patrula!”'))
     cpLogEvent('denied', name, inv, 'interzis (ban)' + at)
     console.info('[Checkpoint] ' + name + ' pushed back (banned)' + at)
     return 1
   }
 
   if (cpInCustody(player)) {
+    player.tell(Text.literal('§4[Strajer]§7 „Fugitivul de la temniță! Puneți mâna pe el!”'))
     cpDelegateArrest(server, player, name, 'fugitiv prins la punctul de control', site)
     console.info('[Checkpoint] ' + name + ' re-arrested at stage 1 (fugitive)' + at)
     return 1
@@ -1189,6 +1201,7 @@ function cpInspect(ctx) {
     cpLogEvent('in', name, inv, 'curat' + at)
     if (CP_INFO_CONFIRM_CLEAN) {
       player.tell(Text.literal(CP_INFO_CLEAN))
+      server.runCommandSilent('playsound minecraft:block.wooden_door.open player ' + cpQuoted(player) + ' ~ ~ ~ 0.8 1.2')
     }
     return 0
   }
@@ -1196,12 +1209,21 @@ function cpInspect(ctx) {
   cpLogEvent('warned', name, inv, 'contraband la etapa 1' + at)
   cpTitle(server, player, CP_WARN_TITLE, CP_WARN_SUBTITLE)
   cpSound(server, player, CP_WARN_SOUND)
-  player.tell(Text.literal(CP_INFO_HEADER))
+  server.runCommandSilent('playsound minecraft:item.armor.equip_iron player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 0.9')
+
+  player.tell(Text.literal('§6[Soldat de Strajă]§7 „Stai puțin pe loc, călătorule...”'))
+  player.tell(Text.literal('§8(Soldatul aruncă o privire bănuitoare în desagă și bate cu pumnul în căptușeală)'))
+  var isDbg = cpIsDebug(server)
   for (var id in found) {
     var entry = found[id]
-    player.tell(Text.literal('§7- §f' + entry.count + 'x ' + entry.name + ' §8(' + id + ')'))
+    if (isDbg) {
+      player.tell(Text.literal('§e• §7„Ce-i cu cele ' + entry.count + ' bucăți de §f' + entry.name + '§7? Nu par să aibă vama plătită.” §8[' + id + ']'))
+    } else {
+      player.tell(Text.literal('§e• §7„Ce-i cu cele ' + entry.count + ' bucăți de §f' + entry.name + '§7? Nu par să aibă vama plătită.”'))
+    }
   }
-  player.tell(Text.literal('§eLasă marfa în cufărul de lângă poartă acum — la al doilea punct vii direct la arest.'))
+  player.tell(Text.literal('§6(Soldatul face un semn discret cu bărbia spre lada de descărcare de la perete)'))
+  player.tell(Text.literal('§7„Dacă nu vrei să dai socoteală sergentului la poarta a doua, descarcă-le în ladă acum.”'))
   console.info('[Checkpoint] ' + name + ' warned at stage 1 (contraband present)')
   return 1
 }
@@ -2192,7 +2214,7 @@ function cpGateDeny(server, player, site, gate, backTo) {
     ' ' + backTo.x + ' ' + backTo.y + ' ' + backTo.z)
   cpCloseDoors(server, site)
   try {
-    player.tell(Text.literal('§c[Checkpoint] Sens interzis — această bandă merge doar într-un sens.'))
+    player.tell(Text.literal('§c[Strajer]§7 „Pe aici nu trece nimeni în sens invers! Fă cale întoarsă!”'))
   } catch (e) { /* chat optional */ }
   cpSound(server, player, CP_DENY_SOUND)
   cpLogEvent('denied', name, '', 'sens interzis la poartă (' + site.name + ')')
@@ -2287,7 +2309,7 @@ function cpGateScan(server) {
             if (st !== null && st.site === site.link) {
               cpBoardStampClear(p)
               cpLogEvent('in', name, '', 'controlat la îmbarcare (' + st.site + ') | punct=' + site.name)
-              p.tell(Text.literal('§a[Checkpoint] Controlul de la ' + site.link + ' e valabil — treceți.'))
+              p.tell(Text.literal('§a[Portărel]§7 „Pecetea de la pontonul ' + site.link + ' e încă proaspătă pe foaie. Treci mai departe!”'))
             } else {
               cpGateArrive(server, p, site)
             }
@@ -2377,8 +2399,7 @@ function cpBoardScan(server) {
         console.info('[Checkpoint] ' + name + ' arrested at boarding (' + site.name + ')')
       } else {
         cpBoardStampSet(p, site.name)
-        p.tell(Text.literal('§a[Checkpoint] Îmbarcare verificată — control curat. Valabil ' +
-          Math.round(CP_BOARD_MS / 60000) + ' minute la punctul de frontieră legat.'))
+        p.tell(Text.literal('§a[Vameș Ponton]§7 „Bagajul este în regulă. Ai primit pecetea de îmbarcare pe bilet.”'))
         cpLogEvent('boarded', name, cpInvSummary(p), 'curat | punct=' + site.name)
       }
     } catch (e) { /* one bad player never stops the scan */ }

@@ -1,7 +1,7 @@
 # ⚜ THE BRASS AGE UPDATE — TESTER & REVIEW GUIDE ⚜
 ### Ghid de Testare & Instalare pentru Testeri (Rustic Craft II)
 
-Versiune: `v1.2.0-Release`  
+Versiune: `v1.3.0-Release`  
 Platformă: `Minecraft 1.21.1` / `NeoForge 21.1.248`  
 Modpack: **Rustic Craft II**  
 Repository: `DurdeuVlad/the-brass-age-update`
@@ -9,11 +9,12 @@ Repository: `DurdeuVlad/the-brass-age-update`
 ---
 
 > [!IMPORTANT]
-> **NOUTĂȚI MAJORE ÎN v1.2.0**:
-> 1. **Alchimia Netherless Create pe 3 Niveluri Industriale**: Sinteză completă a tuturor resurselor de Nether în Overworld urmând arhitectura industrială consacrată: Nivel 1 Desperare (Manual 1×) $\rightarrow$ Nivel 2 Cinetic Create (2×–4×) $\rightarrow$ Nivel 3 Surge Termic cu Sulf & Asamblare Secvențială (8×–16×, 400% surge).
-> 2. **Sistem de Tipografie Zero-Overflow pentru Cărțile Patchouli**: 270 pagini auditate și verificate împotriva depășirilor de chenar (zero text clipping, font wrap calibrated).
-> 3. **Ghid Interactiv Extins la 16 Pași (`/brass_test`)**: Pașii 15 și 16 introduc testarea completă a alchimiei Netherless, cu comenzi dedicate (`/brass_test help`, `/brass_test netherless`) și butoane interactive.
-> 4. **Suită Automatizată Extinsă la 30/30 Aserțiuni (`/straja test`)**: 100% rată de succes pe serverul dedicat live, inclusiv validarea celor 38 de rețete alchimice pe toate cele 3 niveluri.
+> **NOUTĂȚI MAJORE ÎN v1.3.0**:
+> 1. **Imersiune 100% In-Universe Roleplay & Zero Spoilere Meta**: Toate textele robotice (`[Server]`, `[DEBUG]`, `NBT`, `[Arsenal]`) și ID-urile de iteme au fost complet eradicate din experiența jucătorilor. Adăugate 6 straturi audio ambientale (bătăi de inimă, zăngănit de armură, cătușe grele, clopote de alarmă, corn de vânătoare).
+> 2. **Indicii Senzoriale Fizice în Stil „Papers, Please”**: Falsurile se recunosc după detalii fizice (cerneală verde de vitriol, ștanțe bătute strâmb cu bavuri aspre, micro-erori de serie `#RC-1S-XXXX`), iar armele pilite după urmele de tocilă mecanică.
+> 3. **Puncte de Control & Tensiune la Hotar**: Soldații cercetează bagajele și bat în căptușeală, oferind șansa de a lăsa marfa în cufărul de descărcare înainte de poarta a doua.
+> 4. **Dramă Penitenciară & Evadări Spectaculoase**: Arestare cinematică cu cătușe, proces-verbal cu sigiliu de ceară roșie, alarmă masivă cu clopote din turn și corn de vânătoare la evadare.
+> 5. **Comutator Admin Debug (`/straja debug on|off|status`)**: Permite administratorilor comutarea facilă între regimul 100% RP și modul de diagnostic tehnic.
 
 ---
 

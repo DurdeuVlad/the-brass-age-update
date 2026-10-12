@@ -1,8 +1,8 @@
 {
   "name": "The Rifle Ledger",
-  "category": "patchouli:ledgers",
+  "category": "patchouli:workshop",
   "icon": "minecraft:paper",
-  "sortnum": 1,
+  "sortnum": 2,
   "pages": [
     {
       "type": "patchouli:text",

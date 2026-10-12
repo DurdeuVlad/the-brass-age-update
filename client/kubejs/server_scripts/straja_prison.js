@@ -342,10 +342,15 @@ function cpSweepJail(server) {
         cpSuppressRep(server, p)
         cpJailSave(server)
         spLogEvent('escaped', name, cpInvSummary(p), 'fugitiv — straja set 0, wanted activ')
+        cpTitle(server, p, '§4§lEVADARE!', '§cAlarma a fost dată în garnizoană! Fugi!')
+        server.runCommandSilent('playsound minecraft:block.bell.use ambient ' + cpQuoted(p) + ' ~ ~ ~ 2.0 0.8')
+        server.runCommandSilent('playsound minecraft:item.goat_horn.sound.0 ambient ' + cpQuoted(p) + ' ~ ~ ~ 2.0 1.0')
         try {
           var all = server.getPlayerList().getPlayers()
           for (var n = 0; n < all.size(); n++) {
-            all.get(n).tell(Text.literal('§c§lFUGITIV! §r§c' + name + ' a evadat din arestul Straja — gărzile atacă la vedere!'))
+            var targetP = all.get(n)
+            targetP.tell(Text.literal('§4§l[CLOPOTE DE ALARMĂ] §cClopotul din turn bate neîncetat! Deținutul §f' + name + '§c a evadat din temniță! Gărzile atacă la vedere!'))
+            server.runCommandSilent('playsound minecraft:block.bell.use ambient ' + cpQuoted(targetP) + ' ~ ~ ~ 1.0 1.0')
           }
         } catch (e) { /* broadcast best-effort */ }
         console.info('[Prison] ' + name + ' escaped custody — FUGITIVE (faction 0)')
@@ -390,25 +395,30 @@ function cpCmdSourcePlayer(ctx) {
   return ent
 }
 
-// Messages (Romanian, § colour codes)
-const SP_AGGRO_TITLE = '§4§lSTOP! MARFĂ ILEGALĂ!'
-const SP_AGGRO_SUBTITLE = '§cAi încercat să treci punctul de control cu marfă interzisă!'
-const SP_INFO_HEADER = '§cMarfă ilegală detectată în bagaj:'
-const SP_INFO_FOOTER = '§eLasă marfa interzisă în urmă sau pred-o — nu treci cu ea peste hotar.'
-const SP_INFO_CLEAN = '§aVerificare încheiată — nu ai nimic ilegal. Treci liber.'
-const SP_DENY_TITLE = '§4§lACCES INTERZIS'
-const SP_DENY_SUBTITLE = '§cPunctul de control nu te lasă să treci cu marfă ilegală.'
+function spIsDebug(server) {
+  if (!server || !server.persistentData) return false
+  return !!server.persistentData.getBoolean('StrajaDebugMode')
+}
+
+// Messages (Romanian, § colour codes - 100% In-Universe Roleplay)
+const SP_AGGRO_TITLE = '§4§lALARMĂ LA HOTAR!'
+const SP_AGGRO_SUBTITLE = '§c„Pluton, blocați trecerea! Nu lăsați suspectul să scape!”'
+const SP_INFO_HEADER = '§6[Inspecție Temniță]§7 Soldatul verifică inventarul:'
+const SP_INFO_FOOTER = '§eLasă bunurile suspecte sau predă-te de bunăvoie.'
+const SP_INFO_CLEAN = '§2[Temnicer]§7 „Actele sunt în regulă. Poți trece.”'
+const SP_DENY_TITLE = '§c§lOPRIȚI-VĂ!'
+const SP_DENY_SUBTITLE = '§7Grilajul de fier coboară cu zgomot greu în fața ta.'
 const SP_DENY_SOUND = 'minecraft:block.iron_door.close'
 const SP_AGGRO_SOUND = 'minecraft:entity.ravager.roar'
 
-const SP_BANNED_SUBTITLE = '§cEști interzis la acest punct de control.'
-const SP_WARN_TITLE = '§e§lMARFA E INTERZISĂ'
-const SP_WARN_SUBTITLE = '§eLas-o în cufărul de lângă poartă — la punctul următor riști arestarea.'
-const SP_WARN_SOUND = 'minecraft:block.note_block.bass'
-const SP_ARREST_TITLE = '§4§lAI FOST ARESTAT'
-const SP_ARREST_SUBTITLE = '§cPentru contraband. Bunurile suspecte au fost reținute.'
-const SP_FREE_TITLE = '§a§lEȘTI LIBER'
-const SP_FREE_SUBTITLE = '§7Numele ți-a fost șters. Nu te mai întoarce cu contrabandă.'
+const SP_BANNED_SUBTITLE = '§cEști pe lista de interdicție a Garnizoanei.'
+const SP_WARN_TITLE = '§6§lOCHIUL GĂRZII'
+const SP_WARN_SUBTITLE = '§eSoldatul îți cercetează bănuitor încărcătura...'
+const SP_WARN_SOUND = 'minecraft:entity.warden.heartbeat'
+const SP_ARREST_TITLE = '§4§lZĂNGĂNIT DE CĂTUȘE'
+const SP_ARREST_SUBTITLE = '§c„În numele Garnizoanei, ești reținut!”'
+const SP_FREE_TITLE = '§a§lSCÂRȚÂIT DE LACĂT'
+const SP_FREE_SUBTITLE = '§fUșa celulei se deschide larg. Drum bun, călătorule.'
 
 // ============================================================================
 // Jail register — server-side roster, works while the player is offline.
@@ -563,7 +573,9 @@ function cpRecapture(server, player, name, how) {
   cpClearHuntFlags(server, player) // thief/wanted flags too — he's inside
   var repOk = cpRestoreRep(server, player)
   spLogEvent('recaptured', name, cpInvSummary(player), how + (repOk ? '' : ' | rep nerestaurată'))
-  player.tell(Text.literal('§cEști din nou în custodia Straja (' + how + ').'))
+  server.runCommandSilent('playsound minecraft:block.iron_door.close player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 0.8')
+  player.tell(Text.literal('§4[Strajer] §7„Credeai că ai scăpat? Înapoi în celulă!”'))
+  player.tell(Text.literal('§8(Zăvorul se închide din nou cu un zgomot sec.)'))
   console.info('[Prison] ' + name + ' recaptured (' + how + ')')
 }
 
@@ -851,6 +863,13 @@ function cpSound(server, player, soundId) {
 // aggressive: alarm + wanted bounty (Straja guards aggro the smuggler)
 function cpBeginArrest(server, player, name, reason, site) {
   cpTitle(server, player, SP_ARREST_TITLE, SP_ARREST_SUBTITLE)
+  server.runCommandSilent('playsound minecraft:item.armor.equip_chain player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 0.8')
+  server.runCommandSilent('playsound minecraft:block.iron_door.close player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 0.7')
+  server.runCommandSilent('playsound minecraft:entity.warden.heartbeat player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 0.9')
+  try {
+    player.tell(Text.literal('§4[Sergent de Gardă] §7„Jos armele și mâinile la vedere! Nu mișca!”'))
+    player.tell(Text.literal('§8(Zăngănit greu de cătușe și lanțuri reci de fier în jurul încheieturilor...)'))
+  } catch (e) {}
   var seconds = Math.ceil(SP_ARREST_DELAY_TICKS / 20) + 1
   server.runCommandSilent('effect give ' + cpQuoted(player) + ' minecraft:darkness ' + seconds + ' 0 true')
   server.runCommandSilent('effect give ' + cpQuoted(player) + ' minecraft:blindness ' + seconds + ' 0 true')
@@ -1546,22 +1565,27 @@ function cpGiveReport(server, player, name, reason, found, confiscated) {
     when = String(Date.now())
   }
 
+  var isDbg = spIsDebug(server)
   var pages = []
-  pages.push('§0§lPROCES-VERBAL DE AREST§r\n§0\nInculpat: ' + name + '\nData: ' + when + '\nMotiv: ' + reason)
+  pages.push('§0§lGARNIZOANA STRAJA§r\n§8(Pecete din ceară roșie)\n\n§0§lPROCES-VERBAL§r\n§0Învinuit: §4' + name + '\n§0Data: §8' + when + '\n§0Temei: §0' + reason)
 
   var items = []
   for (var id in found) {
-    items.push(found[id].count + 'x ' + found[id].name + ' (' + id + ')')
+    if (isDbg) {
+      items.push(found[id].count + 'x ' + found[id].name + ' §8[' + id + ']')
+    } else {
+      items.push(found[id].count + 'x ' + found[id].name)
+    }
   }
   if (items.length === 0) {
-    items.push('niciunul (interdicție activă)')
+    items.push('niciunul (ordin direct de interdicție)')
   }
   var per = 0
-  var buf = '§0Marfă reținută' + (confiscated ? '' : ' §8(nedepusă — cufăr lipsă)') + ':\n'
+  var buf = '§0Bunuri reținute ca probă' + (confiscated ? '' : ' §8(nedepuse — lipsă spațiu)') + ':\n\n'
   for (var i = 0; i < items.length; i++) {
-    buf += '§8- §0' + items[i] + '\n'
+    buf += '§8• §0' + items[i] + '\n'
     per++
-    if (per === 11) {
+    if (per === 9) {
       pages.push(buf)
       buf = ''
       per = 0
@@ -1571,7 +1595,7 @@ function cpGiveReport(server, player, name, reason, found, confiscated) {
     pages.push(buf)
   }
 
-  pages.push('§0Dispoziție:\nEliberarea și ștergerea numelui se fac numai de ' + SP_JAILERS.join('/') + '.\nBunurile personale → cufărul personal; contrabanda rămâne probă la Straja.')
+  pages.push('§0§lDISPOZIȚIE OFICIALĂ:§r\n\n§0Deținutul rămâne sub pază strictă până la examinarea de către ' + SP_JAILERS.join('/') + '.\n\n§8Bunurile permise au fost zăvorâte în lada personală din temniță.')
 
   var snbt = []
   for (var p = 0; p < pages.length; p++) {
@@ -1580,7 +1604,7 @@ function cpGiveReport(server, player, name, reason, found, confiscated) {
     snbt.push('\'' + JSON.stringify({ text: pages[p] }).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\'')
   }
   var give = 'give ' + cpQuoted(player) +
-    ' minecraft:written_book[minecraft:written_book_content={title:\'Proces-verbal\',author:\'Straja\',pages:[' +
+    ' minecraft:written_book[minecraft:written_book_content={title:\'Pergament de Arestare\',author:\'Garnizoana Straja\',pages:[' +
     snbt.join(',') + ']}]'
   try {
     server.runCommandSilent(give)
@@ -1643,8 +1667,12 @@ function cpFinishArrest(server, name, reason, site) {
       console.error('[Prison] no jail spot configured (use `strajaprison pick cell` or `cellhere`/`jailhere`) — ' + name + ' flagged jailed but not moved')
     }
 
+    server.runCommandSilent('playsound minecraft:block.iron_door.close player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 0.7')
+    server.runCommandSilent('playsound minecraft:block.wooden_door.close player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 0.9')
+    player.tell(Text.literal('§8(Ușa grea de fier se trântește în urma ta cu un bubuit ecou în piatră)'))
+    player.tell(Text.literal('§6[Temnicer] §7„Bun venit la răcoare. Până nu vine ' + SP_JAILERS.join('/') + ' cu ordinul de eliberare, aici îți numeri zilele.”'))
+    player.tell(Text.literal('§7(Un pergament cu sigiliu de ceară ți-a fost strecurat pe sub grilaj: Procesul-verbal de arestare.)'))
     cpGiveReport(server, player, name, reason, found, confiscated)
-    player.tell(Text.literal('§cEști în arestul Straja. Numai ' + SP_JAILERS.join('/') + ' te poate elibera.'))
   }
 
   var siteName = site !== null && site !== undefined ? site.name : null
@@ -1752,10 +1780,11 @@ function cpRelease(ctx, name, fine) {
       )
     }
     cpTitle(server, player, SP_FREE_TITLE, SP_FREE_SUBTITLE)
+    server.runCommandSilent('playsound minecraft:block.iron_door.open player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 1.0')
+    server.runCommandSilent('playsound minecraft:item.armor.equip_leather player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 1.2')
+    player.tell(Text.literal('§6[Temnicer] §7„Ordinul de grațiere a sosit. Lada ți-a fost deblocată, ia-ți calabalâcul și cară-te înainte să ne răzgândim.”'))
     if (fine > 0) {
-      player.tell(Text.literal('§eAi fost eliberat cu o amendă de ' + fine + '. Numele ți-a fost șters.'))
-    } else {
-      player.tell(Text.literal('§aAi fost eliberat și numele ți-a fost șters.'))
+      player.tell(Text.literal('§6[Temnicer] §7„...și vezi că s-a consemnat amenda de ' + fine + ' galbeni la vistierie. Să n-aud de tine!”'))
     }
   }
 
@@ -2033,7 +2062,7 @@ PlayerEvents.loggedIn(function (event) {
     cpJailSave(server)
     cpPourPChest(server, p, pendIdx)
     cpFreePChest(server, pendIdx)
-    p.tell(Text.literal('§a[Prison] Bunurile ți-au fost returnate din cufărul personal.'))
+    p.tell(Text.literal('§a[Temnicer] §7„Ți-ai recuperat bunurile din cufărul personal.”'))
   }
 
   var entry = cpJailEntry(name)
@@ -2071,7 +2100,7 @@ PlayerEvents.loggedIn(function (event) {
     cpSetGameMode(p, 'adventure')
   }
   cpTpJail(server, p)
-  p.tell(Text.literal('§cEști în continuare în arestul Straja. Numai ' + SP_JAILERS.join('/') + ' te poate elibera.'))
+  p.tell(Text.literal('§c[Temnicer] §7„Încă ești sub arestul Garnizoanei. Numai ' + SP_JAILERS.join('/') + ' poate semna ordinul de eliberare.”'))
 })
 
 // Death: a flag carrier (thief / wanted / fugitive) who dies still gets

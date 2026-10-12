@@ -1,9 +1,9 @@
-# The Brass Age Update - Automated Patch Installer v1.2.0
+# The Brass Age Update - Automated Patch Installer v1.3.0
 # Platform: Minecraft 1.21.1 / NeoForge 21.1.248 / Rustic Craft II
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 Write-Host "=====================================================================" -ForegroundColor Yellow
-Write-Host "   ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.2.0 ⚜" -ForegroundColor Cyan
+Write-Host "   ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.3.0 ⚜" -ForegroundColor Cyan
 Write-Host "   Rustic Craft II (Minecraft 1.21.1 / NeoForge 21.1.248)" -ForegroundColor Gray
 Write-Host "=====================================================================" -ForegroundColor Yellow
 Write-Host ""
