@@ -3,13 +3,19 @@
 // for overland logistics via Trotting Wagons, Pack Mules, Create Trains, and Cartage.
 
 ServerEvents.recipes(event => {
+    // Guard against environments where TaCZ items are not registered
+    if (!Item.exists('tacz:modern_kinetic_gun') || !Item.exists('tacz:ammo')) {
+        console.warn('[TheBrassAge] TaCZ firearm/ammo items not yet available in registry; skipping crate packing recipe registration.')
+        return
+    }
+
     // 1. Pack 8 Smoothbore Muskets into a Heavy Military Musket Crate
     event.shaped('kubejs:crate_muskets', [
         'MMM',
         'MBM',
         'MMM'
     ], {
-        M: 'tacz:modern_kinetic_gun',
+        M: Item.of('tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15"}]'),
         B: '#c:chests/wooden'
     }).id('the_brass_age:pack_musket_crate')
 
@@ -19,7 +25,7 @@ ServerEvents.recipes(event => {
         'PBP',
         'PPP'
     ], {
-        P: 'tacz:modern_kinetic_gun',
+        P: Item.of('tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p"}]'),
         B: '#c:chests/wooden'
     }).id('the_brass_age:pack_pistol_crate')
 
@@ -29,7 +35,7 @@ ServerEvents.recipes(event => {
         'ABA',
         'AAA'
     ], {
-        A: 'tacz:ammo',
+        A: Item.of('tacz:ammo[minecraft:custom_data={AmmoId:"qkl:16mm"}]'),
         B: '#c:chests/wooden'
     }).id('the_brass_age:pack_ammunition_crate')
 })

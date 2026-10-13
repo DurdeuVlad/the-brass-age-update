@@ -4,6 +4,26 @@ All notable changes to **The Brass Age** modpack expansion for **Rustic Craft II
 
 ---
 
+## [v1.3.2] — 2026-10-13 (Fix Ammo & Weapon Logistics Crates Recipe Missing Texture Block in JEI/EMI)
+
+This patch release fixes the purple/black checkerboard error block texture appearing on recipe ingredients in JEI/EMI when viewing recipes for military weapon and ammunition crates (`kubejs:crate_muskets`, `kubejs:crate_pistols`, `kubejs:ammunition_crate`):
+
+### 🐛 Bug Fixes & Forensics
+
+1. **Root Cause: TaCZ Empty Weapon/Ammo Model Serialization in Crafting Recipes**
+   - **Problem**: In `military_logistics_crates.js`, shaped crafting recipes for crates declared bare item IDs (`'tacz:modern_kinetic_gun'` and `'tacz:ammo'`). In Minecraft 1.21.1 / TaCZ, unparameterized firearms and ammunition lack component metadata (`GunId` / `AmmoId`), defaulting to `GunId: "tacz:empty"`. TaCZ does not register 3D models or textures for `tacz:empty`, causing Minecraft, JEI, and EMI to render the missing purple/black checkerboard texture for all 8 ingredient slots in the crafting grid.
+   - **Recipe Collision**: Both musket crates (`pack_musket_crate`) and pistol crates (`pack_pistol_crate`) previously used identical generic ingredients (8x `'tacz:modern_kinetic_gun'` + chest), creating an ingredient collision in the recipe manager.
+   - **Fix**: Upgraded all crate packing recipes to use component-aware item stacks (`Item.of`):
+     - `kubejs:crate_muskets`: Requires 8x `Item.of('tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15"}]')` + chest.
+     - `kubejs:crate_pistols`: Requires 8x `Item.of('tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p"}]')` + chest.
+     - `kubejs:ammunition_crate`: Requires 8x `Item.of('tacz:ammo[minecraft:custom_data={AmmoId:"qkl:16mm"}]')` + chest.
+   - **Result**: JEI and EMI now resolve the exact gun and cartridge definitions, rendering the authentic 3D flintlock musket, cavalry pistol, and 16.5mm paper cartridge ammunition models with zero missing textures, while completely resolving the musket/pistol recipe collision.
+
+2. **Defensive Registry Safeguards**
+   - Added registry readiness checks (`Item.exists('tacz:modern_kinetic_gun') && Item.exists('tacz:ammo')`) ensuring graceful fallback and clean startup in any staging or testing environment prior to mod registration.
+
+---
+
 ## [v1.3.1] — 2026-10-13 (Fix Straja Patrol Book Layout Overflow, 32-Char Title Codec Crash, Weapon Patterns Catalog & Command Architecture)
 
 This patch release fixes critical formatting, layout, and command bugs in the physical Straja Patrol Book (`minecraft:written_book` issued via `/straja book` / `/straja registry`):
