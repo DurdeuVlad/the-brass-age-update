@@ -78,15 +78,104 @@ ServerEvents.recipes(event => {
     }).id('kubejs:flintlocks/craft_permit_blank')
 })
 
-// 2. Serial Number Generator Helper
-function getNextStrajaSerial(server) {
-    var current = server.persistentData.getInt('StrajaSerialCount')
-    if (!current || current < 100) current = 100
+// 2. Serial Number Generator Helper (Peek & Consume)
+function peekNextStrajaSerial(server) {
+    var current = 100
+    if (server && server.persistentData) {
+        var c = server.persistentData.getInt('StrajaSerialCount')
+        if (c && c >= 100) current = c
+    }
     var next = current + 1
-    server.persistentData.putInt('StrajaSerialCount', next)
     var padded = String(next)
     while (padded.length < 4) padded = '0' + padded
     return '#RC-15-' + padded
+}
+
+function getNextStrajaSerial(server) {
+    var current = 100
+    if (server && server.persistentData) {
+        var c = server.persistentData.getInt('StrajaSerialCount')
+        if (c && c >= 100) current = c
+    }
+    var next = current + 1
+    if (server && server.persistentData) {
+        server.persistentData.putInt('StrajaSerialCount', next)
+    }
+    var padded = String(next)
+    while (padded.length < 4) padded = '0' + padded
+    return '#RC-15-' + padded
+}
+
+// Deterministic Forgery Matrix Engine (Anti-Reroll Exploit Protection)
+// The next forgery outcome is pre-determined and fixed to the player.
+// Taking weapons or stamps out of the anvil preview NEVER re-rolls the outcome.
+// The matrix advances to a new roll ONLY when the player commits XP and strikes the anvil.
+function generateDeterministicForgeryRoll(server) {
+    var baseSerial = peekNextStrajaSerial(server)
+    var roll = Math.random()
+    var tier = 2
+    var fakeSerial = baseSerial
+    var lore1 = ''
+    var lore2 = ''
+
+    if (roll < 0.05) {
+        // Tier 1: Near Perfect (Micro-tell in serial like 1S or I5, and royal lore with subtle dot)
+        tier = 1
+        fakeSerial = baseSerial.replace('15-', (Math.random() < 0.5 ? '1S-' : 'I5-'))
+        lore1 = '§a✔ POANSONAT: ' + fakeSerial
+        lore2 = '§7Registrul Imperial Straja.' // subtle trailing period
+    } else if (roll < 0.55) {
+        // Tier 2: Common Fake (Copper vitriol ink §2, missing '-l' in Registru)
+        tier = 2
+        fakeSerial = baseSerial
+        lore1 = '§2✔ POANSONAT: ' + fakeSerial
+        lore2 = '§7Registru Imperial Straja' // missing '-l'
+    } else {
+        // Tier 3: Botched / Crude (Amber/iron ink, typo POASONAT without N, misspelled Garnisoana)
+        tier = 3
+        fakeSerial = baseSerial
+        if (Math.random() < 0.5) {
+            lore1 = '§6✔ POASONAT: ' + fakeSerial // Missing 'N' as noted in Semnele Adevarului
+            lore2 = '§8Cancelaria Garnisoana Straja' // 's' instead of 'z'
+        } else {
+            lore1 = '§7✔ POANSON: ' + fakeSerial // Missing '-AT'
+            lore2 = '§8Registru Garnizoana Straja' // Missing '-l' and district style
+        }
+    }
+
+    return {
+        roll: roll,
+        tier: tier,
+        fakeSerial: fakeSerial,
+        lore1: lore1,
+        lore2: lore2
+    }
+}
+
+function getOrCreatePlayerPendingForgery(player, server) {
+    if (player && player.persistentData) {
+        try {
+            var raw = String(player.persistentData.getString('StrajaPendingForgery') || '')
+            if (raw && raw.length > 5) {
+                var parsed = JSON.parse(raw)
+                if (parsed && typeof parsed.tier === 'number' && parsed.fakeSerial) {
+                    return parsed
+                }
+            }
+        } catch (e) {}
+        var newRoll = generateDeterministicForgeryRoll(server)
+        player.persistentData.putString('StrajaPendingForgery', JSON.stringify(newRoll))
+        return newRoll
+    }
+    return generateDeterministicForgeryRoll(server)
+}
+
+function advancePlayerPendingForgery(player, server) {
+    var nextRoll = generateDeterministicForgeryRoll(server)
+    if (player && player.persistentData) {
+        player.persistentData.putString('StrajaPendingForgery', JSON.stringify(nextRoll))
+    }
+    return nextRoll
 }
 
 function strajaIsAuthorizedInspector(player) {
@@ -143,30 +232,42 @@ function strajaRegisterPendingWeapon(server, player, serial, gunId) {
     }
 }
 
-// 3. Anvil Proofing Event: Firearm + Proof Stamp -> Serialized Firearm
+// 3. Anvil Proofing Events: Firearm + Proof Stamp -> Serialized Firearm
 var $AnvilUpdateEvent = null
+var $AnvilRepairEvent = null
 try {
     $AnvilUpdateEvent = Java.loadClass('net.neoforged.neoforge.event.AnvilUpdateEvent')
 } catch (e) {}
+try {
+    $AnvilRepairEvent = Java.loadClass('net.neoforged.neoforge.event.entity.player.AnvilRepairEvent')
+} catch (e) {}
 
+// Global Straja API exports
+if (typeof StrajaWeapons === 'undefined') {
+    var StrajaWeapons = {}
+}
+StrajaWeapons.peekNextSerial = peekNextStrajaSerial
+StrajaWeapons.getNextSerial = getNextStrajaSerial
+StrajaWeapons.getPlayerPendingForgery = getOrCreatePlayerPendingForgery
+StrajaWeapons.advancePlayerPendingForgery = advancePlayerPendingForgery
+StrajaWeapons.generateDeterministicForgeryRoll = generateDeterministicForgeryRoll
+
+// Anvil Preview Hook (Purely Functional & Idempotent)
+// DOES NOT increment serial numbers, DOES NOT enqueue pending registrations, and NEVER rerolls.
 if ($AnvilUpdateEvent && typeof NativeEvents !== 'undefined') {
     NativeEvents.onEvent($AnvilUpdateEvent, function(event) {
         var left = event.getLeft()
         var right = event.getRight()
-        console.info('[AnvilUpdate] event received: left=' + left + ', right=' + right)
         if (!left || left.isEmpty() || !right || right.isEmpty()) return
         
         var leftId = fpGetStackId(left)
         var rightId = fpGetStackId(right)
-        console.info('[AnvilUpdate] leftId=' + leftId + ', rightId=' + rightId)
         if (leftId !== 'tacz:modern_kinetic_gun' || rightId !== 'kubejs:proof_stamp') return
 
         var tag = fpGetGunCustomTag(left)
-        console.info('[AnvilUpdate] tag=' + tag)
         if (!tag) return
 
         var gunId = String(tag.getString('GunId'))
-        console.info('[AnvilUpdate] gunId=' + gunId)
         if (gunId !== 'qkl:fk15' && gunId !== 'qkl:fk15p') return
 
         var player = event.getPlayer()
@@ -192,15 +293,17 @@ if ($AnvilUpdateEvent && typeof NativeEvents !== 'undefined') {
         }
 
         var output = left.copy()
-        var server = player.getServer()
+        var server = player.getServer ? player.getServer() : player.server
         if (!server) return
-        var serial = getNextStrajaSerial(server)
 
         var newTag = tag.copy()
         var loreList = new $FP_ArrayList()
 
         if (isInspector) {
             // Authentic Official Proofing by Licensed Inspector
+            // In PREVIEW: peek the next serial without incrementing or registering
+            var serial = peekNextStrajaSerial(server)
+
             newTag.putBoolean('Proofed', true)
             newTag.putBoolean('Forged', false)
             newTag.putInt('ForgeryTier', 0)
@@ -210,51 +313,21 @@ if ($AnvilUpdateEvent && typeof NativeEvents !== 'undefined') {
 
             loreList.add($FP_Component.literal('§a✔ POANSONAT: ' + serial))
             loreList.add($FP_Component.literal('§7Registrul Imperial Straja'))
-
-            // Enqueue into pending maturation roll for today
-            strajaRegisterPendingWeapon(server, player, serial, gunId)
         } else {
             // Unlicensed Criminal Forgery (Papers, Please RNG Quality Curve)
-            // 5% Near Perfect (Tier 1), 50% Common Fake (Tier 2), 45% Botched (Tier 3)
-            var roll = Math.random()
-            var fakeSerial = serial
-            var tier = 2
-            var lore1 = ''
-            var lore2 = ''
-
-            if (roll < 0.05) {
-                // Tier 1: Near Perfect (Micro-tell in serial like 1S or I5, and royal lore with subtle dot)
-                tier = 1
-                fakeSerial = serial.replace('15-', (Math.random() < 0.5 ? '1S-' : 'I5-'))
-                lore1 = '§a✔ POANSONAT: ' + fakeSerial
-                lore2 = '§7Registrul Imperial Straja.' // subtle trailing period
-            } else if (roll < 0.55) {
-                // Tier 2: Common Fake (Copper vitriol ink §2, missing '-l' in Registru)
-                tier = 2
-                lore1 = '§2✔ POANSONAT: ' + serial
-                lore2 = '§7Registru Imperial Straja' // missing '-l'
-            } else {
-                // Tier 3: Botched / Crude (Amber/iron ink, typo POASONAT without N, misspelled Garnisoana)
-                tier = 3
-                if (Math.random() < 0.5) {
-                    lore1 = '§6✔ POASONAT: ' + serial // Missing 'N' as noted in Semnele Adevarului
-                    lore2 = '§8Cancelaria Garnisoana Straja' // 's' instead of 'z'
-                } else {
-                    lore1 = '§7✔ POANSON: ' + serial // Missing '-AT'
-                    lore2 = '§8Registru Garnizoana Straja' // Missing '-l' and district style
-                }
-            }
+            // 100% Deterministic: Reads locked pending forgery for this player.
+            // Removing/re-inserting the gun or stamp NEVER rerolls!
+            var pending = getOrCreatePlayerPendingForgery(player, server)
 
             newTag.putBoolean('Proofed', false)
             newTag.putBoolean('Forged', true)
-            newTag.putInt('ForgeryTier', tier)
-            newTag.putString('Serial', fakeSerial)
-            newTag.putString('GunSerial', fakeSerial)
+            newTag.putInt('ForgeryTier', pending.tier)
+            newTag.putString('Serial', pending.fakeSerial)
+            newTag.putString('GunSerial', pending.fakeSerial)
             newTag.remove('Defaced')
 
-            loreList.add($FP_Component.literal(lore1))
-            loreList.add($FP_Component.literal(lore2))
-            // Unlicensed smithing NEVER enters any official queue
+            loreList.add($FP_Component.literal(pending.lore1))
+            loreList.add($FP_Component.literal(pending.lore2))
         }
 
         output.set($FP_DataComponents.CUSTOM_DATA, $FP_CustomData.of(newTag))
@@ -262,6 +335,72 @@ if ($AnvilUpdateEvent && typeof NativeEvents !== 'undefined') {
 
         event.setOutput(output)
         event.setCost(5) // Inspection / forging cost in XP levels
+    })
+}
+
+// Anvil Take / Commit Hook
+// Commits state changes ONLY when the player spends XP and extracts the finished weapon.
+if ($AnvilRepairEvent && typeof NativeEvents !== 'undefined') {
+    NativeEvents.onEvent($AnvilRepairEvent, function(event) {
+        var left = event.getLeft()
+        var right = event.getRight()
+        var output = event.getOutput()
+        if (!left || left.isEmpty() || !right || right.isEmpty() || !output || output.isEmpty()) return
+
+        var leftId = fpGetStackId(left)
+        var rightId = fpGetStackId(right)
+        if (leftId !== 'tacz:modern_kinetic_gun' || rightId !== 'kubejs:proof_stamp') return
+
+        var player = null
+        try {
+            player = (typeof event.getPlayer === 'function') ? event.getPlayer() : event.getEntity()
+        } catch (e) {
+            try { player = event.getEntity() } catch (e2) {}
+        }
+        if (!player) return
+
+        var server = player.getServer ? player.getServer() : player.server
+        if (!server) return
+
+        var leftTag = fpGetGunCustomTag(left)
+        if (!leftTag) return
+        var gunId = String(leftTag.getString('GunId'))
+        if (gunId !== 'qkl:fk15' && gunId !== 'qkl:fk15p') return
+
+        var isInspector = strajaIsAuthorizedInspector(player)
+
+        // Cannot re-proof or re-stamp if already proofed/defaced/forged
+        if (leftTag.getBoolean('Proofed') || (!isInspector && leftTag.getBoolean('Forged')) || leftTag.getBoolean('Defaced')) {
+            return
+        }
+
+        // Return the indestructible Imperial Proof Stamp to the player
+        try {
+            var isCreative = false
+            try { isCreative = player.isCreative ? player.isCreative() : (player.isCreativeMode ? player.isCreativeMode() : false) } catch (ce) {}
+            if (!isCreative) {
+                player.give('kubejs:proof_stamp')
+            }
+        } catch (e) {
+            console.error('[AnvilRepair] Error refunding proof_stamp: ' + e)
+        }
+
+        if (isInspector) {
+            // Authentic official proofing committed:
+            // Consume next official serial number and register weapon in daily queue
+            var serial = getNextStrajaSerial(server)
+            strajaRegisterPendingWeapon(server, player, serial, gunId)
+            try {
+                player.tell('§a[Garnizoana Straja] §fArma a fost poansonată și înregistrată oficial cu seria: §e' + serial)
+            } catch (e) {}
+        } else {
+            // Unlicensed forgery committed:
+            // Advance the player's pending roll to the next matrix
+            advancePlayerPendingForgery(player, server)
+            try {
+                player.tell('§e[Atelier Clandestin] §7Matrița a fost bătută pe culată. O nouă matriță a fost pregătită pe banc.')
+            } catch (e) {}
+        }
     })
 }
 

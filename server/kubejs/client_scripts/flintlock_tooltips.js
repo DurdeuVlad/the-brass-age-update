@@ -36,6 +36,7 @@ ItemEvents.modifyTooltips(event => {
         Text.of('§6Sigiliu Imperial de Poansonare'),
         Text.of('§aUnealtă Oficială de Stat §7(Indestructibilă)'),
         Text.of('§fCombină pe nicovală cu o armă pentru a-i atribui serie legală (#RC-15-XXXX).'),
+        Text.of('§8(Pe banc clandestin, tiparul matriței este fixat și avansează doar prin forjare.)'),
         Text.of('§cArmele nepoansonate sunt confiscate de jandarmeria din Straja!')
     ])
 

@@ -1443,6 +1443,61 @@ function runStrajaAutomatedTests(server, src) {
     assertTest('Nivel 2: Rețete Cinetice Create active', t2Found >= 8, t2Found + ' rețete de mixer/bazin/spălare')
     assertTest('Nivel 3: Surge Termic cu Sulf & Asamblare Secvențială active', t3Found >= 10, t3Found + ' rețete de mare randament')
 
+    // --- TEST SUITE 7: Deterministic Forgery Matrix & Anvil Anti-Reroll Exploit Verification ---
+    log('§e▶ 7. Verificare Matriță Deterministă Nicovală (Anti-Reroll Exploit)')
+    var initSerial = server.persistentData.getInt('StrajaSerialCount') || 100
+    var peek1 = StrajaWeapons.peekNextSerial(server)
+    var peek2 = StrajaWeapons.peekNextSerial(server)
+    var peek3 = StrajaWeapons.peekNextSerial(server)
+    var afterPeekSerial = server.persistentData.getInt('StrajaSerialCount') || 100
+
+    assertTest('Inspector/Citizen Preview: peekNextSerial nu incrementează contorul', afterPeekSerial === initSerial, 'Contor neschimbat: ' + initSerial)
+    assertTest('Previzualizările consecutive de serie sunt identice', peek1 === peek2 && peek2 === peek3, peek1)
+
+    // Mock Citizen Player without licensing
+    var mockCitizenData = {}
+    var mockCitizen = {
+        username: 'CetateanClandestin',
+        persistentData: {
+            getString: function(k) { return mockCitizenData[k] || '' },
+            putString: function(k, v) { mockCitizenData[k] = String(v) },
+            getBoolean: function(k) { return !!mockCitizenData[k] }
+        },
+        tags: { contains: function() { return false } },
+        getServer: function() { return server }
+    }
+
+    var roll1 = StrajaWeapons.getPlayerPendingForgery(mockCitizen, server)
+    assertTest('Cetățeanul primește o matriță clandestină inițială validă', roll1 && roll1.tier >= 1 && roll1.tier <= 3 && roll1.fakeSerial.indexOf('#RC-') === 0, 'Tier ' + roll1.tier + ' (' + roll1.fakeSerial + ')')
+
+    // Simulate player taking out the gun / stamp and putting it back in 10 times
+    var isDeterministic = true
+    for (var i = 0; i < 10; i++) {
+        var checkRoll = StrajaWeapons.getPlayerPendingForgery(mockCitizen, server)
+        if (checkRoll.tier !== roll1.tier || checkRoll.fakeSerial !== roll1.fakeSerial || checkRoll.roll !== roll1.roll) {
+            isDeterministic = false
+        }
+    }
+    assertTest('Anti-Reroll: 10 verificări consecutive pe nicovală returnează exact aceeași matriță', isDeterministic, 'Blocat pe Tier ' + roll1.tier)
+
+    // Simulate swapping weapon type in anvil preview
+    var swapRoll = StrajaWeapons.getPlayerPendingForgery(mockCitizen, server)
+    assertTest('Anti-Reroll: Schimbarea armei/poansonului pe nicovală păstrează aceeași matriță', swapRoll.fakeSerial === roll1.fakeSerial && swapRoll.tier === roll1.tier)
+
+    // Simulate committing the craft (AnvilRepairEvent: advance matrix)
+    var roll2 = StrajaWeapons.advancePlayerPendingForgery(mockCitizen, server)
+    assertTest('Avansare Matriță: Călcarea pe nicovală pregătește o nouă matriță pentru banc', roll2 && roll2.tier >= 1 && roll2.tier <= 3)
+
+    // Verify next preview now returns the newly advanced roll
+    var rollAfterAdvance = StrajaWeapons.getPlayerPendingForgery(mockCitizen, server)
+    assertTest('Matrița avansată rămâne fixată pentru următorul meșteșug', rollAfterAdvance.fakeSerial === roll2.fakeSerial && rollAfterAdvance.tier === roll2.tier)
+
+    // Inspector preview queue safety
+    var pendingBeforeInspector = getPendingToday(server).length
+    var mockInspectorPreview = StrajaWeapons.peekNextSerial(server)
+    var pendingAfterInspector = getPendingToday(server).length
+    assertTest('Inspector Preview: Coada de astăzi nu este poluată înainte de călcarea oficială', pendingBeforeInspector === pendingAfterInspector, pendingBeforeInspector + ' arme în coadă')
+
     log('§6§l╠════════════════════════════════════════════════════════╣')
     log('§6§l║ REZULTAT FINAL: ' + (passed === total ? '§a§lTOATE TESTELE AU TRECUT (' + passed + '/' + total + ')' : '§c§lEȘECURI DETECTATE (' + passed + '/' + total + ')') + ' §6§l║')
     log('§6§l╚════════════════════════════════════════════════════════╝')

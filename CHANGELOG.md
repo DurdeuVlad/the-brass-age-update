@@ -4,6 +4,32 @@ All notable changes to **The Brass Age** modpack expansion for **Rustic Craft II
 
 ---
 
+## [v1.3.3] — 2026-10-13 (Deterministic Citizen Forgery Matrices, Anvil Anti-Reroll Exploit Protection & Preview Idempotency)
+
+This patch release fixes a critical anvil preview exploit and serial burn bug in black market weapons proofing:
+
+### 🔒 Core Mechanics & Exploit Fixes
+
+1. **Deterministic Citizen Forgery Matrices ("The Next Reroll Is Fixed For You")**
+   - **Exploit**: In previous versions, unlicensed citizens forging black market weapons could freely re-roll the RNG quality distribution (5% Tier 1, 50% Tier 2, 45% Tier 3) by repeatedly lifting either the firearm or the imperial proof stamp out of the anvil preview slot and placing it back in. Because `Math.random()` was executed inside `AnvilUpdateEvent`, players could game the GUI to fish for near-perfect Tier 1 fakes at zero cost.
+   - **Fix**: Re-architected forgery rolls to be 100% deterministic per player (`player.persistentData.StrajaPendingForgery`). When a citizen places a weapon on the anvil, their counterfeit die matrix is locked on the bench.
+   - **Anti-Reroll Protection**: Removing the gun, removing the proof stamp, swapping firearms (e.g. musket to cavalry pistol), or closing the anvil GUI yields the exact same serial number, forgery tier, and lore tells every single time.
+   - **Roll Progression Contract**: The matrix advances to a brand-new roll **only** when the player actually spends 5 XP levels and clicks the output slot to complete the craft (`AnvilRepairEvent`).
+   - **Roleplay Immersion**: Upon striking the anvil, the citizen receives immersive atmospheric feedback: `§e[Atelier Clandestin] Matrița a fost bătută pe culată. O nouă matriță a fost pregătită pe banc.`
+
+2. **Idempotent Inspector Anvil Previews & Queue Safety**
+   - **Problem**: When an official inspector opened the anvil to preview a proofed weapon, `AnvilUpdateEvent` called `getNextStrajaSerial(server)` and prematurely enqueued the firearm into `StrajaPendingToday`. If an inspector canceled or changed items, serial numbers were permanently burned and phantom entries cluttered the daily registry queue.
+   - **Fix**: Separated serial inspection into `peekNextStrajaSerial(server)` (idempotent preview without side effects) and `getNextStrajaSerial(server)` (committed strictly on `AnvilRepairEvent`). Serial numbers and daily queue entries are now preserved with 100% integrity.
+
+3. **Indestructible Proof Stamp Retention (`kubejs:proof_stamp`)**
+   - Handled vanilla anvil ingredient consumption during `AnvilRepairEvent` to safely refund the master Imperial Proof Stamp (`player.give('kubejs:proof_stamp')`), honoring its official item lore ("Indestructibilă. Poanson din oțel călit imperial").
+
+4. **Expanded Automated Verification Suite**
+   - Added **Test Suite 7** to `/straja test` (`Verificare Matriță Deterministă Nicovală (Anti-Reroll Exploit)`), verifying serial peeking idempotency, 10-cycle anvil removal determinism, weapon swap stability, and post-strike matrix advancement.
+   - Total automated empirical tests passing: **49 / 49 assertions (100% PASS)**.
+
+---
+
 ## [v1.3.2] — 2026-10-13 (Fix Ammo & Weapon Logistics Crates Recipe Missing Texture Block in JEI/EMI)
 
 This patch release fixes the purple/black checkerboard error block texture appearing on recipe ingredients in JEI/EMI when viewing recipes for military weapon and ammunition crates (`kubejs:crate_muskets`, `kubejs:crate_pistols`, `kubejs:ammunition_crate`):
