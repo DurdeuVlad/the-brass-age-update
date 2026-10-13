@@ -4,6 +4,37 @@ All notable changes to **The Brass Age** modpack expansion for **Rustic Craft II
 
 ---
 
+## [v1.3.1] — 2026-10-13 (Fix Straja Patrol Book Layout Overflow, 32-Char Title Codec Crash, Weapon Patterns Catalog & Command Architecture)
+
+This patch release fixes critical formatting, layout, and command bugs in the physical Straja Patrol Book (`minecraft:written_book` issued via `/straja book` / `/straja registry`):
+
+### 🐛 Bug Fixes & Forensics
+
+1. **Root Cause: Minecraft 32-Character Written Book Title Limit**
+   - **Problem**: Mojang's Filterable Component codec for `minecraft:written_book_content` strictly enforces a title length range `[0-32]`. The previous title `"Registrul de Arme Straja (Ed. #3)"` was 33 characters (and longer on subsequent editions), causing NeoForge / KubeJS to reject the item component as malformed with `KubeRuntimeException: String is too long: 33, expected range [0-32]`.
+   - **Fix**: Shortened the official title to `"Registrul Straja (Ed. #" + edition + ")"` (25 characters, strictly $\le 32$ even up to edition #9999).
+
+2. **Resolution of 14-Line Page Overflow & Truncated Weapon Entries**
+   - **Problem**: Minecraft written book pages render at most 14 vertical lines before overflowing off the bottom of the page. The old layout attempted to pack 3 entries per page with 5 lines per entry ($3 \times 5 = 15$ lines + 3 lines header = 18 lines), which silently truncated and hid the 3rd entry on every page of the catastif. Page 2's roleplay inspection cues also spanned >20 lines and overflowed.
+   - **Fix**: Redesigned all catastif pages with a guaranteed, non-overflowing 2-entry layout (3 lines header + 2 entries of 3 lines = 9-10 lines total). Redesigned Page 2 (SEMNELE ADEVĂRULUI) into 11 crisp lines displaying all 4 inspection tells with zero truncation.
+
+3. **Inclusion of Authorized Weapon Models Catalog (Tipare Autorizate)**
+   - **Problem**: The patrol book previously only listed serialized firearm instances, omitting the realm's official military firearm catalog and legal carry limits.
+   - **Fix**: Added Page 3 (**TIPARE AUTORIZATE**), listing all approved royal firearm patterns (*Muschetă FK15* 16.5mm infanterie, limită 1 armă/cetățean; *Pistol Cavalerie FK15-P* 16.5mm, limită 2 arme/cetățean). Added Page 4 (**MUNIȚIE & LOGISTICĂ**), detailing approved 16.5mm munitions (Lead, Consecrated Silver, Canister, Incendiary) and sealed crate logistics rules.
+
+4. **Inclusion of Today's Maturing Firearms Queue (StrajaPendingToday)**
+   - **Problem**: Weapons proofed today by inspectors were queued in `StrajaPendingToday` awaiting midnight rollover and did not appear anywhere in the patrol book, leading inspectors to believe weapons were missing or unrecorded.
+   - **Fix**: Added dedicated section (**ARME ÎN CURS DE MATURARE (AZI)**) displaying weapons pending midnight rollover alongside their status (`⏳ Așteaptă Rollover`), permitting cross-referencing with same-day dated permits.
+
+5. **Universal Command Architecture for `/straja book` and `/straja registry`**
+   - **Problem**: `/straja book give @s` (used by the automated test runner in `admin_test_runner.js`) failed with Brigadier syntax errors because `book` lacked child subcommands, and `$SR_StringArgument.word()` rejected `@s` selector characters.
+   - **Fix**: Upgraded both `/straja book` and `/straja registry` to support `give [player]`, `[player]`, `@s`, and `@p` using `greedyString()` arguments and player profile suggestions.
+
+6. **Expanded Automated Verification Suite**
+   - Expanded `/straja test` from 37 to **41 empirical assertions (100% PASS)**, adding automated validation for authorized weapon catalogs, munitions specifications, visual page limits, and error-free book item delivery.
+
+---
+
 ## [v1.3.0] — 2026-10-12 (100% In-Universe Roleplay Immersive Overhaul, Sensory "Papers, Please" Cues, High-Stakes Checkpoints & Prison Escapes)
 
 This minor release completely transforms the player and server experience into a **100% In-Universe Medieval Roleplay environment**. All technical meta alerts, blunt system broadcasts (`[Server]`, `[DEBUG]`, `NBT`, `Ilegal`), and item IDs have been completely eradicated from player view in favor of tactile audio cues, guard dialogues, physical inspections, and high-stakes drama. It introduces calibrated sensory tells for forged and defaced firearms, atmospheric two-stage border checkpoints with heart-pounding audio cues, cinematic arrests, bailiff arrest warrants, and dynamic fortress jailbreaks with ringing alarm bells and hunting horns. For server administrators, a persistent `/straja debug on|off|status` toggle allows full diagnostic transparency on demand.

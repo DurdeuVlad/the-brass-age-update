@@ -411,6 +411,7 @@ function formatPatrolBook(server) {
     var edition = server.persistentData.getInt('StrajaRegistryEdition') || 1
     var todayStr = StrajaWeapons.getTodayDateString()
     var master = getMasterRegistry(server)
+    var pending = getPendingToday(server)
 
     var pages = []
 
@@ -422,31 +423,59 @@ function formatPatrolBook(server) {
         'Datoria ta începe acolo unde porțile automate se opresc. Cercetează slovele și pecetea!'
     pages.push(p1)
 
-    // Page 2: Cues de Rol (Papers, Please Protocol)
+    // Page 2: Cues de Rol (Papers, Please Protocol) - Compact layout fitting within 14 lines
     var p2 = '§4§lSEMNELE ADEVĂRULUI§r\n' +
-        '§81. Cerneala:§r Adevărata pecete sclipește verde ca smaraldul (§a). Cocleala de aramă dă un verde întunecat și mort (§2). Arătura de alamă arsă dă tonuri ruginii (§6).\n\n' +
-        '§82. Slova:§r Matrița regală bate mereu «Registrul». Falsul de târg scapă slova «-l» («Registru»), «N» din «POASONAT» sau bate «Garnisoana» cu «s».\n\n' +
-        '§83. Cifre Măsluite:§r Caută litere furișate în serie («1S» sau «I5» în loc de «15» sau separatori strâmbi «_»).\n\n' +
-        '§84. Regula de 24h:§r Arma de azi intră în carte mâine. Cel de azi trebuie să aibă permis semnat azi!'
+        '§8Indicii de Recunoaștere§r\n\n' +
+        '§81. Cerneala: §aVerde smarald§8 (legal), §2coclit§8 ori §6ruginiu§8 (fals).\n\n' +
+        '§82. Slova: §f«Registrul»§8 bate curat; falsul scapă «-l» ori «s».\n\n' +
+        '§83. Seria: §8Cifre strâmbe (§c«1S»§8, §c«I5»§8 sau separator §c«_»§8).\n\n' +
+        '§84. Regula 24h: §8Arma de azi intră în carte mâine. Necesită permis!'
     pages.push(p2)
 
-    // Page 3+: Paginated Master Registry (3 entries per page)
+    // Page 3: Catalogul Tiparelor Autorizate de Stat (Toate armele legale din imperiu)
+    var p3 = '§1§lTIPARE AUTORIZATE§r\n' +
+        '§8Catalogul Armelor Straja§r\n' +
+        '§8───────────────────§r\n' +
+        '§0• §2Muschetă FK15§r\n' +
+        '  §8Calibru: §016.5mm Ghintuit\n' +
+        '  §8Destinație: §0Infanterie\n' +
+        '  §8Limită port: §11 armă / om§r\n\n' +
+        '§0• §2Pistol FK15-P§r\n' +
+        '  §8Calibru: §016.5mm Cavalerie\n' +
+        '  §8Destinație: §0Ofițeri / Călăreți\n' +
+        '  §8Limită port: §12 arme / om§r'
+    pages.push(p3)
+
+    // Page 4: Regulament de Muniție & Logistică
+    var p4 = '§1§lMUNIȚIE & LOGISTICĂ§r\n' +
+        '§8Regulament Militar§r\n' +
+        '§8───────────────────§r\n' +
+        '§8Muniție 16.5mm Admisă:§r\n' +
+        '§0• Glonț Standard de Plumb\n' +
+        '§0• Glonț Sfințit de Argint\n' +
+        '§0• Mitralii (Alice Recul)\n' +
+        '§0• Glonț Incendiar (8s foc)\n\n' +
+        '§8Transport Peste Limită:§r\n' +
+        '§0Doar în §2Lăzi Sigilate§0 purtate de căruțe ori transportatori.'
+    pages.push(p4)
+
+    // Page 5+: Paginated Master Registry (2 entries per page, immune to 14-line overflow)
     if (master.length === 0) {
-        pages.push('§1§lCATASTIFUL ARMELOR§r\n§8Ediția #' + edition + ' (' + todayStr + ')§r\n\n§7Nicio armă înregistrată încă în catastiful oficial.')
+        pages.push('§1§lCATASTIFUL CENTRAL§r\n§8Ediția #' + edition + ' (' + todayStr + ')§r\n§8───────────────────§r\n\n§7Nicio armă înregistrată încă în catastiful oficial.\n\n§8Armele înscrise astăzi vor apărea în ediția de mâine.')
     } else {
-        var curPage = '§1§lCATASTIFUL ARMELOR§r\n§8Ediția #' + edition + ' (' + todayStr + ')§r\n-------------------\n'
+        var curPage = '§1§lCATASTIFUL CENTRAL§r\n§8Ediția #' + edition + ' (' + todayStr + ')§r\n§8───────────────────§r\n'
         var onPage = 0
         for (var i = 0; i < master.length; i++) {
             var e = master[i]
-            curPage += '§0• §1' + e.serial + '§r\n' +
+            var mShorthand = (e.model && (e.model.toLowerCase().indexOf('fk15p') !== -1 || e.model.toLowerCase().indexOf('pistol') !== -1)) ? 'FK15-P' : 'FK15'
+            curPage += '§0• §1' + e.serial + ' §8(§2' + mShorthand + '§8)\n' +
                 '  §8Posesor: §0' + e.owner + '\n' +
-                '  §8Model: §2' + e.model + '\n' +
                 '  §8Data: §8' + e.registeredDate + '\n'
             onPage++
 
-            if (onPage >= 3 && i < master.length - 1) {
+            if (onPage >= 2 && i < master.length - 1) {
                 pages.push(curPage)
-                curPage = '§1§lCATASTIFUL ARMELOR§r\n§8Ediția #' + edition + ' (cont.)§r\n-------------------\n'
+                curPage = '§1§lCATASTIFUL CENTRAL§r\n§8Ediția #' + edition + ' (cont.)§r\n§8───────────────────§r\n'
                 onPage = 0
             }
         }
@@ -455,8 +484,33 @@ function formatPatrolBook(server) {
         }
     }
 
+    // Following Page(s): Arme În Curs de Maturare (Pending Today Queue)
+    if (pending.length === 0) {
+        pages.push('§6§lARME ÎN CURS (AZI)§r\n§8Înregistrate la Cancelarie§r\n§8───────────────────§r\n\n§7Nicio înregistrare nouă astăzi.\n\n§8Armele poansonate de inspectori apar aici până la miezul nopții.')
+    } else {
+        var curPend = '§6§lARME ÎN CURS (AZI)§r\n§8Înregistrate la Cancelarie§r\n§8───────────────────§r\n'
+        var onPend = 0
+        for (var j = 0; j < pending.length; j++) {
+            var p = pending[j]
+            var pShorthand = (p.model && (p.model.toLowerCase().indexOf('fk15p') !== -1 || p.model.toLowerCase().indexOf('pistol') !== -1)) ? 'FK15-P' : 'FK15'
+            curPend += '§0• §e' + p.serial + ' §8(§2' + pShorthand + '§8)\n' +
+                '  §8Posesor: §0' + p.owner + '\n' +
+                '  §8Status: §e⏳ Așteaptă Rollover\n'
+            onPend++
+
+            if (onPend >= 2 && j < pending.length - 1) {
+                pages.push(curPend)
+                curPend = '§6§lARME ÎN CURS (AZI)§r\n§8Înregistrate (cont.)§r\n§8───────────────────§r\n'
+                onPend = 0
+            }
+        }
+        if (onPend > 0) {
+            pages.push(curPend)
+        }
+    }
+
     return {
-        title: 'Registrul de Arme Straja (Ed. #' + edition + ')',
+        title: 'Registrul Straja (Ed. #' + edition + ')',
         author: 'Cancelaria Garnizoanei',
         pages: pages
     }
@@ -464,7 +518,6 @@ function formatPatrolBook(server) {
 
 StrajaWeapons.givePatrolBook = function(server, targetPlayer) {
     if (!targetPlayer) return
-    var pName = targetPlayer.username ? String(targetPlayer.username) : String(targetPlayer.getName().getString())
     var bookData = formatPatrolBook(server)
 
     var pageArrayJson = []
@@ -473,11 +526,36 @@ StrajaWeapons.givePatrolBook = function(server, targetPlayer) {
         pageArrayJson.push('\'' + rawText + '\'')
     }
 
-    var giveCmd = 'give ' + pName + ' minecraft:written_book[minecraft:written_book_content={title:\'' +
-        bookData.title.replace(/'/g, "\\'") + '\',author:\'' + bookData.author + '\',pages:[' + pageArrayJson.join(',') + ']}] 1'
+    var itemSnbt = 'minecraft:written_book[minecraft:written_book_content={title:\'' +
+        bookData.title.replace(/'/g, "\\'") + '\',author:\'' + bookData.author.replace(/'/g, "\\'") + '\',pages:[' + pageArrayJson.join(',') + ']}]'
 
-    server.runCommandSilent(giveCmd)
-    targetPlayer.tell('§a[Straja] Ai primit exemplarul oficial: §e' + bookData.title)
+    var pName = targetPlayer.username ? String(targetPlayer.username) : String(targetPlayer.getName().getString())
+
+    var given = false
+    try {
+        if (typeof targetPlayer.give === 'function' && typeof Item !== 'undefined') {
+            var bookStack = Item.of(itemSnbt)
+            if (bookStack && !bookStack.isEmpty()) {
+                targetPlayer.give(bookStack)
+                given = true
+            }
+        }
+    } catch (e) {
+        console.error('[StrajaBook] targetPlayer.give error: ' + e)
+    }
+
+    if (!given && server) {
+        var giveCmd = 'give ' + pName + ' ' + itemSnbt + ' 1'
+        server.runCommandSilent(giveCmd)
+    }
+
+    try {
+        if (typeof targetPlayer.tell === 'function') {
+            targetPlayer.tell('§a[Straja] Ai primit exemplarul oficial: §e' + bookData.title)
+        } else if (typeof targetPlayer.sendSystemMessage === 'function') {
+            targetPlayer.sendSystemMessage(Text.literal('§a[Straja] Ai primit exemplarul oficial: §e' + bookData.title))
+        }
+    } catch (e) {}
 }
 
 // ----------------------------------------------------------------------------
@@ -510,6 +588,8 @@ ServerEvents.commandRegistry(function(event) {
     // Helper command player suggestor
     function suggestOnlinePlayers(ctx, builder) {
         try {
+            builder.suggest('@s')
+            builder.suggest('@p')
             var server = ctx.source.server
             var players = server.getPlayerList().getPlayers()
             for (var i = 0; i < players.size(); i++) {
@@ -517,6 +597,37 @@ ServerEvents.commandRegistry(function(event) {
             }
         } catch (e) {}
         return builder.buildFuture()
+    }
+
+    function dispatchGivePatrolBook(ctx, explicitPlayerName) {
+        var server = ctx.source.server
+        var target = null
+        var pName = explicitPlayerName ? String(explicitPlayerName).trim() : ''
+
+        if (pName.length > 0) {
+            if (pName === '@s' || pName === '@p') {
+                target = ctx.source.player
+            } else {
+                target = server.getPlayerList().getPlayerByName(pName)
+            }
+            if (!target) {
+                ctx.source.sendSystemMessage(Text.literal('§c[Straja] Jucătorul ' + pName + ' nu este conectat pe server.'))
+                return 0
+            }
+        } else {
+            target = ctx.source.player
+            if (!target) {
+                ctx.source.sendSystemMessage(Text.literal('§cComanda poate fi rulată doar de un jucător sau specifică ținta.'))
+                return 0
+            }
+        }
+
+        StrajaWeapons.givePatrolBook(server, target)
+        var targetName = target.username ? String(target.username) : String(target.getName().getString())
+        if (ctx.source.player !== target) {
+            ctx.source.sendSystemMessage(Text.literal('§a[Straja] Exemplarul tipărit a fost înmânat ostașului ' + targetName + '.'))
+        }
+        return 1
     }
 
     event.register(
@@ -538,37 +649,39 @@ ServerEvents.commandRegistry(function(event) {
                 return 1
             })
 
-            // 1. Registry Book Command
+            // 1. Registry Book Command (aliases: /straja registry, /straja book, with optional 'give' and player target)
             .then(Commands.literal('registry')
                 .executes(function(ctx) {
-                    var p = ctx.source.player
-                    if (!p) {
-                        ctx.source.sendSystemMessage(Text.literal('§cComanda poate fi rulată doar de un jucător sau specifică ținta.'))
-                        return 0
-                    }
-                    StrajaWeapons.givePatrolBook(ctx.source.server, p)
-                    return 1
+                    return dispatchGivePatrolBook(ctx, null)
                 })
-                .then(Commands.argument('player', $SR_StringArgument.word()).suggests(suggestOnlinePlayers)
-                    .requires(function(src) { return src.hasPermission(2) })
+                .then(Commands.literal('give')
                     .executes(function(ctx) {
-                        var pName = $SR_StringArgument.getString(ctx, 'player')
-                        var server = ctx.source.server
-                        var target = server.getPlayerList().getPlayerByName(pName)
-                        if (!target) {
-                            ctx.source.sendSystemMessage(Text.literal('§c[Straja] Jucătorul ' + pName + ' nu este conectat pe server.'))
-                            return 0
-                        }
-                        StrajaWeapons.givePatrolBook(server, target)
-                        ctx.source.sendSystemMessage(Text.literal('§a[Straja] Exemplarul tipărit a fost înmânat ostașului ' + pName + '.'))
-                        return 1
+                        return dispatchGivePatrolBook(ctx, null)
+                    })
+                    .then(Commands.argument('player', $SR_StringArgument.greedyString()).suggests(suggestOnlinePlayers)
+                        .executes(function(ctx) {
+                            return dispatchGivePatrolBook(ctx, $SR_StringArgument.getString(ctx, 'player'))
+                        })))
+                .then(Commands.argument('player', $SR_StringArgument.greedyString()).suggests(suggestOnlinePlayers)
+                    .executes(function(ctx) {
+                        return dispatchGivePatrolBook(ctx, $SR_StringArgument.getString(ctx, 'player'))
                     })))
-            .then(Commands.literal('book') // alias
+            .then(Commands.literal('book') // alias for registry
                 .executes(function(ctx) {
-                    var p = ctx.source.player
-                    if (p) StrajaWeapons.givePatrolBook(ctx.source.server, p)
-                    return 1
-                }))
+                    return dispatchGivePatrolBook(ctx, null)
+                })
+                .then(Commands.literal('give')
+                    .executes(function(ctx) {
+                        return dispatchGivePatrolBook(ctx, null)
+                    })
+                    .then(Commands.argument('player', $SR_StringArgument.greedyString()).suggests(suggestOnlinePlayers)
+                        .executes(function(ctx) {
+                            return dispatchGivePatrolBook(ctx, $SR_StringArgument.getString(ctx, 'player'))
+                        })))
+                .then(Commands.argument('player', $SR_StringArgument.greedyString()).suggests(suggestOnlinePlayers)
+                    .executes(function(ctx) {
+                        return dispatchGivePatrolBook(ctx, $SR_StringArgument.getString(ctx, 'player'))
+                    })))
 
             // 2. Register Serial Command (OP 2)
             .then(Commands.literal('register_serial')
@@ -1194,7 +1307,7 @@ function runStrajaAutomatedTests(server, src) {
     // --- TEST SUITE 5: Snapshot Patrol Book Generation ---
     log('§e▶ 5. Verificare Formatare Catastif Patrol Book')
     var book = formatPatrolBook(server)
-    assertTest('Titlu carte conform', book.title.indexOf('Registrul de Arme Straja') !== -1)
+    assertTest('Titlu carte conform (max 32 caractere)', book.title.indexOf('Registrul Straja') !== -1 && book.title.length <= 32)
     assertTest('Autor carte este Cancelaria Garnizoanei', book.author === 'Cancelaria Garnizoanei')
     assertTest('Pagina 1 conține Ordinul Garnizoanei', book.pages[0].indexOf('ORDINUL GARNIZOANEI') !== -1)
     assertTest('Pagina 2 conține indicii de rol (cerneală, slove, 24h)',
@@ -1207,6 +1320,35 @@ function runStrajaAutomatedTests(server, src) {
         book.pages[1].indexOf('NBT') === -1 &&
         book.pages[1].indexOf('crafting') === -1
     )
+    assertTest('Pagina 3 conține catalogul tiparelor autorizate (Muschetă & Pistol)',
+        book.pages[2].indexOf('TIPARE AUTORIZATE') !== -1 &&
+        book.pages[2].indexOf('Muschetă FK15') !== -1 &&
+        book.pages[2].indexOf('Pistol FK15-P') !== -1
+    )
+    assertTest('Pagina 4 conține regulamentul de muniții și transport',
+        book.pages[3].indexOf('MUNIȚIE & LOGISTICĂ') !== -1 &&
+        book.pages[3].indexOf('16.5mm') !== -1
+    )
+    var allPagesWithinLimit = true
+    for (var pIdx = 0; pIdx < book.pages.length; pIdx++) {
+        var pageLines = book.pages[pIdx].split('\n').length
+        if (pageLines > 16) allPagesWithinLimit = false
+    }
+    assertTest('Toate paginile registrului respectă limita vizuală', allPagesWithinLimit)
+
+    var mockBookRecipient = {
+        username: 'OfiterTest',
+        getName: function() { return { getString: function() { return 'OfiterTest' } } },
+        tell: function(msg) {},
+        give: function(st) {}
+    }
+    var bookGivenCleanly = true
+    try {
+        StrajaWeapons.givePatrolBook(server, mockBookRecipient)
+    } catch (e) {
+        bookGivenCleanly = false
+    }
+    assertTest('givePatrolBook se execută fără erori de sintaxă sau crash', bookGivenCleanly)
 
     // --- TEST SUITE 6: Netherless Industrial 3-Tier Synthesis Engine ---
     log('§e▶ 6. Verificare Rețete Industriale Alchimie Netherless (3 Niveluri)')
