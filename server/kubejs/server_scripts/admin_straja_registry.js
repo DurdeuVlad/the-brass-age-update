@@ -564,6 +564,7 @@ StrajaWeapons.givePatrolBook = function(server, targetPlayer) {
 
 var lastCheckedDay = ''
 
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.tick(function(event) {
     if (event.server.getTickCount() % 1200 !== 0) return // Check every 60 seconds
     var todayStr = StrajaWeapons.getTodayDateString()
@@ -577,11 +578,13 @@ ServerEvents.tick(function(event) {
         lastCheckedDay = todayStr
     }
 })
+}
 
 // ----------------------------------------------------------------------------
 // 6. Unified /straja Command Family
 // ----------------------------------------------------------------------------
 
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.commandRegistry(function(event) {
     var Commands = event.commands
 
@@ -1113,6 +1116,7 @@ ServerEvents.commandRegistry(function(event) {
                     })))
     )
 })
+}
 
 // ============================================================================
 // 7. Automated Self-Test Engine (Verification of All Contracts)

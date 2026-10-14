@@ -2,43 +2,46 @@
 // Allows large quantities of firearms and munitions to be boxed into dense military transport crates
 // for overland logistics via Trotting Wagons, Pack Mules, Create Trains, and Cartage.
 
-ServerEvents.recipes(event => {
-    // Guard against environments where TaCZ items are not registered
-    if (!Item.exists('tacz:modern_kinetic_gun') || !Item.exists('tacz:ammo')) {
-        console.warn('[TheBrassAge] TaCZ firearm/ammo items not yet available in registry; skipping crate packing recipe registration.')
-        return
-    }
+if (typeof ServerEvents !== 'undefined') {
+    ServerEvents.recipes(event => {
+        // Guard against environments where TaCZ items or crate items are not registered
+        if (!Item.exists('tacz:modern_kinetic_gun') || !Item.exists('tacz:ammo') ||
+            !Item.exists('kubejs:crate_muskets') || !Item.exists('kubejs:crate_pistols') || !Item.exists('kubejs:ammunition_crate')) {
+            console.warn('[TheBrassAge] TaCZ firearm/ammo or crate items not yet available in registry; skipping crate packing recipe registration.')
+            return
+        }
 
-    // 1. Pack 8 Smoothbore Muskets into a Heavy Military Musket Crate
-    event.shaped('kubejs:crate_muskets', [
-        'MMM',
-        'MBM',
-        'MMM'
-    ], {
-        M: Item.of('tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15"}]'),
-        B: '#c:chests/wooden'
-    }).id('the_brass_age:pack_musket_crate')
+        // 1. Pack 8 Smoothbore Muskets into a Heavy Military Musket Crate
+        event.shaped('kubejs:crate_muskets', [
+            'MMM',
+            'MBM',
+            'MMM'
+        ], {
+            M: Item.of('tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15"}]'),
+            B: '#c:chests/wooden'
+        }).id('the_brass_age:pack_musket_crate')
 
-    // 2. Pack 8 Dragoon Pistols into an Officer Pistol Crate
-    event.shaped('kubejs:crate_pistols', [
-        'PPP',
-        'PBP',
-        'PPP'
-    ], {
-        P: Item.of('tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p"}]'),
-        B: '#c:chests/wooden'
-    }).id('the_brass_age:pack_pistol_crate')
+        // 2. Pack 8 Dragoon Pistols into an Officer Pistol Crate
+        event.shaped('kubejs:crate_pistols', [
+            'PPP',
+            'PBP',
+            'PPP'
+        ], {
+            P: Item.of('tacz:modern_kinetic_gun[minecraft:custom_data={GunId:"qkl:fk15p"}]'),
+            B: '#c:chests/wooden'
+        }).id('the_brass_age:pack_pistol_crate')
 
-    // 3. Heavy Ammunition Crate Packing (256 standard round balls)
-    event.shaped('kubejs:ammunition_crate', [
-        'AAA',
-        'ABA',
-        'AAA'
-    ], {
-        A: Item.of('tacz:ammo[minecraft:custom_data={AmmoId:"qkl:16mm"}]'),
-        B: '#c:chests/wooden'
-    }).id('the_brass_age:pack_ammunition_crate')
-})
+        // 3. Heavy Ammunition Crate Packing (256 standard round balls)
+        event.shaped('kubejs:ammunition_crate', [
+            'AAA',
+            'ABA',
+            'AAA'
+        ], {
+            A: Item.of('tacz:ammo[minecraft:custom_data={AmmoId:"qkl:16mm"}]'),
+            B: '#c:chests/wooden'
+        }).id('the_brass_age:pack_ammunition_crate')
+    })
+}
 
 // Shared Unpack Logic: handles unpacking crates whether clicked in air or on ground/blocks
 function unpackLogisticsCrate(player, stack, crateType) {
@@ -80,36 +83,40 @@ function unpackLogisticsCrate(player, stack, crateType) {
 }
 
 // Air Unpacking (Right-Click in air)
-ItemEvents.rightClicked('kubejs:crate_muskets', event => {
-    if (unpackLogisticsCrate(event.player, event.item, 'muskets')) event.cancel()
-})
+if (typeof ItemEvents !== 'undefined') {
+    ItemEvents.rightClicked('kubejs:crate_muskets', event => {
+        if (unpackLogisticsCrate(event.player, event.item, 'muskets')) event.cancel()
+    })
 
-ItemEvents.rightClicked('kubejs:crate_pistols', event => {
-    if (unpackLogisticsCrate(event.player, event.item, 'pistols')) event.cancel()
-})
+    ItemEvents.rightClicked('kubejs:crate_pistols', event => {
+        if (unpackLogisticsCrate(event.player, event.item, 'pistols')) event.cancel()
+    })
 
-ItemEvents.rightClicked('kubejs:ammunition_crate', event => {
-    if (unpackLogisticsCrate(event.player, event.item, 'ammo')) event.cancel()
-})
+    ItemEvents.rightClicked('kubejs:ammunition_crate', event => {
+        if (unpackLogisticsCrate(event.player, event.item, 'ammo')) event.cancel()
+    })
+}
 
 // Ground/Block Unpacking (Right-Click on ground / any block)
-BlockEvents.rightClicked(event => {
-    const player = event.player
-    if (!player) return
-    const item = event.item
-    if (!item || item.isEmpty()) return
+if (typeof BlockEvents !== 'undefined') {
+    BlockEvents.rightClicked(event => {
+        const player = event.player
+        if (!player) return
+        const item = event.item
+        if (!item || item.isEmpty()) return
 
-    var id = ''
-    try {
-        id = String(Java.loadClass('net.minecraft.core.registries.BuiltInRegistries').ITEM.getKey(item.getItem())).toLowerCase()
-    } catch (e) {
-        id = String(item.id || '').toLowerCase()
-    }
-    if (id === 'kubejs:crate_muskets') {
-        if (unpackLogisticsCrate(player, item, 'muskets')) event.cancel()
-    } else if (id === 'kubejs:crate_pistols') {
-        if (unpackLogisticsCrate(player, item, 'pistols')) event.cancel()
-    } else if (id === 'kubejs:ammunition_crate') {
-        if (unpackLogisticsCrate(player, item, 'ammo')) event.cancel()
-    }
-})
+        var id = ''
+        try {
+            id = String(Java.loadClass('net.minecraft.core.registries.BuiltInRegistries').ITEM.getKey(item.getItem())).toLowerCase()
+        } catch (e) {
+            id = String(item.id || '').toLowerCase()
+        }
+        if (id === 'kubejs:crate_muskets') {
+            if (unpackLogisticsCrate(player, item, 'muskets')) event.cancel()
+        } else if (id === 'kubejs:crate_pistols') {
+            if (unpackLogisticsCrate(player, item, 'pistols')) event.cancel()
+        } else if (id === 'kubejs:ammunition_crate') {
+            if (unpackLogisticsCrate(player, item, 'ammo')) event.cancel()
+        }
+    })
+}

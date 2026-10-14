@@ -873,6 +873,7 @@ function giveNetherlessKit(server, player) {
     player.sendSystemMessage(Text.literal('§6✔ [Kit Alchimie Netherless Livrat]§f Ai primit toate ingredientele de sinteză (Cobble, Redstone, Sulf, Salpetru, Slime, Cărbune, Lavă, Apă, Bazine Create, Burner și Șmirghel)!'))
 }
 
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.commandRegistry(event => {
     const Commands = event.commands
 
@@ -1233,3 +1234,4 @@ ServerEvents.commandRegistry(event => {
     registerTestRunner('testguide')
     registerTestRunner('ghid_test')
 })
+}

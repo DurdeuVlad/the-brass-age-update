@@ -142,33 +142,23 @@ function flintlockEnforce(player) {
         })
     }
 
-    // 4. Priority 4: Crafting grid slots (survival 2x2 or crafting table 3x3)
-    if (player.containerMenu) {
+    // 4. Priority 4: Crafting grid slots (slots 1..9 in crafting menus)
+    if (player.containerMenu && player.containerMenu.slots) {
         try {
             var slots = player.containerMenu.slots
-            if (slots && typeof slots.size === 'function') {
-                for (var i = 0; i < slots.size(); i++) {
-                    var slotObj = slots.get(i)
-                    if (!slotObj || !slotObj.container) continue
-                    var isCraftingGrid = false
-                    try {
-                        var cls = (typeof slotObj.container.getClass === 'function') ? slotObj.container.getClass() : (slotObj.container.class || null)
-                        if (cls && typeof cls.getName === 'function') {
-                            var cName = String(cls.getName())
-                            if (cName.indexOf('Craft') !== -1 || cName.indexOf('Transient') !== -1) {
-                                isCraftingGrid = true
-                            }
+            var maxCraftSlot = Math.min(slots.size ? slots.size() : 10, 10)
+            for (var i = 1; i < maxCraftSlot; i++) {
+                var slotObj = slots.get(i)
+                if (!slotObj) continue
+                var sItem = slotObj.getItem()
+                if (!sItem || sItem.isEmpty()) continue
+                if (flintlockCarryKind(sItem) !== null) {
+                    checkStack(sItem, function(excess) {
+                        if (slotObj.getItem().isEmpty() || slotObj.getItem().getCount() <= 0) {
+                            slotObj.set($FlintlockItemStack.EMPTY)
                         }
-                    } catch (e) {}
-
-                    if (isCraftingGrid) {
-                        checkStack(slotObj.getItem(), function(excess) {
-                            if (slotObj.getItem().isEmpty() || slotObj.getItem().getCount() <= 0) {
-                                slotObj.set($FlintlockItemStack.EMPTY)
-                            }
-                            slotObj.setChanged()
-                        })
-                    }
+                        slotObj.setChanged()
+                    })
                 }
             }
         } catch (e) {}
@@ -204,6 +194,16 @@ if (typeof NativeEvents !== 'undefined') {
             var player = event.getPlayer()
             var itemEntity = event.getItemEntity()
             if (!player || !itemEntity) return
+
+            // Debounce to prevent 20 Hz scanning spam when standing on dropped excess weapon
+            var lvl = (typeof player.getLevel === 'function') ? player.getLevel() : player.level
+            var now = (lvl && typeof lvl.getGameTime === 'function') ? lvl.getGameTime() : 0
+            var lastBlocked = player.persistentData.getLong('flintlockLastPickupBlock')
+            if (now < lastBlocked + 10) {
+                try { event.setCanceled(true) } catch (err) {}
+                return
+            }
+
             var stack = itemEntity.getItem()
             var kind = flintlockCarryKind(stack)
             if (kind === null) return
@@ -220,6 +220,7 @@ if (typeof NativeEvents !== 'undefined') {
             }
 
             if (count + stack.getCount() > flintlockCarryLimits[kind]) {
+                player.persistentData.putLong('flintlockLastPickupBlock', now)
                 try { event.setCanceled(true) } catch (err) {}
                 flintlockCarryMessage(player)
             }
@@ -228,11 +229,13 @@ if (typeof NativeEvents !== 'undefined') {
 }
 
 // 4 Hz tick checking (every 5 ticks) across all online players via ServerEvents.tick
-ServerEvents.tick(event => {
-    var server = event.server
-    if (server.tickCount % 5 !== 0) return
-    server.players.forEach(player => {
-        if (!player || !player.isAlive() || player.isSpectator()) return
-        flintlockEnforce(player)
+if (typeof ServerEvents !== 'undefined') {
+    ServerEvents.tick(event => {
+        var server = event.server
+        if (server.tickCount % 5 !== 0) return
+        server.players.forEach(player => {
+            if (!player || !player.isAlive() || player.isSpectator()) return
+            flintlockEnforce(player)
+        })
     })
-})
+}

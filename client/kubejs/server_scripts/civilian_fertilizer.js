@@ -1,6 +1,7 @@
 // Civilian Commodity Line: Miracle Super-Phosphate Agricultural Fertilizer
 // Manufactured by P.U.L.A SRL for grain, vineyard, and vegetable plantations.
 
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.recipes(event => {
     // Check item registry readiness
     if (!Item.exists('kubejs:miracle_fertilizer') || !Item.exists('kubejs:saltpeter')) {
@@ -48,8 +49,10 @@ ServerEvents.recipes(event => {
         ]
     }).id('kubejs:civilian/fertilizer_tier3_surge')
 })
+}
 
 // In-world utility: Right-clicking crops with Miracle Fertilizer accelerates 3x3 plant growth
+if (typeof BlockEvents !== 'undefined') {
 BlockEvents.rightClicked(event => {
     const player = event.player
     const item = event.item
@@ -84,3 +87,4 @@ BlockEvents.rightClicked(event => {
         player.tell('§a[Agricultură] Super-Fosfatul a stimulat rodirea culturilor în jur!')
     }
 })
+}

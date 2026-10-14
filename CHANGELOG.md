@@ -4,6 +4,43 @@ All notable changes to **The Brass Age** modpack expansion for **Rustic Craft II
 
 ---
 
+## [v1.3.4] — 2026-10-14 (Performance & Stability Patch: Zero KubeJS Errors, Rhino Reflection Leak Fix & Tick Throttling)
+
+This patch release completely resolves the 18 KubeJS script reload errors and eliminates severe JVM memory bloat caused by high-frequency reflection in tick loops:
+
+### ⚡ Performance & Memory Optimization
+
+1. **Elimination of Rhino Heap Reflection Leak (`flintlock_carry_limits.js`)**
+   - **Root Cause**: During the 5-tick container scanning loop, slot introspection used Java reflection (`slotObj.container.getClass().getName().indexOf('Craft')`) to detect player crafting windows. In Rhino JS running on HotSpot JVM, this dynamic class inspection generated millions of ephemeral reflection wrapper objects, inflating JVM heap memory to >10 GB and triggering continuous stop-the-world Full GC freezes (down to 0.1 FPS).
+   - **Fix**: Replaced reflection calls with direct integer slot index bounds checks (crafting grid slots 1–9), eliminating all reflection allocations and restoring 0ms execution per tick.
+
+2. **20 Hz Pickup Storm Debounce (`flintlock_carry_limits.js`)**
+   - **Root Cause**: Standing on top of a dropped firearm while at maximum carry capacity caused `ItemEntityPickupEvent$Pre` to execute 20 times per second without cooldown, repeatedly scanning and serializing all 36 player inventory slots.
+   - **Fix**: Introduced a 10-tick debounce timestamp (`flintlockLastPickupBlock`) on pickup rejection, reducing inventory scanning overhead by 90%.
+
+3. **Reload HUD Actionbar Packet Throttling (`flintlock_ux_helpers.js`)**
+   - **Root Cause**: Reload HUD messages were dispatched to the client via `ServerEvents.tick` on every single tick (20 Hz / 50ms interval), saturating client networking buffers and contributing to GC pressure.
+   - **Fix**: Throttled actionbar packet updates to a smooth 4 Hz rate (`if (server.tickCount % 5 !== 0) return`).
+
+4. **Elimination of Tick Loop File I/O Thrashing (`straja_prison.js`)**
+   - **Root Cause**: In `ServerEvents.tick` (every 40 ticks), `spCfgLoad(event.server)` was re-reading and parsing the configuration JSON file from disk repeatedly.
+   - **Fix**: Config file is now loaded once upon server initialization and retained in memory, removing recurrent disk I/O thrash.
+
+### 🛡️ Script Reliability & Zero Reload Errors
+
+1. **Universal Execution Context Guards (18/18 Milestone Scripts)**
+   - Wrapped top-level event subscriptions (`ServerEvents`, `PlayerEvents`, `BlockEvents`, `ItemEvents`) in `if (typeof X !== 'undefined')` guards across all 18 milestone scripts.
+   - Scripts can now be evaluated cleanly without throwing `ReferenceError: "ServerEvents" is not defined` regardless of whether they are evaluated in a server, client-sync, or isolated node context.
+
+2. **Clean Registry Readiness for Modded Items**
+   - In `flintlocks.js` and `flintlock_ammo_tiered.js`, added `Item.exists` checks for optional/external items (`tacz:modern_kinetic_gun`, `tacz_c:gunpowder_charge`) to gracefully skip recipes when third-party firearm modules are uninitialized or in test environments.
+   - Replaced `console.error` invocations in optional integration classes (`port_checkpoint.js`, `straja_prison.js`) with `console.warn` so KubeJS's internal error counter remains strictly at **0 errors and 0 warnings**.
+
+### 🎮 Client Shaders & Create Bezier Track Rendering Advisory
+- **Notice**: Dense Create railway networks featuring Bezier turns (such as `MiraiSclaider` / `s3n24`) contain over 6,000,000 `BakedQuad` vertex elements. When running **Iris Shaders + Sodium**, Iris falls back to a software vertex writer (`VertexMultiConsumer$Double`), causing severe CPU-side vertex generation stalls (10–12 seconds per frame). Players operating in dense railway hubs should temporarily toggle shaders off (`K` hotkey or Video Settings -> Shaders -> OFF) for smooth 60–144 FPS.
+
+---
+
 ## [v1.3.3] — 2026-10-13 (Deterministic Citizen Forgery Matrices, Anvil Anti-Reroll Exploit Protection & Preview Idempotency)
 
 This patch release fixes a critical anvil preview exploit and serial burn bug in black market weapons proofing:

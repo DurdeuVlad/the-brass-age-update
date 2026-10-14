@@ -1,6 +1,7 @@
 // Civilian Commodity Line: Friction Safety Matches & Matchboxes
 // Manufactured by P.U.L.A SRL for all-weather ignition in karst caverns and domestic hearths.
 
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.recipes(event => {
     // Check item registry readiness
     if (!Item.exists('kubejs:sulfur_matches') || !Item.exists('kubejs:safety_matches')) {
@@ -65,8 +66,10 @@ ServerEvents.recipes(event => {
         loops: 1
     }).id('kubejs:civilian/matches_tier3_safety_box')
 })
+}
 
 // In-world utility: Right-clicking with Safety Matches lights campfires, candles, and creates fire
+if (typeof BlockEvents !== 'undefined') {
 BlockEvents.rightClicked(event => {
     const item = event.item
     if (!item) return
@@ -92,3 +95,4 @@ BlockEvents.rightClicked(event => {
         }
     }
 })
+}

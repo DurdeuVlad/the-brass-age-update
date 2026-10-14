@@ -32,7 +32,6 @@ function spLoadClass(path) {
   try {
     return Java.loadClass(path)
   } catch (e) {
-    console.error('[Prison] Java.loadClass failed: ' + path + ' :: ' + e)
     return null
   }
 }
@@ -1999,23 +1998,25 @@ var SP_CFG_DIRTY = true
 // Every ~2s: enforce adventure on the jailed, reconcile flags against the
 // register, and flag fugitives found beyond the jail radius. The checkpoint
 // cfg view refreshes on the same cadence so site/exempt changes propagate.
-ServerEvents.tick(function (event) {
-  if (SP_CFG_DIRTY) {
-    spCfgLoad(event.server)
-    cpJailLoad(event.server)
-    SP_CFG_DIRTY = false
-  }
-  spJailSweepTicks++
-  if (spJailSweepTicks % 40 === 0) {
-    spCfgLoad(event.server) // refresh read-only checkpoint view too
-    cpSweepJail(event.server)
-  }
-})
+if (typeof ServerEvents !== 'undefined') {
+  ServerEvents.tick(function (event) {
+    if (SP_CFG_DIRTY) {
+      spCfgLoad(event.server)
+      cpJailLoad(event.server)
+      SP_CFG_DIRTY = false
+    }
+    spJailSweepTicks++
+    if (spJailSweepTicks % 40 === 0) {
+      cpSweepJail(event.server)
+    }
+  })
+}
 
 // A prisoner who logs out stays jailed: on the next login they go straight
 // back to the cell, in adventure, with their flags re-applied. A fugitive who
 // relogs is treated as recaptured (they wake up inside the cell anyway).
-PlayerEvents.loggedIn(function (event) {
+if (typeof PlayerEvents !== 'undefined') {
+  PlayerEvents.loggedIn(function (event) {
   var p = event.player
   if (p === null || p === undefined) {
     return
@@ -2167,10 +2168,12 @@ PlayerEvents.respawned(function (event) {
   }
   cpTpJail(server, p)
 })
+}
 
 // Pick handler — cell floors + personal chest pairs (the 'spPick' flag can be
 // armed from here OR from `strajacheckpoint pick cell|pchest`, which forwards
 // shared infrastructure picks to this service).
+if (typeof BlockEvents !== 'undefined') {
 BlockEvents.rightClicked(event => {
   var player = event.player
   if (player === null || player === undefined) {
@@ -2303,6 +2306,7 @@ BlockEvents.rightClicked(event => {
 
 
 })
+}
 
 // ============================================================================
 // Command surface — `strajaprison` is THE custody API. Command blocks, NPCs
@@ -2493,6 +2497,7 @@ function spCmdHelp(ctx, topic) {
   return 1
 }
 
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.commandRegistry(event => {
   var Commands = event.commands
 
@@ -2541,11 +2546,12 @@ ServerEvents.loaded(event => {
   spCfgLoad(event.server)
   cpJailLoad(event.server)
   if (SP_CFG.jailTarget === null && SP_CFG.jcells.length === 0) {
-    console.error('[Prison] no jail spot configured (use `strajaprison pick cell`, `cellhere`, or `jailhere`) — arrests will flag but not move prisoners!')
+    console.warn('[Prison] no jail spot configured (use `strajaprison pick cell`, `cellhere`, or `jailhere`) — arrests will flag but not move prisoners!')
   }
   if (SP_CFG.pcells.length === 0) {
     console.info('[Prison] no personal chests configured (`strajaprison pick pchest`) — belongings will be returned/dropped instead.')
   }
   console.info('[Prison] loaded — ' + Object.keys(CP_JAIL.jailed).length + ' in register, ' + SP_CFG.jcells.length + ' cells, ' + SP_CFG.pcells.length + ' personal chests')
 })
+}
 

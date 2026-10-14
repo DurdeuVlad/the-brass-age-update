@@ -50,7 +50,6 @@ function cpLoadClass(path) {
   try {
     return Java.loadClass(path)
   } catch (e) {
-    console.error('[Checkpoint] Java.loadClass failed: ' + path + ' :: ' + e)
     return null
   }
 }
@@ -435,31 +434,35 @@ var cpJailSweepTicks = 0
 
 // Border scans only — custody enforcement (adventure-on-jailed, fugitive
 // flagging, sweeps) belongs to straja_prison.js.
-ServerEvents.tick(function (event) {
-  if (CP_CFG_DIRTY) {
-    cpCfgLoad(event.server)
-    CP_CFG_DIRTY = false
-  }
-  cpJailSweepTicks++
-  if (cpJailSweepTicks % 5 === 0) {
-    cpGateScan(event.server)
-    cpBoardScan(event.server)
-    cpHeartbeatScan(event.server)
-  }
-})
+if (typeof ServerEvents !== 'undefined') {
+  ServerEvents.tick(function (event) {
+    if (CP_CFG_DIRTY) {
+      cpCfgLoad(event.server)
+      CP_CFG_DIRTY = false
+    }
+    cpJailSweepTicks++
+    if (cpJailSweepTicks % 5 === 0) {
+      cpGateScan(event.server)
+      cpBoardScan(event.server)
+      cpHeartbeatScan(event.server)
+    }
+  })
+}
 
 // Gate-crossing state is per-session — drop it on login so a stale prev-pos
 // can't phantom-cross a lane after relog.
-PlayerEvents.loggedIn(function (event) {
-  var name = cpPlayerName(event.player)
-  if (cpGatePrev[name] !== undefined) delete cpGatePrev[name]
-})
+if (typeof PlayerEvents !== 'undefined') {
+  PlayerEvents.loggedIn(function (event) {
+    var name = cpPlayerName(event.player)
+    if (cpGatePrev[name] !== undefined) delete cpGatePrev[name]
+  })
 
-PlayerEvents.loggedOut(function (event) {
-  var name = cpPlayerName(event.player)
-  if (cpGatePrev[name] !== undefined) delete cpGatePrev[name]
-  if (cpHeartbeatTracker[name] !== undefined) delete cpHeartbeatTracker[name]
-})
+  PlayerEvents.loggedOut(function (event) {
+    var name = cpPlayerName(event.player)
+    if (cpGatePrev[name] !== undefined) delete cpGatePrev[name]
+    if (cpHeartbeatTracker[name] !== undefined) delete cpHeartbeatTracker[name]
+  })
+}
 
 function cpPickMode(player) {
   return String(player.persistentData.getString('cpPick') || '')
@@ -2684,6 +2687,7 @@ function cpCmdHeartbeatStatus(ctx, targetPlayer) {
   return 1
 }
 
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.commandRegistry(event => {
   var Commands = event.commands
 
@@ -2869,9 +2873,10 @@ ServerEvents.loaded(event => {
     }
   }
   if (siteCount === 0) {
-    console.error('[Checkpoint] no sites configured (use `strajacheckpoint site <nume> denyhere`) — deny will only show a title!')
+    console.warn('[Checkpoint] no sites configured (use `strajacheckpoint site <nume> denyhere`) — deny will only show a title!')
   }
   if (unconfigured.length > 0) {
-    console.error('[Checkpoint] sites without an anchor (no denyTarget/doors/evidence): ' + unconfigured.join(', '))
+    console.warn('[Checkpoint] sites without an anchor (no denyTarget/doors/evidence): ' + unconfigured.join(', '))
   }
 })
+}

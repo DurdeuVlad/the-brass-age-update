@@ -53,30 +53,37 @@ function fpGetGunCustomTag(stack) {
 }
 
 // 1. Tooling & Permit Recipes
-ServerEvents.recipes(event => {
-    // Imperial Proof Stamp (Indestructible Master Tool)
-    event.shaped('kubejs:proof_stamp', [
-        ' G ',
-        'STS',
-        ' W '
-    ], {
-        G: 'minecraft:gold_ingot',
-        S: 'create:brass_sheet',
-        T: 'kubejs:tempered_gun_steel',
-        W: 'minecraft:stick'
-    }).id('kubejs:flintlocks/craft_proof_stamp')
+if (typeof ServerEvents !== 'undefined') {
+    ServerEvents.recipes(event => {
+        if (!Item.exists('kubejs:proof_stamp') || !Item.exists('kubejs:permit_blank')) {
+            console.warn('[TheBrassAge] Proof stamp / permit blank items not yet in registry; skipping recipes until restart.')
+            return
+        }
 
-    // Permit Blanks
-    event.shaped('4x kubejs:permit_blank', [
-        ' G ',
-        ' P ',
-        ' R '
-    ], {
-        G: 'minecraft:gold_nugget',
-        P: 'minecraft:paper',
-        R: 'minecraft:red_dye'
-    }).id('kubejs:flintlocks/craft_permit_blank')
-})
+        // Imperial Proof Stamp (Indestructible Master Tool)
+        event.shaped('kubejs:proof_stamp', [
+            ' G ',
+            'STS',
+            ' W '
+        ], {
+            G: 'minecraft:gold_ingot',
+            S: 'create:brass_sheet',
+            T: 'kubejs:tempered_gun_steel',
+            W: 'minecraft:stick'
+        }).id('kubejs:flintlocks/craft_proof_stamp')
+
+        // Permit Blanks
+        event.shaped('4x kubejs:permit_blank', [
+            ' G ',
+            ' P ',
+            ' R '
+        ], {
+            G: 'minecraft:gold_nugget',
+            P: 'minecraft:paper',
+            R: 'minecraft:red_dye'
+        }).id('kubejs:flintlocks/craft_permit_blank')
+    })
+}
 
 // 2. Serial Number Generator Helper (Peek & Consume)
 function peekNextStrajaSerial(server) {

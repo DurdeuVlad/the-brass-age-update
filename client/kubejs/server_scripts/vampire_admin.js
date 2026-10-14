@@ -36,14 +36,17 @@ function setVampire(player, enable) {
 }
 
 // Preserve tags on respawn
-PlayerEvents.respawned(event => {
-    const player = event.player
-    if (player && player.persistentData.getBoolean('is_vampire')) {
-        setVampire(player, true)
-    }
-})
+if (typeof PlayerEvents !== 'undefined') {
+    PlayerEvents.respawned(event => {
+        const player = event.player
+        if (player && player.persistentData.getBoolean('is_vampire')) {
+            setVampire(player, true)
+        }
+    })
+}
 
-ServerEvents.commandRegistry(event => {
+if (typeof ServerEvents !== 'undefined') {
+    ServerEvents.commandRegistry(event => {
     const Commands = event.commands
 
     function registerVampireCommand(alias) {
@@ -117,3 +120,4 @@ ServerEvents.commandRegistry(event => {
     registerVampireCommand('vampire')
     registerVampireCommand('vampir')
 })
+}

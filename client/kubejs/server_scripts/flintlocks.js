@@ -1,6 +1,4 @@
-// Minecraft 1.21.1 / Create 6 / ChocolateMan gun pack.
-// All firearms require powered Create Mechanical Crafters for precision assembly.
-// Raw components are prepared in forge/benches; guns cannot be assembled in a simple crafting table.
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.recipes(event => {
     const part = name => 'kubejs:' + name
     const iron = 'create:iron_sheet'
@@ -70,6 +68,7 @@ ServerEvents.recipes(event => {
     // Explicit 1.21.1 item components: these are two variants of the SAME TaCZ item.
     // Guns are crafted empty, ready to reload with the gun pack's 16.5mm ammunition.
     function gunRecipe(name, gunId, pattern, ingredients, extraData, customName) {
+        if (!Item.exists('tacz:modern_kinetic_gun')) return
         const key = {}
         Object.keys(ingredients).forEach(symbol => { key[symbol] = { item: ingredients[symbol] } })
         const customData = {
@@ -110,3 +109,4 @@ ServerEvents.recipes(event => {
         I: steel, P: 'create:precision_mechanism'
     }, { Rifled: true, PrecisionGrade: true }, '{"text":"FK15-R Jaeger Rifled Musket","color":"gold","italic":false}')
 })
+}

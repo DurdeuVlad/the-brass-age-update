@@ -1,6 +1,7 @@
 // Civilian Commodity Line: Antiseptic Medicated Sulfur Soap
 // Manufactured by P.U.L.A SRL for medical sanitation, plague prevention, and hygiene.
 
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.recipes(event => {
     // Check item registry readiness
     if (!Item.exists('kubejs:medicated_soap') || !Item.exists('kubejs:saltpeter')) {
@@ -47,8 +48,10 @@ ServerEvents.recipes(event => {
         ]
     }).id('kubejs:civilian/soap_tier3_surge')
 })
+}
 
 // In-world utility: Right-clicking with Medicated Soap washes away negative potion effects
+if (typeof ItemEvents !== 'undefined') {
 ItemEvents.rightClicked('kubejs:medicated_soap', event => {
     const player = event.player
     const item = event.item
@@ -81,3 +84,4 @@ ItemEvents.rightClicked('kubejs:medicated_soap', event => {
         player.tell('§7[Igienă] Ești deja curat și nu ai infecții active.')
     }
 })
+}

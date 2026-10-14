@@ -1,6 +1,7 @@
 // 3-Tier Factorio Industrial Gunpowder & Nitrate Refining Chains
 // Disables creeper mob-farm bypasses and rewards industrial automation scaling.
 
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.recipes(event => {
     // 0. Exploit Remediation: Remove unearned gunpowder shortcuts
     event.remove({ id: 'tacz_c:gunpowder_cake_mix' })
@@ -67,12 +68,14 @@ ServerEvents.recipes(event => {
     }).id('kubejs:flintlocks/crude_cake_bottle')
 
     // Drying crude cake into single gunpowder charges
-    event.smoking('tacz_c:gunpowder_charge', 'kubejs:crude_gunpowder_cake')
-        .cookingTime(200).xp(0.1).id('kubejs:flintlocks/dry_crude_cake_smoker')
-    event.campfireCooking('tacz_c:gunpowder_charge', 'kubejs:crude_gunpowder_cake')
-        .cookingTime(600).xp(0.1).id('kubejs:flintlocks/dry_crude_cake_campfire')
-    event.smelting('tacz_c:gunpowder_charge', 'kubejs:crude_gunpowder_cake')
-        .cookingTime(300).xp(0.1).id('kubejs:flintlocks/dry_crude_cake_furnace')
+    if (Item.exists('tacz_c:gunpowder_charge')) {
+        event.smoking('tacz_c:gunpowder_charge', 'kubejs:crude_gunpowder_cake')
+            .cookingTime(200).xp(0.1).id('kubejs:flintlocks/dry_crude_cake_smoker')
+        event.campfireCooking('tacz_c:gunpowder_charge', 'kubejs:crude_gunpowder_cake')
+            .cookingTime(600).xp(0.1).id('kubejs:flintlocks/dry_crude_cake_campfire')
+        event.smelting('tacz_c:gunpowder_charge', 'kubejs:crude_gunpowder_cake')
+            .cookingTime(300).xp(0.1).id('kubejs:flintlocks/dry_crude_cake_furnace')
+    }
 
     // 3. Tier 2 (Kinetic Mechanical Line)
     // Basin Mixing: Saltpeter + Charcoal + Water -> Wet Powder Mass
@@ -90,34 +93,37 @@ ServerEvents.recipes(event => {
         ]
     }).id('kubejs:flintlocks/tier2_wet_powder_mixing')
 
-    // Compacting Press: Wet Powder Mass -> 4x Gunpowder Charges
-    event.custom({
-        type: 'create:compacting',
-        ingredients: [
-            { item: 'kubejs:wet_powder_mass' }
-        ],
-        results: [
-            { id: 'tacz_c:gunpowder_charge', count: 4 }
-        ]
-    }).id('kubejs:flintlocks/tier2_compact_gunpowder')
+    if (Item.exists('tacz_c:gunpowder_charge')) {
+        // Compacting Press: Wet Powder Mass -> 4x Gunpowder Charges
+        event.custom({
+            type: 'create:compacting',
+            ingredients: [
+                { item: 'kubejs:wet_powder_mass' }
+            ],
+            results: [
+                { id: 'tacz_c:gunpowder_charge', count: 4 }
+            ]
+        }).id('kubejs:flintlocks/tier2_compact_gunpowder')
 
-    // 4. Tier 3 (Thermodynamic Sulfur Surge)
-    // Heated Basin Mixing with Straja Sulfur -> 16x Gunpowder Charges (400% surge)
-    event.custom({
-        type: 'create:mixing',
-        heat_requirement: 'heated',
-        ingredients: [
-            { item: 'kubejs:saltpeter' },
-            { item: 'kubejs:saltpeter' },
-            { item: 'kubejs:saltpeter' },
-            { item: 'kubejs:saltpeter' },
-            { item: 'minecraft:charcoal' },
-            { item: 'minecraft:charcoal' },
-            { item: 'butchery:sulfur' },
-            { type: 'neoforge:single', fluid: 'minecraft:water', amount: 500 }
-        ],
-        results: [
-            { id: 'tacz_c:gunpowder_charge', count: 16 }
-        ]
-    }).id('kubejs:flintlocks/tier3_sulfur_powder_surge')
+        // 4. Tier 3 (Thermodynamic Sulfur Surge)
+        // Heated Basin Mixing with Straja Sulfur -> 16x Gunpowder Charges (400% surge)
+        event.custom({
+            type: 'create:mixing',
+            heat_requirement: 'heated',
+            ingredients: [
+                { item: 'kubejs:saltpeter' },
+                { item: 'kubejs:saltpeter' },
+                { item: 'kubejs:saltpeter' },
+                { item: 'kubejs:saltpeter' },
+                { item: 'minecraft:charcoal' },
+                { item: 'minecraft:charcoal' },
+                { item: 'butchery:sulfur' },
+                { type: 'neoforge:single', fluid: 'minecraft:water', amount: 500 }
+            ],
+            results: [
+                { id: 'tacz_c:gunpowder_charge', count: 16 }
+            ]
+        }).id('kubejs:flintlocks/tier3_sulfur_powder_surge')
+    }
 })
+}

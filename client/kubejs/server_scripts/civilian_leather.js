@@ -1,6 +1,7 @@
 // Civilian Commodity Line: Vitriol Heavy Leather Tanning
 // Manufactured by P.U.L.A SRL for heavy military armor, boots, and cavalry saddles.
 
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.recipes(event => {
     // Check item registry readiness
     if (!Item.exists('kubejs:vitriol_leather') || !Item.exists('kubejs:saltpeter')) {
@@ -62,3 +63,4 @@ ServerEvents.recipes(event => {
         I: 'minecraft:iron_nugget'
     }).id('kubejs:civilian/vitriol_saddle')
 })
+}

@@ -1,7 +1,9 @@
 // Consecrated Silver Cartridge: Crafting, Offhand Priority & Supernatural Damage Hook
 // Deals devastating 4x damage against undead mobs & CustomNPCs, and 2x damage against vampire players.
 
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.recipes(event => {
+    if (!Item.exists('tacz:ammo')) return
     // 1. Tier 1 (Shaped Altar Crafting)
     event.shaped({
         id: 'tacz:ammo',
@@ -89,6 +91,7 @@ ServerEvents.recipes(event => {
         loops: 1
     }).id('kubejs:flintlocks/silver_ammo_tier3')
 })
+}
 
 // 4. Tactical Ammunition Combat Bridge (Silver, Canister, Incendiary)
 var $TacZGunReloadEvent = null

@@ -10,6 +10,7 @@
 
 const $Admin_EntityArgument = Java.loadClass('net.minecraft.commands.arguments.EntityArgument')
 
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.commandRegistry(event => {
     const Commands = event.commands
 
@@ -91,3 +92,4 @@ ServerEvents.commandRegistry(event => {
     registerBookCommand('gunsmith_manual')
     registerBookCommand('manual_armurier')
 })
+}

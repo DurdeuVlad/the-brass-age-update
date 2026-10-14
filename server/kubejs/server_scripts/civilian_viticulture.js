@@ -1,6 +1,7 @@
 // Civilian Commodity Line: Viticulture Cask Fumigation Strips (Vinery & Wine Preservation)
 // Manufactured by P.U.L.A SRL for commercial vineyard and cellaring operations.
 
+if (typeof ServerEvents !== 'undefined') {
 ServerEvents.recipes(event => {
     // Check item registry readiness
     if (!Item.exists('kubejs:fumigation_strip') || !Item.exists('kubejs:royal_fumigation_strip')) {
@@ -67,8 +68,10 @@ ServerEvents.recipes(event => {
         loops: 1
     }).id('kubejs:civilian/viticulture_tier3_royal')
 })
+}
 
 // In-world utility: Fumigation strips can be used on wine barrels or wooden storage to sterilize
+if (typeof ItemEvents !== 'undefined') {
 ItemEvents.rightClicked('kubejs:royal_fumigation_strip', event => {
     const player = event.player
     const level = event.level
@@ -76,3 +79,4 @@ ItemEvents.rightClicked('kubejs:royal_fumigation_strip', event => {
     level.playSound(null, player.x, player.y, player.z, 'minecraft:block.fire.ambient', 'players', 0.8, 1.2)
     player.tell('§5[Viticultură] Butoiul a fost sterilizat cu fitil regal de sulf. Calitatea vinului este garantată!')
 })
+}
