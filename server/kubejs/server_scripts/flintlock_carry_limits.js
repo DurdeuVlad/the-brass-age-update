@@ -142,13 +142,18 @@ function flintlockEnforce(player) {
         })
     }
 
-    // 4. Priority 4: Crafting grid slots (slots 1..9 in crafting menus)
-    if (player.containerMenu && player.containerMenu.slots) {
+    // 4. Priority 4: 2x2 crafting grid in player's personal inventory menu (slots 1..4)
+    // CRITICAL ANTI-DUPE: NEVER inspect player.containerMenu here! When an external menu is open
+    // (AnvilMenu, GrindstoneMenu, MerchantMenu, CraftingMenu, etc.), containerMenu.slots includes
+    // ResultSlot / preview slots (e.g. anvil output at slot 2) or chest storage slots.
+    // Inspecting or dropping preview slots creates a critical item duplication exploit!
+    // External crafting grids (e.g. Crafting Table) automatically return items to player inventory on close.
+    if (player.inventoryMenu && player.inventoryMenu.slots) {
         try {
-            var slots = player.containerMenu.slots
-            var maxCraftSlot = Math.min(slots.size ? slots.size() : 10, 10)
-            for (var i = 1; i < maxCraftSlot; i++) {
-                var slotObj = slots.get(i)
+            var invSlots = player.inventoryMenu.slots
+            var maxSlot = Math.min(invSlots.size ? invSlots.size() : 5, 5)
+            for (var i = 1; i < maxSlot; i++) {
+                var slotObj = invSlots.get(i)
                 if (!slotObj) continue
                 var sItem = slotObj.getItem()
                 if (!sItem || sItem.isEmpty()) continue
@@ -185,7 +190,17 @@ if (typeof NativeEvents !== 'undefined') {
         NativeEvents.onEvent($PlayerContainerCloseEvent, function(event) {
             var entity = event.getEntity()
             if (entity && entity.isPlayer()) {
-                flintlockEnforce(entity)
+                var server = entity.getServer ? entity.getServer() : entity.server
+                if (server && typeof server.scheduleInTicks === 'function') {
+                    // Schedule 1 tick later so container.removed() has finished returning items to inventory
+                    server.scheduleInTicks(1, function() {
+                        if (entity && entity.isAlive() && !entity.isSpectator()) {
+                            flintlockEnforce(entity)
+                        }
+                    })
+                } else {
+                    flintlockEnforce(entity)
+                }
             }
         })
     }

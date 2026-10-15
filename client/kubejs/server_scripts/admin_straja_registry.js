@@ -1502,6 +1502,115 @@ function runStrajaAutomatedTests(server, src) {
     var pendingAfterInspector = getPendingToday(server).length
     assertTest('Inspector Preview: Coada de astăzi nu este poluată înainte de călcarea oficială', pendingBeforeInspector === pendingAfterInspector, pendingBeforeInspector + ' arme în coadă')
 
+    // --- TEST SUITE 8: Carry Limits & Anvil Container Close Anti-Dupe Verification ---
+    log('§e▶ 8. Verificare Limite de Port & Protecție Anti-Dupe Nicovală/GUI')
+    assertTest('Definire Limită Port: Pușcă (1) și Pistol (2)', flintlockCarryLimits.rifle === 1 && flintlockCarryLimits.pistol === 2, 'Rifle: 1, Pistol: 2')
+
+    // Mock Gun Items
+    function createMockGunStack(gunId, isProofed) {
+        var nbt = { GunId: gunId }
+        if (isProofed) nbt.Proofed = true
+        return {
+            id: 'tacz:modern_kinetic_gun',
+            isEmpty: function() { return false },
+            getCount: function() { return 1 },
+            getItem: function() { return null },
+            get: function(key) { return null },
+            tag: nbt,
+            nbt: nbt,
+            copy: function() { return createMockGunStack(gunId, isProofed) },
+            setCount: function(c) {},
+            shrink: function(c) {}
+        }
+    }
+
+    var mockRifle = createMockGunStack('qkl:fk15', false)
+    var mockPistol = createMockGunStack('qkl:fk15p', false)
+    var mockStick = {
+        id: 'minecraft:stick',
+        isEmpty: function() { return false },
+        getCount: function() { return 1 },
+        getItem: function() { return null },
+        get: function(key) { return null }
+    }
+
+    assertTest('Identificare Arme: fk15 este recunoscut ca pușcă', flintlockCarryKind(mockRifle) === 'rifle')
+    assertTest('Identificare Arme: fk15p este recunoscut ca pistol', flintlockCarryKind(mockPistol) === 'pistol')
+    assertTest('Identificare Arme: bățul nu este armă', flintlockCarryKind(mockStick) === null)
+
+    // Anti-Dupe Simulation:
+    // When a player has an Anvil open, containerMenu.slots contains slot 2 (ResultSlot preview).
+    // flintlockEnforce must NEVER drop slot 2 or inspect containerMenu slots!
+    var droppedItems = []
+    var mockAnvilSlot2 = {
+        item: createMockGunStack('qkl:fk15', true),
+        getItem: function() { return this.item },
+        set: function(s) { this.item = s },
+        setChanged: function() {}
+    }
+    var mockAnvilMenu = {
+        slots: {
+            size: function() { return 3 },
+            get: function(idx) {
+                if (idx === 2) return mockAnvilSlot2
+                return null
+            }
+        },
+        getCarried: function() {
+            return { isEmpty: function() { return true }, getCount: function() { return 0 } }
+        },
+        broadcastChanges: function() {}
+    }
+
+    var mockInvSlots = [
+        null, // 0: result
+        { getItem: function() { return null } }, // 1
+        { getItem: function() { return null } }, // 2
+        { getItem: function() { return null } }, // 3
+        { getItem: function() { return null } }  // 4
+    ]
+    var mockInventoryMenu = {
+        slots: {
+            size: function() { return 46 },
+            get: function(idx) { return mockInvSlots[idx] || null }
+        },
+        broadcastChanges: function() {}
+    }
+
+    var mockInv = {
+        selected: 0,
+        items: {},
+        getItem: function(idx) {
+            return this.items[idx] || { isEmpty: function() { return true }, getCount: function() { return 0 } }
+        },
+        setItem: function(idx, s) { this.items[idx] = s },
+        getContainerSize: function() { return 41 },
+        setChanged: function() {}
+    }
+    mockInv.items[0] = createMockGunStack('qkl:fk15', false)
+
+    var mockPlayerWithAnvil = {
+        isAlive: function() { return true },
+        isSpectator: function() { return false },
+        getInventory: function() { return mockInv },
+        containerMenu: mockAnvilMenu,
+        inventoryMenu: mockInventoryMenu,
+        persistentData: {
+            getLong: function() { return 0 },
+            putLong: function() {}
+        },
+        drop: function(stack, b) {
+            droppedItems.push(stack)
+            return { setPickUpDelay: function() {} }
+        },
+        tell: function(msg) {}
+    }
+
+    flintlockEnforce(mockPlayerWithAnvil)
+
+    assertTest('Anti-Dupe Nicovală: Previzualizarea din slotul 2 al nicovalei NU este dropată', droppedItems.length === 0, 'Dropate: ' + droppedItems.length + ' arme (trebuie să fie 0)')
+    assertTest('Anti-Dupe Nicovală: Arma din slotul 2 al nicovalei rămâne intactă în slot', !mockAnvilSlot2.getItem().isEmpty(), 'Slot 2 păstrat intact')
+
     log('§6§l╠════════════════════════════════════════════════════════╣')
     log('§6§l║ REZULTAT FINAL: ' + (passed === total ? '§a§lTOATE TESTELE AU TRECUT (' + passed + '/' + total + ')' : '§c§lEȘECURI DETECTATE (' + passed + '/' + total + ')') + ' §6§l║')
     log('§6§l╚════════════════════════════════════════════════════════╝')
