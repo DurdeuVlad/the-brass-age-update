@@ -44,11 +44,12 @@ foreach ($Folder in $Folders) {
 
 Write-Host ""
 Write-Host "=====================================================================" -ForegroundColor Green
-Write-Host " ✔ SUCCESS: The Brass Age v1.2.0 patch successfully applied!" -ForegroundColor Green
+Write-Host " ✔ SUCCESS: The Brass Age v1.3.5 patch successfully applied!" -ForegroundColor Green
 Write-Host ""
 Write-Host " Quick Check:" -ForegroundColor White
-Write-Host "  - 34 item textures and weapon crates installed." -ForegroundColor Gray
+Write-Host "  - 35 item textures and weapon crates installed." -ForegroundColor Gray
 Write-Host "  - 140ms smoothbore lock-time ballistics active." -ForegroundColor Gray
+Write-Host "  - Anvil preview duplication exploit patched." -ForegroundColor Gray
 Write-Host "  - In-game manual available via: /flintlock or /arma" -ForegroundColor Gray
 Write-Host "  - Gunsmith Handbook available via: /function kubejs:give_gunsmith_manual" -ForegroundColor Gray
 Write-Host ""

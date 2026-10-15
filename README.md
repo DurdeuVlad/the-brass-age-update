@@ -73,18 +73,117 @@ Production efficiency scales non-linearly with kinetic and thermal automation:
 
 ---
 
-## 🚀 Installation & Deployment (v1.2.0)
+## 🚀 Installation & Deployment (v1.3.5)
 
-> [!TIP]
-> **Automated 1-Click Installation for Testers**:
-> Download **`TheBrassAge-Update-All-In-One-v1.2.0.zip`** from [Releases](https://github.com/DurdeuVlad/the-brass-age-update/releases), extract directly into your existing **Rustic Craft II** instance folder, and double-click **`install_patch.bat`** (or `install_patch.ps1`). See [**`HOW_TO_INSTALL.txt`**](HOW_TO_INSTALL.txt) and [**`TESTER_GUIDE.md`**](TESTER_GUIDE.md) for full instructions.
+> [!IMPORTANT]
+> **Patch / Expansion Notice**: The Brass Age is an expansion overlay designed to be installed **OVER an existing Rustic Craft II instance** (Minecraft 1.21.1 / NeoForge 21.1.248).  
+> **Do NOT import this release ZIP as a new profile in CurseForge or Prism Launcher!** An empty profile lacks the 150+ base modpack dependencies (`kubejs`, `create`, etc.) and will fail to boot with dependency errors (`tacz_js requires kubejs`, `tacz_c requires create`).
 
-1. **Server Deployment**:
-   - Merge the contents of `server/` (or `TheBrassAge-Update-Server-v1.2.0.zip`) directly into the Minecraft server root directory.
-   - Restart the dedicated server.
-2. **Client Deployment**:
-   - Merge the contents of `client/` (or `TheBrassAge-Update-Client-v1.2.0.zip`) into the client instance root directory.
-   - In Singleplayer, both client and server scripts are bundled to guarantee seamless offline play.
+Download the latest packages from [**GitHub Releases (v1.3.5)**](https://github.com/DurdeuVlad/the-brass-age-update/releases/tag/v1.3.5):
+- 📦 **All-In-One Package**: `TheBrassAge-Update-All-In-One-v1.3.5.zip` *(Recommended for Singleplayer & Drop-in modpack updates)*
+- 🖥️ **Client Package**: `TheBrassAge-Update-Client-v1.3.5.zip` *(For players connecting to remote dedicated servers)*
+- 🖧 **Server Package**: `TheBrassAge-Update-Server-v1.3.5.zip` *(For dedicated Linux / Windows server administrators)*
+
+---
+
+### 1. Windows Installation (CMD & PowerShell)
+
+1. Open your existing **Rustic Craft II** instance folder:
+   - **Prism Launcher**: Right-click instance $\rightarrow$ **Folder Instanță** $\rightarrow$ `.minecraft`
+   - **CurseForge**: Right-click profile $\rightarrow$ **Open Folder**
+   - **Modrinth**: Right-click instance $\rightarrow$ **Open Folder**
+2. Extract the contents of the downloaded ZIP directly into this folder.
+3. Run the installer:
+   ```cmd
+   :: Method A: Double-click install_patch.bat in Windows Explorer
+   install_patch.bat
+   ```
+   *or via PowerShell:*
+   ```powershell
+   # Method B: PowerShell (handles permission bypass automatically)
+   powershell -ExecutionPolicy Bypass -File .\install_patch.ps1
+   ```
+4. Launch the game from your existing launcher profile.
+
+---
+
+### 2. Linux & Headless Server Installation
+
+For standalone Linux systems (Ubuntu, Debian, Fedora, Arch, Alpine), Pterodactyl panels, or systemd services:
+
+#### Option A: Automated Script (`install_patch.sh`)
+```bash
+# 1. Navigate to your server or client instance folder
+cd /path/to/rusticcraft2/
+
+# 2. Extract the update archive into the instance root
+unzip -o /path/to/TheBrassAge-Update-Server-v1.3.5.zip
+
+# 3. Grant execute permissions and run the patcher
+chmod +x install_patch.sh
+./install_patch.sh
+```
+
+#### Option B: Headless Server One-Liner (curl / wget)
+```bash
+# Direct download and silent merge on a remote Linux server
+wget -qO /tmp/brass_age.zip https://github.com/DurdeuVlad/the-brass-age-update/releases/download/v1.3.5/TheBrassAge-Update-Server-v1.3.5.zip \
+  && unzip -qo /tmp/brass_age.zip -d /var/games/minecraft/rusticcraft2/ \
+  && chmod +x /var/games/minecraft/rusticcraft2/install_patch.sh \
+  && /var/games/minecraft/rusticcraft2/install_patch.sh \
+  && rm -f /tmp/brass_age.zip
+```
+
+---
+
+### 3. WSL (Windows Subsystem for Linux) & Sublinux Environment Support
+
+When managing a Windows-hosted modpack instance (e.g. Prism or CurseForge on Windows) from within a WSL terminal (Ubuntu, Debian on WSL):
+
+#### Step 1: Locate the Windows instance from WSL
+WSL mounts Windows drives under `/mnt/c/`. Replace `<WindowsUser>` with your actual Windows username:
+
+* **Prism Launcher (WSL path)**:
+  ```bash
+  PRISM_DIR="/mnt/c/Users/<WindowsUser>/AppData/Roaming/PrismLauncher/instances/RusticCraft2/.minecraft"
+  ```
+* **CurseForge (WSL path)**:
+  ```bash
+  CURSE_DIR="/mnt/c/Users/<WindowsUser>/curseforge/minecraft/Instances/Rustic Craft II"
+  ```
+
+#### Step 2: Execute `install_patch.sh` targeting the Windows instance
+```bash
+# Grant execution permissions
+chmod +x ./install_patch.sh
+
+# Run installer passing the target Windows instance path:
+./install_patch.sh "/mnt/c/Users/<WindowsUser>/AppData/Roaming/PrismLauncher/instances/RusticCraft2/.minecraft"
+```
+
+#### Step 3: Direct `rsync` / `cp` Command for WSL
+If you prefer direct terminal merging without interactive prompts:
+```bash
+TARGET="/mnt/c/Users/<WindowsUser>/AppData/Roaming/PrismLauncher/instances/RusticCraft2/.minecraft"
+
+for folder in mods kubejs tacz patchouli_books config defaultconfigs; do
+  if [ -d "./$folder" ]; then
+    mkdir -p "$TARGET/$folder"
+    cp -rf "./$folder"/* "$TARGET/$folder"/
+    echo "[WSL] Merged $folder into $TARGET"
+  fi
+done
+```
+
+---
+
+### 4. Verification & Post-Install Validation
+
+1. **Verify In-Game Lore & Manuals**:
+   - `/flintlock` or `/arma` — Opens the in-game Flintlock Lore & Quick Guide.
+   - `/function kubejs:give_gunsmith_manual` — Grants the Patchouli *Gunsmith's Handbook*.
+2. **Dedicated Server Verification**:
+   - Execute `/straja test` in the server console or via RCON to run the automated empirical test suite (55/55 tests should pass, including Test Suite 8 anti-dupe validation).
 
 
 ---

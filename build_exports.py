@@ -27,7 +27,7 @@ def zip_dir(source_dir, output_zip_path):
     return output_zip_path
 
 def copy_installer_files(target_stage):
-    for doc in ["TESTER_GUIDE.md", "HOW_TO_INSTALL.txt", "install_patch.bat", "install_patch.ps1"]:
+    for doc in ["TESTER_GUIDE.md", "HOW_TO_INSTALL.txt", "install_patch.bat", "install_patch.ps1", "install_patch.sh"]:
         src = os.path.join(BASE_DIR, doc)
         if os.path.exists(src):
             shutil.copy(src, os.path.join(target_stage, doc))

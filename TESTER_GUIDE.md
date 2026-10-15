@@ -1,7 +1,7 @@
 # ⚜ THE BRASS AGE UPDATE — TESTER & REVIEW GUIDE ⚜
 ### Ghid de Testare & Instalare pentru Testeri (Rustic Craft II)
 
-Versiune: `v1.3.0-Release`  
+Versiune: `v1.3.5-Release`  
 Platformă: `Minecraft 1.21.1` / `NeoForge 21.1.248`  
 Modpack: **Rustic Craft II**  
 Repository: `DurdeuVlad/the-brass-age-update`
@@ -9,12 +9,11 @@ Repository: `DurdeuVlad/the-brass-age-update`
 ---
 
 > [!IMPORTANT]
-> **NOUTĂȚI MAJORE ÎN v1.3.0**:
-> 1. **Imersiune 100% In-Universe Roleplay & Zero Spoilere Meta**: Toate textele robotice (`[Server]`, `[DEBUG]`, `NBT`, `[Arsenal]`) și ID-urile de iteme au fost complet eradicate din experiența jucătorilor. Adăugate 6 straturi audio ambientale (bătăi de inimă, zăngănit de armură, cătușe grele, clopote de alarmă, corn de vânătoare).
-> 2. **Indicii Senzoriale Fizice în Stil „Papers, Please”**: Falsurile se recunosc după detalii fizice (cerneală verde de vitriol, ștanțe bătute strâmb cu bavuri aspre, micro-erori de serie `#RC-1S-XXXX`), iar armele pilite după urmele de tocilă mecanică.
-> 3. **Puncte de Control & Tensiune la Hotar**: Soldații cercetează bagajele și bat în căptușeală, oferind șansa de a lăsa marfa în cufărul de descărcare înainte de poarta a doua.
-> 4. **Dramă Penitenciară & Evadări Spectaculoase**: Arestare cinematică cu cătușe, proces-verbal cu sigiliu de ceară roșie, alarmă masivă cu clopote din turn și corn de vânătoare la evadare.
-> 5. **Comutator Admin Debug (`/straja debug on|off|status`)**: Permite administratorilor comutarea facilă între regimul 100% RP și modul de diagnostic tehnic.
+> **NOUTĂȚI MAJORE ÎN v1.3.5**:
+> 1. **Rezolvare Critică Dupe Nicovală (`flintlock_carry_limits.js`)**: Eliminat complet exploit-ul prin care previzualizarea din slotul 2 al nicovalei cădea pe jos la apăsarea tastei ESC. Sloturile meniurilor externe sunt acum 100% protejate.
+> 2. **Optimizare Heap & Zero Erori KubeJS**: Rezolvat leak-ul de reflexie Rhino din tick loop, throttled pachetele de actionbar la 4 Hz și securizate toate evenimentele cu verificări universale de context.
+> 3. **Suport Complet Linux & WSL**: Adăugat scriptul automatizat `install_patch.sh` pentru servere dedicate Linux, Pterodactyl și instanțe Windows accesate prin WSL.
+> 4. **Suită Automată de Testare 8**: `/straja test` verifică 55 de teste empirice direct pe serverul pornit cu 100% succes.
 
 ---
 
@@ -30,7 +29,7 @@ Acest export conține sistemul complet al expansiunii **The Brass Age**:
 7. **Mina Continentală Straja**: Integrare completă în motorul de mine `custom_mines` cu 4 zone de adâncime calibrate.
 8. **Sistem Legal de Poansonare & Piață Neagră**: Armele noi sunt contrabandă (`NEPOANSONAT`); baterea pe nicovală cu Sigiliul Imperial aplică serie unică `#RC-15-XXXX`; polizarea pe tocilă (grindstone) pilește seria pentru lumea interlopă.
 9. **UX Prietenos**: Comenzi universale `/flintlock` și `/arma`, comenzi de operator `/gunsmith book [player]`, HUD dinamic pe actionbar la reîncărcare (numărătoare inversă 20s, avertizare la sprint).
-10. **34 Texturi Pixel-Art Autentice 16x16**: Toate piesele, pulberile, lăzile și armele au artă completă stil Minecraft.
+10. **35 Texturi Pixel-Art Autentice 16x16**: Toate piesele, pulberile, lăzile și armele au artă completă stil Minecraft.
 
 ---
 
@@ -38,24 +37,27 @@ Acest export conține sistemul complet al expansiunii **The Brass Age**:
 
 ### Opțiunea A: Instalare Automată 1-Click (Recomandată)
 1. Deschide launcher-ul tău (Prism Launcher, CurseForge, Modrinth sau ATLauncher).
-2. Dă click-dreapta pe instanța **Rustic Craft II** și alege **Open Folder** / **Folder Instanță** (unde vezi folderele `mods`, `config`, `kubejs`).
-3. Descarcă și extrage **`TheBrassAge-Update-All-In-One-v1.2.0.zip`** direct în acel folder.
-4. Dă dublu-click pe **`install_patch.bat`** (sau click-dreapta `Run with PowerShell` pe `install_patch.ps1`).
+2. Dă click-dreapta pe instanța existentă **Rustic Craft II** și alege **Open Folder** / **Folder Instanță** (unde vezi folderele `mods`, `config`, `kubejs`).
+3. Descarcă și extrage **`TheBrassAge-Update-All-In-One-v1.3.5.zip`** direct în acel folder.
+4. Rulează scriptul potrivit:
+   - **Pe Windows**: dublu-click pe `install_patch.bat` (sau click-dreapta `Run with PowerShell` pe `install_patch.ps1`).
+   - **Pe Linux / WSL**: `chmod +x install_patch.sh && ./install_patch.sh`
 5. Gata! Pornește jocul.
 
 ### Opțiunea B: Instalare Manuală (Fără installer)
-Dacă preferi să copiezi manual, extrage arhiva și suprascrie (Overwrite All) următoarele foldere în instanța ta:
+Dacă preferi să copiezi manual, extrage arhiva și suprascrie (Overwrite All) următoarele foldere în instanța ta existentă:
 - `mods/` -> adaugă TaCZ și compatibilitățile necesare
 - `kubejs/` -> se îmbină cu scripturile, texturile și lăzile militare
 - `tacz/` -> conține gunpack-urile cu muschete și pistoale
 - `patchouli_books/` -> adaugă Manualul Armurierului
 - `config/` -> actualizează setările de rucsac și depozitare
 
-### Opțiunea C: Pentru Administratori de Server Dedicat
+### Opțiunea C: Pentru Administratori de Server Dedicat (Linux / Windows)
 1. Oprește serverul dedicat (`stop`).
-2. Descarcă **`TheBrassAge-Update-Server-v1.2.0.zip`** (sau `All-In-One`).
-3. Extrage în rădăcina serverului dedicat (sau rulează `install_patch.bat`).
-4. Repornește serverul.
+2. Descarcă **`TheBrassAge-Update-Server-v1.3.5.zip`** (sau `All-In-One`).
+3. Extrage în rădăcina serverului dedicat.
+4. Pe Linux rulează: `chmod +x install_patch.sh && ./install_patch.sh` (sau pe Windows: `install_patch.bat`).
+5. Repornește serverul.
 
 ---
 

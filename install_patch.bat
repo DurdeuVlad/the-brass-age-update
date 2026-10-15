@@ -67,11 +67,12 @@ if exist "%SCRIPT_DIR%defaultconfigs" (
 
 echo.
 echo =====================================================================
-echo  ✔ SUCCESS: The Brass Age v1.1.0 successfully installed!
+echo  ✔ SUCCESS: The Brass Age v1.3.5 successfully installed!
 echo.
 echo  Quick check:
-echo   - 34 item textures and weapon crates installed.
+echo   - 35 item textures and weapon crates installed.
 echo   - 140ms smoothbore lock-time ballistics active.
+echo   - Anvil preview duplication exploit patched.
 echo   - In-game manual available via: /flintlock or /arma
 echo.
 echo  You can now start Minecraft / NeoForge. Have fun testing!

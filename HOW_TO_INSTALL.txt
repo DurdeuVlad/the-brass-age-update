@@ -1,12 +1,12 @@
 =====================================================================
-  ⚜ THE BRASS AGE UPDATE — INSTRUCTIUNI RAPIDE DE INSTALARE v1.3.1 ⚜
+  ⚜ THE BRASS AGE UPDATE — INSTRUCTIUNI RAPIDE DE INSTALARE v1.3.5 ⚜
 =====================================================================
 
 ATENȚIE PENTRU TESTERI:
 Acest pachet este un UPDATE / PATCH pentru modpack-ul existent Rustic Craft II.
 NU încercați să importați această arhivă ca profil nou în CurseForge / Prism!
 Dacă o importați ca profil nou, Minecraft va crăpa imediat pentru că lipsesc
-celelate 150 de moduri ale jocului de bază (Create, KubeJS, etc.).
+celelalte 150 de moduri ale jocului de bază (Create, KubeJS, etc.).
 
 ---------------------------------------------------------------------
 METODA 1: INSTALARE AUTOMATĂ (1-CLICK) [RECOMANDATĂ]
@@ -16,8 +16,9 @@ METODA 1: INSTALARE AUTOMATĂ (1-CLICK) [RECOMANDATĂ]
    - În CurseForge: Click dreapta pe profil -> "Open Folder"
    - În Modrinth: Click dreapta -> "Open Folder"
 2. Extrageți conținutul acestei arhive direct în folderul instanței.
-3. Rulați cu dublu click:
-   --> install_patch.bat (sau install_patch.ps1)
+3. Rulați scriptul corespunzător sistemului vostru de operare:
+   - Pe Windows: dublu click pe install_patch.bat (sau install_patch.ps1)
+   - Pe Linux / WSL: chmod +x install_patch.sh && ./install_patch.sh
 4. Porniți jocul!
 
 ---------------------------------------------------------------------
