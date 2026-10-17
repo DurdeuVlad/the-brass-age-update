@@ -4,6 +4,53 @@ All notable changes to **The Brass Age** modpack expansion for **Rustic Craft II
 
 ---
 
+## [v1.3.6] — 2026-10-18 (Ballistics Recalibration, Visible Weapons on Back & Straja Penitentiary Reconciliation)
+
+This release resolves the reticle-to-bullet trajectory mismatch, buffs close/medium-range flintlock accuracy to guarantee reliable chest hits at 10–25 blocks without sniper powercreep, enables visible back-holstered firearms, and fully reconciles the new Straja Penitentiary system:
+
+### 🎯 Ballistics Realignment & Reticle Synchronization
+1. **Elimination of Recoil-Elevation Camera Desync (`delayshoot_gun_logic.lua`)**
+   - **Root Cause**: In previous versions, trigger pull scheduled `api:shootOnce()` after a `shoot_delay = 140ms` ignition delay. Simultaneously, TaCZ's native recoil engine kicked camera pitch upward starting at `t=0` (~4° pitch rise). By the time the bullet exited at 140ms, the player's camera was already elevated ~3° into the sky. The bullet was cast from this displaced vector, landing 70cm–1m above the crosshair center. This caused players to miss 5 back-to-back aimed shots at a target's chest from 10 blocks away, making it feel like "the reticle has nothing to do with where the bullet goes".
+   - **Resolution**: `delayshoot_gun_logic.lua` now executes `api:shootOnce(api:isShootingNeedConsumeAmmo())` directly at `t=0` upon trigger pull. The bullet exits instantaneously along the exact vector aligned with the player's sights before recoil displaces the camera. The authentic flintlock vulnerability window remains enforced by the ~20-second manual muzzle-loading sequence.
+
+2. **Smoothbore Dispersion Recalibration (`fk15_data.json`, `fk15p_data.json`, `flintlock_ballistics.js`)**
+   - **FK15 Smoothbore Volley Musket**:
+     - Aimed Inaccuracy (`aim`): Calibrated from `1.85°` down to `0.45°`. At 10m: 15cm cone (100% reliable chest hit). At 20m: 31cm cone (reliable torso hit). At 35m: 55cm cone. At 50m: 78cm cone (historically authentic volley lethality for massed ranks). Spread widens past 60m+ to ensure it cannot be abused as a modern pinpoint sniper rifle.
+     - Sneak Inaccuracy: `0.25°` (kneeling/braced hold for steady marksmanship).
+     - Standing / Hipfire Inaccuracy: `2.4°`. Moving: `4.5°`.
+     - Bullet Speed: Increased from 135 to 150 m/s; gravity reduced from 0.031 to 0.024 for flatter, predictable trajectory within 30 blocks.
+   - **FK15P Smoothbore Officer / Dragoon Pistol**:
+     - Aimed Inaccuracy (`aim`): Calibrated from `2.40°` down to `0.70°`. At 10m: 26cm cone (solid torso hit). Past 20m: >50cm cone (retains authentic close-quarters sidearm spread).
+     - Sneak Inaccuracy: `0.45°`. Standing: `2.8°`. Moving: `3.8°`.
+     - Bullet Speed: Increased from 95 to 110 m/s; gravity reduced from 0.038 to 0.030.
+
+### ⚔️ Visual Polish: Weapons on Player Back & Hip
+1. **Weapon Master Firearm Integration (`weaponmaster_ydm-common.toml`)**
+   - Added `modern_kinetic_gun,tacz:modern_kinetic_gun` to `whitelist` in `config/weaponmaster_ydm-common.toml`.
+   - Hotbar weapons (slots 1, 2, 7, 8) now automatically render visibly strapped across the player's back and hips when holstered.
+   - Fully customizable per-player via Weapon Master's in-game GUI (`V` key / YDM menu).
+
+### ⚖️ Straja Penitentiary Subsystem Reconciliation
+1. **Core Custody Engine Upgrade (`straja_prison.js`)**
+   - Reconciled with main server release: added prisoner scoreboard team assignment on arrest (`Prizonieri`), restoring original team on release.
+   - Integrated perimeter grounds bounding box checks (`spInGrounds()`) and mine box checks (`spMineBox()`) to prevent false-positive fugitive alarms for working prisoners.
+   - Deep inventory seizure integration: imports `$SP_BackpackHelper`, `$SP_ItemContainerContents`, and `$SP_BundleContents` to seize nested backpack and bundle inventories into personal storage.
+   - Added sentencing & debt tracking (`pendingDebt`) with `/strajaprison sentence <player> <amount> [reason]` and `/strajaprison paydebt <name> <amount>`.
+   - Escape mode now properly switches fugitives to survival mode with wanted broadcast.
+2. **Gate & Perimeter Airlock System (`straja_prison_gates.js`)**
+   - Implemented dual-door airlock gate control with automatic door close timers, denial teleport coordinates, and prison grounds perimeter bounds.
+   - Command surface: `/prisongate` (help, setup, list, grounds).
+3. **Penal Market & Prisoner Economy (`straja_prison_market.js`)**
+   - Added prisoner mining economy with `/sellall`, state credit balances, and NPC buyer registration (`/prisonmarket buyer|price|credit`).
+   - Automatically directs prisoner mined resources to Straja state depots while issuing credits to pay court debts.
+4. **Penal Labor Mine Management (`straja_prison_mine.js`)**
+   - Auto-adopts `mina_straja_continent` with 7 stages (shafts 1-2, zones 1-4, warehouse).
+   - Manages prisoner work shifts and automated scheduled ore vein regeneration cycles.
+5. **Interactive Deployment Wizard (`straja_prison_setup.js`)**
+   - 15-step interactive verification checklist via `/prisonsetup all`, validating cells, overflow rooms, personal chests, release points, gates, and markets.
+
+---
+
 ## [v1.3.5] — 2026-10-15 (Critical Exploit Fix: Anvil GUI Preview Duplication Patch)
 
 This release addresses and eliminates an item duplication exploit occurring in workstation GUIs (Anvil, Grindstone) when interacting with firearms:

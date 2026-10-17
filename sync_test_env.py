@@ -60,4 +60,11 @@ assets_dst = [os.path.join(s, "kubejs", "assets") for s in SERVER_DIRS] + [
 ]
 sync_folder(assets_src, assets_dst)
 
+print("=== 6. Syncing config files ===")
+cfg_srv_src = os.path.join(BASE, "server", "config")
+cfg_cli_src = os.path.join(BASE, "client", "config")
+sync_folder(cfg_srv_src, [os.path.join(s, "config") for s in SERVER_DIRS])
+sync_folder(cfg_cli_src, [os.path.join(CLIENT_DIR, "config")])
+
 print("=== Sync Complete! All files mirrored successfully. ===")
+

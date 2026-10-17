@@ -1,8 +1,8 @@
 @echo off
 chcp 65001 > nul
-title The Brass Age Update - Patch Installer v1.3.5
+title The Brass Age Update - Patch Installer v1.3.6
 echo =====================================================================
-echo    ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.3.5 ⚜
+echo    ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.3.6 ⚜
 echo    Rustic Craft II (Minecraft 1.21.1 / NeoForge 21.1.248)
 echo =====================================================================
 echo.
@@ -67,11 +67,11 @@ if exist "%SCRIPT_DIR%defaultconfigs" (
 
 echo.
 echo =====================================================================
-echo  ✔ SUCCESS: The Brass Age v1.3.5 successfully installed!
+echo  ✔ SUCCESS: The Brass Age v1.3.6 successfully installed!
 echo.
 echo  Quick check:
 echo   - 35 item textures and weapon crates installed.
-echo   - 140ms smoothbore lock-time ballistics active.
+echo   - Calibrated smoothbore ballistics & back-holstered weapons active.
 echo   - Anvil preview duplication exploit patched.
 echo   - In-game manual available via: /flintlock or /arma
 echo.

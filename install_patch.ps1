@@ -1,9 +1,9 @@
-# The Brass Age Update - Automated Patch Installer v1.3.5
+# The Brass Age Update - Automated Patch Installer v1.3.6
 # Platform: Minecraft 1.21.1 / NeoForge 21.1.248 / Rustic Craft II
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 Write-Host "=====================================================================" -ForegroundColor Yellow
-Write-Host "   ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.3.5 ⚜" -ForegroundColor Cyan
+Write-Host "   ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.3.6 ⚜" -ForegroundColor Cyan
 Write-Host "   Rustic Craft II (Minecraft 1.21.1 / NeoForge 21.1.248)" -ForegroundColor Gray
 Write-Host "=====================================================================" -ForegroundColor Yellow
 Write-Host ""
@@ -44,11 +44,11 @@ foreach ($Folder in $Folders) {
 
 Write-Host ""
 Write-Host "=====================================================================" -ForegroundColor Green
-Write-Host " ✔ SUCCESS: The Brass Age v1.3.5 patch successfully applied!" -ForegroundColor Green
+Write-Host " ✔ SUCCESS: The Brass Age v1.3.6 patch successfully applied!" -ForegroundColor Green
 Write-Host ""
 Write-Host " Quick Check:" -ForegroundColor White
 Write-Host "  - 35 item textures and weapon crates installed." -ForegroundColor Gray
-Write-Host "  - 140ms smoothbore lock-time ballistics active." -ForegroundColor Gray
+Write-Host "  - Calibrated smoothbore ballistics & back-holstered weapons active." -ForegroundColor Gray
 Write-Host "  - Anvil preview duplication exploit patched." -ForegroundColor Gray
 Write-Host "  - In-game manual available via: /flintlock or /arma" -ForegroundColor Gray
 Write-Host "  - Gunsmith Handbook available via: /function kubejs:give_gunsmith_manual" -ForegroundColor Gray
