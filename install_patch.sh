@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =====================================================================
-#   ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.3.5 ⚜
+#   ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.3.6 ⚜
 #   Rustic Craft II (Minecraft 1.21.1 / NeoForge 21.1.248)
 #   Linux, WSL (Windows Subsystem for Linux) & Headless Server Support
 # =====================================================================
@@ -11,7 +11,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_DIR="${1:-$SCRIPT_DIR}"
 
 echo "====================================================================="
-echo "   ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.3.5 ⚜"
+echo "   ⚜ THE BRASS AGE UPDATE — AUTOMATED PATCH INSTALLER v1.3.6 ⚜"
 echo "   Rustic Craft II (Minecraft 1.21.1 / NeoForge 21.1.248)"
 echo "====================================================================="
 echo ""
@@ -63,11 +63,11 @@ done
 
 echo ""
 echo "====================================================================="
-echo "  ✔ SUCCESS: The Brass Age v1.3.5 patch successfully applied!"
+echo "  ✔ SUCCESS: The Brass Age v1.3.6 patch successfully applied!"
 echo ""
 echo "  Quick Check:"
 echo "   - 35 item textures and weapon crates installed."
-echo "   - 140ms smoothbore lock-time ballistics active."
+echo "   - Calibrated smoothbore ballistics & back-holstered weapons active."
 echo "   - Anvil preview duplication exploit patched."
 echo "   - In-game manual available via: /flintlock or /arma"
 echo "   - Gunsmith Handbook available via: /function kubejs:give_gunsmith_manual"

@@ -9,26 +9,26 @@ if (typeof TaCZServerEvents !== 'undefined') {
             // FK15 Smoothbore Volley Musket
             const data = JSON.parse(event.getJson())
             
-            // Mechanical Lock Time (140 ms: cock strike -> pan flash -> breech ignition)
+            // Direct Trigger Synchronization: eliminates recoil-induced high elevation misses
             data.rpm = 100
             data.script = 'qkl:delayshoot_gun_logic'
-            data.script_param = { shoot_delay: 0.14 }
+            data.script_param = { shoot_delay: 0.0 }
             
-            // Conical Dispersion: lethal at 0-30m, disciplined volleys at 30-60m, inaccurate past 60m
+            // Calibrated Dispersion: pinpoint ADS torso hits at 10-25m, effective volleys at 30-50m, wide spread past 60m
             if (data.inaccuracy) {
-                data.inaccuracy.stand = 4.5
-                data.inaccuracy.move = 7.5
-                data.inaccuracy.sneak = 1.0 // Taking a knee braces the 5kg iron barrel
-                data.inaccuracy.lie = 4.0
-                data.inaccuracy.aim = 1.85 // 1.85 degrees conical spread (was 0.5 modern sniper)
+                data.inaccuracy.stand = 2.4
+                data.inaccuracy.move = 4.5
+                data.inaccuracy.sneak = 0.25 // Taking a knee/bracing gives razor-sharp hold
+                data.inaccuracy.lie = 0.35
+                data.inaccuracy.aim = 0.45 // Reliable chest hit at 10-25m without becoming a 100m sniper
             }
             
-            // Black Powder External Ballistics: heavy round lead ball drop
+            // Black Powder External Ballistics: heavy round lead ball trajectory
             if (data.bullet) {
-                data.bullet.speed = 135
-                data.bullet.gravity = 0.031
+                data.bullet.speed = 150
+                data.bullet.gravity = 0.024
                 data.bullet.knockback = 0.45
-                data.bullet.friction = 0.015
+                data.bullet.friction = 0.012
                 if (data.bullet.extra_damage) {
                     data.bullet.extra_damage.damage_adjust = [
                         { distance: 15, damage: 55 },
@@ -48,19 +48,19 @@ if (typeof TaCZServerEvents !== 'undefined') {
             
             data.rpm = 100
             data.script = 'qkl:delayshoot_gun_logic'
-            data.script_param = { shoot_delay: 0.16 }
+            data.script_param = { shoot_delay: 0.0 }
             
             if (data.inaccuracy) {
-                data.inaccuracy.stand = 4.5
-                data.inaccuracy.move = 5.5
-                data.inaccuracy.sneak = 2.0
-                data.inaccuracy.lie = 4.0
-                data.inaccuracy.aim = 2.40 // Wide defensive spread beyond 15m
+                data.inaccuracy.stand = 2.8
+                data.inaccuracy.move = 3.8
+                data.inaccuracy.sneak = 0.45
+                data.inaccuracy.lie = 0.50
+                data.inaccuracy.aim = 0.70 // Reliable torso hit at 10-15m, sidearm scatter past 20m
             }
             
             if (data.bullet) {
-                data.bullet.speed = 95
-                data.bullet.gravity = 0.038
+                data.bullet.speed = 110
+                data.bullet.gravity = 0.030
             }
             
             event.setJson(JSON.stringify(data))

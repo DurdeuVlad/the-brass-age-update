@@ -32,6 +32,7 @@ function spLoadClass(path) {
   try {
     return Java.loadClass(path)
   } catch (e) {
+    console.error('[Prison] Java.loadClass failed: ' + path + ' :: ' + e)
     return null
   }
 }
@@ -50,6 +51,10 @@ const $SP_GameType = spLoadClass('net.minecraft.world.level.GameType')
 const $SP_ItemStack = spLoadClass('net.minecraft.world.item.ItemStack')
 const $SP_NpcAPI = spLoadClass('noppes.npcs.api.NpcAPI')
 const $SP_PlayerWrapper = spLoadClass('noppes.npcs.api.wrapper.PlayerWrapper')
+const $SP_BackpackHelper = spLoadClass('com.mrcrayfish.backpacked.BackpackHelper')
+const $SP_ItemContainerContents = spLoadClass('net.minecraft.world.item.component.ItemContainerContents')
+const $SP_BundleContents = spLoadClass('net.minecraft.world.item.component.BundleContents')
+const $SP_ArrayList = spLoadClass('java.util.ArrayList')
 
 // ============================================================================
 // CONFIG — edit these
@@ -83,6 +88,12 @@ const SP_FUGITIVE_WANTED_SECONDS = 86400
 // CustomNPCs faction id for the Straja guard (same id straja_gold.js uses —
 // faction 0 means attack-on-sight for all Straja NPCs).
 const SP_STRAJA_FACTION = 12
+
+// "Facțiunea" deținuților (echipă scoreboard / Simple Teams): la arest se salvează echipa veche și
+// deținutul e pus în echipa asta; nu o poate părăsi cât e în registru (se reaplică la fiecare
+// sweep). La eliberare primește înapoi echipa dinainte. false = dezactivat.
+const SP_TEAM_SWAP = true
+const SP_PRISON_TEAM = 'Prizonieri'
 
 // Border crossing log — every inspect/arrest gate pass is appended here with
 // the full inventory snapshot. java.nio.file is blocked by KubeJS, so the log
@@ -278,10 +289,107 @@ function spCfgSave(server) {
 
 var spJailSweepTicks = 0
 
+function spTeamName(player) {
+  try {
+    var t = player.getTeam()
+    return t ? String(t.getName()) : ''
+  } catch (e) {
+    return ''
+  }
+}
+
+// Idempotent: prima dată salvează echipa veche (cpPrevTeam), apoi îl ține în SP_PRISON_TEAM.
+function spPrisonerTeamApply(server, player) {
+  if (!SP_TEAM_SWAP) {
+    return
+  }
+  var cur = spTeamName(player)
+  if (cur === SP_PRISON_TEAM) {
+    return
+  }
+  var pd = player.persistentData
+  if (!pd.getBoolean('cpTeamSaved')) {
+    pd.putString('cpPrevTeam', cur)
+    pd.putBoolean('cpTeamSaved', true)
+    console.info('[Prison] ' + cpPlayerName(player) + ' team "' + cur + '" saved, joining ' + SP_PRISON_TEAM)
+  }
+  server.runCommandSilent('team add ' + SP_PRISON_TEAM) // există deja -> eroare ignorată
+  server.runCommandSilent('team join ' + SP_PRISON_TEAM + ' ' + cpPlayerName(player))
+}
+
+function spPrisonerTeamRestore(server, player) {
+  var pd = player.persistentData
+  if (!pd.getBoolean('cpTeamSaved')) {
+    return
+  }
+  var prev = String(pd.getString('cpPrevTeam') || '')
+  var name = cpPlayerName(player)
+  server.runCommandSilent('team leave ' + name)
+  if (prev.length > 0 && prev !== SP_PRISON_TEAM) {
+    server.runCommandSilent('team join ' + prev + ' ' + name)
+  }
+  pd.putBoolean('cpTeamSaved', false)
+  pd.remove('cpPrevTeam')
+  console.info('[Prison] ' + name + ' team restored -> "' + prev + '"')
+}
+
+// Prison-mine box published by straja_prison_mine.js (strajaPrisonMine). A
+// prisoner inside it is not escaping (they may mine whenever they like).
+function spMineBox(server) {
+  try {
+    var raw = String(server.persistentData.getString('strajaPrisonMine') || '')
+    if (raw.length > 2) {
+      var m = JSON.parse(raw)
+      if (m.enabled === true && m.box) {
+        return m
+      }
+    }
+  } catch (e) { /* no mine configured */ }
+  return null
+}
+
+// Cartierele pușcăriei (curte, cantină…) publicate de straja_prison_gates.js: strajaPrisonGrounds.
+// Un deținut înăuntru nu evadează, oricât de departe e de celulă.
+function spGrounds(server) {
+  try {
+    var raw = String(server.persistentData.getString('strajaPrisonGrounds') || '')
+    if (raw.length > 2) {
+      var g = JSON.parse(raw)
+      if (g.dim && g.boxes && g.boxes.length > 0) {
+        return g
+      }
+    }
+  } catch (e) { /* fără cartiere */ }
+  return null
+}
+
+function spInGrounds(g, p) {
+  if (g === null || String(p.level.dimension) !== g.dim) {
+    return false
+  }
+  for (var i = 0; i < g.boxes.length; i++) {
+    var b = g.boxes[i]
+    if (p.x >= b.x1 && p.x <= b.x2 + 1 && p.y >= b.y1 && p.y <= b.y2 + 2 && p.z >= b.z1 && p.z <= b.z2 + 1) {
+      return true
+    }
+  }
+  return false
+}
+
+function spOnMineDetail(mine, p, entry) {
+  if (mine === null || String(p.level.dimension) !== mine.dim) {
+    return false
+  }
+  var b = mine.box
+  return p.x >= b.x1 && p.x <= b.x2 + 1 && p.y >= b.y1 && p.y <= b.y2 + 2 && p.z >= b.z1 && p.z <= b.z2 + 1
+}
+
 // Every ~2s: enforce adventure on the jailed, reconcile flags against the
 // register, and flag fugitives found beyond the jail radius.
 function cpSweepJail(server) {
   var players = server.getPlayerList().getPlayers()
+  var mine = spMineBox(server)
+  var grounds = spGrounds(server)
   for (var i = 0; i < players.size(); i++) {
     var p = players.get(i)
     var name = null
@@ -294,6 +402,7 @@ function cpSweepJail(server) {
     var pd = p.persistentData
 
     if (entry === null) {
+      spPrisonerTeamRestore(server, p)
       // released while offline — clear the stale flags, restore mode and rep
       if (pd.getBoolean('cpJailed')) {
         pd.putBoolean('cpJailed', false)
@@ -309,6 +418,7 @@ function cpSweepJail(server) {
       continue
     }
 
+    spPrisonerTeamApply(server, p)
     if (!pd.getBoolean('cpJailed')) {
       pd.putBoolean('cpJailed', true)
       if (String(pd.getString('cpJailWasMode') || '').length === 0) {
@@ -316,7 +426,7 @@ function cpSweepJail(server) {
       }
     }
 
-    if (!spIsExempt(p) && cpGameModeName(p) !== 'adventure') {
+    if (!spIsExempt(p) && entry.status !== 'fugitive' && cpGameModeName(p) !== 'adventure') {
       cpSetGameMode(p, 'adventure')
     }
     // adventure_zone datapack force-reverts adventure players outside its
@@ -332,6 +442,9 @@ function cpSweepJail(server) {
         var dz = p.z - jt.z
         escaped = dx * dx + dy * dy + dz * dz > SP_JAIL_RADIUS * SP_JAIL_RADIUS
       }
+      if (escaped && (spOnMineDetail(mine, p, entry) || spInGrounds(grounds, p))) {
+        escaped = false // inside the prison mine (straja_prison_mine.js) or the prison grounds (straja_prison_gates.js)
+      }
       if (escaped) {
         entry.status = 'fugitive'
         pd.putBoolean('cpFugitive', true)
@@ -339,17 +452,15 @@ function cpSweepJail(server) {
           pd.putLong('strajaWantedUntil', Date.now() + SP_FUGITIVE_WANTED_SECONDS * 1000)
         } catch (e) { /* wanted flag is best-effort */ }
         cpSuppressRep(server, p)
+        if (!spIsExempt(p)) {
+          cpSetGameMode(p, 'survival') // a free fugitive is no longer confined to adventure
+        }
         cpJailSave(server)
         spLogEvent('escaped', name, cpInvSummary(p), 'fugitiv — straja set 0, wanted activ')
-        cpTitle(server, p, '§4§lEVADARE!', '§cAlarma a fost dată în garnizoană! Fugi!')
-        server.runCommandSilent('playsound minecraft:block.bell.use ambient ' + cpQuoted(p) + ' ~ ~ ~ 2.0 0.8')
-        server.runCommandSilent('playsound minecraft:item.goat_horn.sound.0 ambient ' + cpQuoted(p) + ' ~ ~ ~ 2.0 1.0')
         try {
           var all = server.getPlayerList().getPlayers()
           for (var n = 0; n < all.size(); n++) {
-            var targetP = all.get(n)
-            targetP.tell(Text.literal('§4§l[CLOPOTE DE ALARMĂ] §cClopotul din turn bate neîncetat! Deținutul §f' + name + '§c a evadat din temniță! Gărzile atacă la vedere!'))
-            server.runCommandSilent('playsound minecraft:block.bell.use ambient ' + cpQuoted(targetP) + ' ~ ~ ~ 1.0 1.0')
+            all.get(n).tell(Text.literal('§c§lFUGITIV! §r§c' + name + ' a evadat din arestul Straja — gărzile atacă la vedere!'))
           }
         } catch (e) { /* broadcast best-effort */ }
         console.info('[Prison] ' + name + ' escaped custody — FUGITIVE (faction 0)')
@@ -363,6 +474,9 @@ function cpSweepJail(server) {
         var dy2 = p.y - jt2.y
         var dz2 = p.z - jt2.z
         backInside = dx2 * dx2 + dy2 * dy2 + dz2 * dz2 <= SP_JAIL_RADIUS * SP_JAIL_RADIUS
+      }
+      if (!backInside && spInGrounds(grounds, p)) {
+        backInside = true // physically back inside the prison grounds
       }
       if (backInside) {
         cpRecapture(server, p, name, 'reintrat în perimetrul arestului')
@@ -394,30 +508,25 @@ function cpCmdSourcePlayer(ctx) {
   return ent
 }
 
-function spIsDebug(server) {
-  if (!server || !server.persistentData) return false
-  return !!server.persistentData.getBoolean('StrajaDebugMode')
-}
-
-// Messages (Romanian, § colour codes - 100% In-Universe Roleplay)
-const SP_AGGRO_TITLE = '§4§lALARMĂ LA HOTAR!'
-const SP_AGGRO_SUBTITLE = '§c„Pluton, blocați trecerea! Nu lăsați suspectul să scape!”'
-const SP_INFO_HEADER = '§6[Inspecție Temniță]§7 Soldatul verifică inventarul:'
-const SP_INFO_FOOTER = '§eLasă bunurile suspecte sau predă-te de bunăvoie.'
-const SP_INFO_CLEAN = '§2[Temnicer]§7 „Actele sunt în regulă. Poți trece.”'
-const SP_DENY_TITLE = '§c§lOPRIȚI-VĂ!'
-const SP_DENY_SUBTITLE = '§7Grilajul de fier coboară cu zgomot greu în fața ta.'
+// Messages (Romanian, § colour codes)
+const SP_AGGRO_TITLE = '§4§lSTOP! MARFĂ ILEGALĂ!'
+const SP_AGGRO_SUBTITLE = '§cAi încercat să treci punctul de control cu marfă interzisă!'
+const SP_INFO_HEADER = '§cMarfă ilegală detectată în bagaj:'
+const SP_INFO_FOOTER = '§eLasă marfa interzisă în urmă sau pred-o — nu treci cu ea peste hotar.'
+const SP_INFO_CLEAN = '§aVerificare încheiată — nu ai nimic ilegal. Treci liber.'
+const SP_DENY_TITLE = '§4§lACCES INTERZIS'
+const SP_DENY_SUBTITLE = '§cPunctul de control nu te lasă să treci cu marfă ilegală.'
 const SP_DENY_SOUND = 'minecraft:block.iron_door.close'
 const SP_AGGRO_SOUND = 'minecraft:entity.ravager.roar'
 
-const SP_BANNED_SUBTITLE = '§cEști pe lista de interdicție a Garnizoanei.'
-const SP_WARN_TITLE = '§6§lOCHIUL GĂRZII'
-const SP_WARN_SUBTITLE = '§eSoldatul îți cercetează bănuitor încărcătura...'
-const SP_WARN_SOUND = 'minecraft:entity.warden.heartbeat'
-const SP_ARREST_TITLE = '§4§lZĂNGĂNIT DE CĂTUȘE'
-const SP_ARREST_SUBTITLE = '§c„În numele Garnizoanei, ești reținut!”'
-const SP_FREE_TITLE = '§a§lSCÂRȚÂIT DE LACĂT'
-const SP_FREE_SUBTITLE = '§fUșa celulei se deschide larg. Drum bun, călătorule.'
+const SP_BANNED_SUBTITLE = '§cEști interzis la acest punct de control.'
+const SP_WARN_TITLE = '§e§lMARFA E INTERZISĂ'
+const SP_WARN_SUBTITLE = '§eLas-o în cufărul de lângă poartă — la punctul următor riști arestarea.'
+const SP_WARN_SOUND = 'minecraft:block.note_block.bass'
+const SP_ARREST_TITLE = '§4§lAI FOST ARESTAT'
+const SP_ARREST_SUBTITLE = '§cPentru contraband. Bunurile suspecte au fost reținute.'
+const SP_FREE_TITLE = '§a§lEȘTI LIBER'
+const SP_FREE_SUBTITLE = '§7Numele ți-a fost șters. Nu te mai întoarce cu contrabandă.'
 
 // ============================================================================
 // Jail register — server-side roster, works while the player is offline.
@@ -427,10 +536,10 @@ const SP_FREE_SUBTITLE = '§fUșa celulei se deschide larg. Drum bun, călătoru
 //   fines:  { name: totalFine }
 // }
 // ============================================================================
-var CP_JAIL = { jailed: {}, fines: {}, pendingChest: {} }
+var CP_JAIL = { jailed: {}, fines: {}, pendingChest: {}, pendingDebt: {} }
 
 function cpJailLoad(server) {
-  CP_JAIL = { jailed: {}, fines: {}, pendingChest: {} }
+  CP_JAIL = { jailed: {}, fines: {}, pendingChest: {}, pendingDebt: {} }
   try {
     var raw = String(server.persistentData.getString('strajaPrisonJail') || '')
     if (raw.length <= 2) {
@@ -445,6 +554,7 @@ function cpJailLoad(server) {
       if (saved.jailed !== undefined) CP_JAIL.jailed = saved.jailed
       if (saved.fines !== undefined) CP_JAIL.fines = saved.fines
       if (saved.pendingChest !== undefined) CP_JAIL.pendingChest = saved.pendingChest
+      if (saved.pendingDebt !== undefined) CP_JAIL.pendingDebt = saved.pendingDebt
       cpJailSave(server)
       try { server.persistentData.remove('portCheckpointJail') } catch (e2) { /* cleanup best-effort */ }
     }
@@ -571,10 +681,11 @@ function cpRecapture(server, player, name, how) {
   pd.putBoolean('cpFugitive', false)
   cpClearHuntFlags(server, player) // thief/wanted flags too — he's inside
   var repOk = cpRestoreRep(server, player)
+  if (!spIsExempt(player)) {
+    cpSetGameMode(player, 'adventure')
+  }
   spLogEvent('recaptured', name, cpInvSummary(player), how + (repOk ? '' : ' | rep nerestaurată'))
-  server.runCommandSilent('playsound minecraft:block.iron_door.close player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 0.8')
-  player.tell(Text.literal('§4[Strajer] §7„Credeai că ai scăpat? Înapoi în celulă!”'))
-  player.tell(Text.literal('§8(Zăvorul se închide din nou cu un zgomot sec.)'))
+  player.tell(Text.literal('§cEști din nou în custodia Straja (' + how + ').'))
   console.info('[Prison] ' + name + ' recaptured (' + how + ')')
 }
 
@@ -862,13 +973,6 @@ function cpSound(server, player, soundId) {
 // aggressive: alarm + wanted bounty (Straja guards aggro the smuggler)
 function cpBeginArrest(server, player, name, reason, site) {
   cpTitle(server, player, SP_ARREST_TITLE, SP_ARREST_SUBTITLE)
-  server.runCommandSilent('playsound minecraft:item.armor.equip_chain player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 0.8')
-  server.runCommandSilent('playsound minecraft:block.iron_door.close player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 0.7')
-  server.runCommandSilent('playsound minecraft:entity.warden.heartbeat player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 0.9')
-  try {
-    player.tell(Text.literal('§4[Sergent de Gardă] §7„Jos armele și mâinile la vedere! Nu mișca!”'))
-    player.tell(Text.literal('§8(Zăngănit greu de cătușe și lanțuri reci de fier în jurul încheieturilor...)'))
-  } catch (e) {}
   var seconds = Math.ceil(SP_ARREST_DELAY_TICKS / 20) + 1
   server.runCommandSilent('effect give ' + cpQuoted(player) + ' minecraft:darkness ' + seconds + ' 0 true')
   server.runCommandSilent('effect give ' + cpQuoted(player) + ' minecraft:blindness ' + seconds + ' 0 true')
@@ -1058,6 +1162,269 @@ function cpStoreInChests(server, stack, level, boxes) {
 // chest. Personal overflow spills into the pile — nothing stays behind.
 // Returns { items, contra, left } unit counts.
 // ============================================================================
+// ============================================================================
+// Sentence / debt — a sentence is a sum owed. Coins (adys_decorations brass 1 / silver 64 /
+// gold 4096) are taken first from the inventory, curios, the Backpacked backpacks and any
+// container inside them (sacks, bundles, shulkers, item-handler bags); only what is left becomes
+// debt, worked off in the prison mine (every sale pays the debt; at 0 the prisoner is released).
+// ============================================================================
+
+const SP_COIN_KEY = {
+  'adys_decorations:brass_coin': 'b',
+  'adys_decorations:silver_coin': 's',
+  'adys_decorations:gold_coin': 'g'
+}
+const SP_COIN_ITEM = { b: 'adys_decorations:brass_coin', s: 'adys_decorations:silver_coin', g: 'adys_decorations:gold_coin' }
+
+// Walks one stack (recursing into containers). st = {take, want:{g,s,b}, found:{g,s,b}}.
+// Counts coins always; removes up to `want` when st.take. Returns true when the stack changed.
+function spCoinWalk(stack, st, depth) {
+  if (stack === null || stack === undefined || stack.isEmpty() || depth > 4) {
+    return false
+  }
+  var k = SP_COIN_KEY[cpItemId(stack)]
+  if (k !== undefined) {
+    var cnt = stack.getCount()
+    st.found[k] += cnt
+    if (st.take && st.want[k] > 0) {
+      var n = Math.min(cnt, st.want[k])
+      stack.shrink(n)
+      st.want[k] -= n
+      return n > 0
+    }
+    return false
+  }
+  try {
+    var cont = stack.get($SP_DataComponents.CONTAINER)
+    if (cont !== null && cont !== undefined) {
+      var list = new $SP_ArrayList()
+      var changed = false
+      var it = cont.nonEmptyItems().iterator()
+      while (it.hasNext()) {
+        var sub = it.next().copy()
+        if (spCoinWalk(sub, st, depth + 1)) {
+          changed = true
+        }
+        if (!sub.isEmpty()) {
+          list.add(sub)
+        }
+      }
+      if (changed && st.take) {
+        stack.set($SP_DataComponents.CONTAINER, $SP_ItemContainerContents.fromItems(list))
+        return true
+      }
+      return false
+    }
+  } catch (e) { /* no container component */ }
+  try {
+    var bundle = stack.get($SP_DataComponents.BUNDLE_CONTENTS)
+    if (bundle !== null && bundle !== undefined) {
+      var blist = new $SP_ArrayList()
+      var bchanged = false
+      var bit = null
+      try { bit = bundle.items().iterator() } catch (b1) { bit = bundle.items.iterator() }
+      while (bit.hasNext()) {
+        var bsub = bit.next().copy()
+        if (spCoinWalk(bsub, st, depth + 1)) {
+          bchanged = true
+        }
+        if (!bsub.isEmpty()) {
+          blist.add(bsub)
+        }
+      }
+      if (bchanged && st.take) {
+        stack.set($SP_DataComponents.BUNDLE_CONTENTS, new $SP_BundleContents(blist))
+        return true
+      }
+      return false
+    }
+  } catch (e) { /* not a bundle */ }
+  try {
+    var cap = stack.getCapability($SP_Capabilities.ItemHandler.ITEM)
+    if (cap !== null && cap !== undefined) {
+      var any = false
+      for (var i = 0; i < cap.getSlots(); i++) {
+        var cs = cap.getStackInSlot(i)
+        if (cs === null || cs.isEmpty()) {
+          continue
+        }
+        var ck = SP_COIN_KEY[cpItemId(cs)]
+        if (ck === undefined) {
+          continue
+        }
+        st.found[ck] += cs.getCount()
+        if (st.take && st.want[ck] > 0) {
+          var got = cap.extractItem(i, Math.min(cs.getCount(), st.want[ck]), false)
+          st.want[ck] -= got.getCount()
+          any = true
+        }
+      }
+      return any
+    }
+  } catch (e) { /* no item handler */ }
+  return false
+}
+
+// Everything a player carries: inventory, curios, Backpacked backpacks (their live contents).
+function spCoinSweep(player, take, want) {
+  var st = { take: take, want: want, found: { g: 0, s: 0, b: 0 } }
+  var inv = player.getInventory()
+  for (var i = 0; i < inv.getContainerSize(); i++) {
+    spCoinWalk(inv.getItem(i), st, 0)
+  }
+  try {
+    var opt = $SP_CuriosApi.getCuriosInventory(player)
+    if (opt !== null && opt !== undefined && opt.isPresent()) {
+      var eq = opt.get().getEquippedCurios()
+      for (var s = 0; s < eq.getSlots(); s++) {
+        var cst = eq.getStackInSlot(s)
+        if (spCoinWalk(cst, st, 0)) {
+          eq.setStackInSlot(s, cst)
+        }
+      }
+    }
+  } catch (e) { /* no curios */ }
+  try {
+    var bpN = player['backpacked$GetBackpackInventoryCount']()
+    for (var bi = 0; bi < bpN; bi++) {
+      var bpInv = player['backpacked$GetBackpackInventory'](bi)
+      if (bpInv === null || bpInv === undefined) {
+        continue
+      }
+      for (var k = 0; k < bpInv.getContainerSize(); k++) {
+        spCoinWalk(bpInv.getItem(k), st, 0)
+      }
+      if (take) {
+        bpInv.saveItemsToStack()
+        bpInv.setChanged()
+      }
+    }
+  } catch (e) { /* no Backpacked */ }
+  return st
+}
+
+// What to take for `debt`: biggest coins first without overshooting; if still short and a bigger
+// coin exists, take it and give change.
+function spCoinPlan(found, debt) {
+  var take = { g: 0, s: 0, b: 0 }
+  var rem = debt
+  take.g = Math.min(found.g, Math.floor(rem / 4096))
+  rem -= take.g * 4096
+  take.s = Math.min(found.s, Math.floor(rem / 64))
+  rem -= take.s * 64
+  take.b = Math.min(found.b, rem)
+  rem -= take.b
+  var change = 0
+  if (rem > 0) {
+    if (found.s > take.s) {
+      take.s++
+      change = 64 - rem
+      rem = 0
+    } else if (found.g > take.g) {
+      take.g++
+      change = 4096 - rem
+      rem = 0
+    }
+  }
+  return { take: take, remaining: rem, change: change }
+}
+
+// Takes up to `debt` in coins from everything `player` carries. Returns {paid, remaining}.
+function spCollectDebt(server, player, debt) {
+  var count = spCoinSweep(player, false, { g: 0, s: 0, b: 0 })
+  var plan = spCoinPlan(count.found, debt)
+  if (plan.take.g + plan.take.s + plan.take.b > 0) {
+    spCoinSweep(player, true, { g: plan.take.g, s: plan.take.s, b: plan.take.b })
+  }
+  if (plan.change > 0) {
+    var cs = Math.floor(plan.change / 64)
+    var cb = plan.change % 64
+    var who = cpQuoted(player)
+    if (cs > 0) server.runCommandSilent('give ' + who + ' ' + SP_COIN_ITEM.s + ' ' + cs)
+    if (cb > 0) server.runCommandSilent('give ' + who + ' ' + SP_COIN_ITEM.b + ' ' + cb)
+  }
+  return { paid: debt - plan.remaining, remaining: plan.remaining, change: plan.change }
+}
+
+// /strajaprison sentence <player> <amount> [reason] — coins first, then the cell + the mine.
+function spSentenceCmd(ctx, reasonArg) {
+  var player = null
+  try { player = $SP_EntityArgument.getPlayer(ctx, 'player') } catch (e) { player = null }
+  if (player === null || player === undefined) {
+    ctx.source.sendSystemMessage(Text.literal('§c[Prison] jucătorul nu e online.'))
+    return 0
+  }
+  if (spIsExempt(player)) {
+    ctx.source.sendSystemMessage(Text.literal('§c[Prison] ' + cpPlayerName(player) + ' e exempt — nu poate fi sancționat.'))
+    return 0
+  }
+  var amount = $SP_IntegerArgument.getInteger(ctx, 'amount')
+  var server = ctx.source.server
+  var name = cpPlayerName(player)
+  var reason = reasonArg !== null && reasonArg !== undefined && String(reasonArg).length > 0 ? String(reasonArg) : 'sentință'
+  var res = spCollectDebt(server, player, amount)
+  spLogEvent('sentenced', name, '', reason + ' | datorie ' + amount + ' | plătit din monede ' + res.paid + ' | rămas ' + res.remaining)
+  if (res.remaining <= 0) {
+    player.tell(Text.literal('§a[Straja] Amenda de §f' + amount + ' alamă§a (' + reason + ') a fost luată din monedele tale — nu intri în arest.'))
+    ctx.source.sendSystemMessage(Text.literal('§a[Prison] ' + name + ' a plătit integral ' + amount + ' alamă din monede — fără arest.'))
+    return 1
+  }
+  var existing = cpJailEntry(name)
+  if (existing !== null) {
+    existing.debt = (existing.debt || 0) + res.remaining
+    existing.sentence = (existing.sentence || 0) + amount
+    existing.paid = (existing.paid || 0) + res.paid
+    existing.work = true
+    cpJailSave(server)
+    player.tell(Text.literal('§c[Straja] Datoria ta a crescut cu §f' + res.remaining + ' alamă§c (' + reason + '). Total de plătit: §f' + existing.debt + '§c.'))
+    ctx.source.sendSystemMessage(Text.literal('§a[Prison] ' + name + ' era deja în arest — datoria e acum ' + existing.debt + '.'))
+    return 1
+  }
+  if (spMineBox(server) === null) {
+    ctx.source.sendSystemMessage(Text.literal('§e[Prison] atenție: mina e oprită/neconfigurată — datoria nu poate fi muncită până o pornești (/prisonmine on).'))
+  }
+  CP_JAIL.pendingDebt[name] = { debt: res.remaining, total: amount, paid: res.paid }
+  cpJailSave(server)
+  player.tell(Text.literal('§c[Straja] Sentință: §f' + amount + ' alamă§c. Din monede s-au luat §f' + res.paid + '§c — rămân §f' + res.remaining + '§c de muncit la mină.'))
+  cpBeginArrest(server, player, name, reason + ' — datorie ' + res.remaining + ' alamă', cpSiteNearest(server, player))
+  ctx.source.sendSystemMessage(Text.literal('§a[Prison] ' + name + ' sentențiat: ' + amount + ' alamă, plătit ' + res.paid + ', rămas ' + res.remaining + ' (la celulă + mină).'))
+  return 1
+}
+
+// /strajaprison paydebt <name> <amount> — called by the market after a sale (console level); at 0 → released.
+function spPayDebtCmd(ctx, name, amount) {
+  var entry = cpJailEntry(name)
+  if (entry === null || !(entry.debt > 0)) {
+    return 0
+  }
+  var server = ctx.source.server
+  var realName = name
+  for (var k in CP_JAIL.jailed) {
+    if (CP_JAIL.jailed[k] === entry) {
+      realName = k
+      break
+    }
+  }
+  var apply = Math.min(entry.debt, amount)
+  entry.debt -= apply
+  entry.paid = (entry.paid || 0) + apply
+  cpJailSave(server)
+  spLogEvent('debt-paid', realName, '', apply + ' alamă din muncă | rămas ' + entry.debt)
+  var player = cpOnlinePlayer(server, realName)
+  if (entry.debt > 0) {
+    if (player !== null && player !== undefined) {
+      player.tell(Text.literal('§a[Straja] Datorie plătită: §f' + apply + '§a — mai ai §f' + entry.debt + ' alamă§a de muncit.'))
+    }
+    return 1
+  }
+  entry.work = false
+  if (player !== null && player !== undefined) {
+    player.tell(Text.literal('§a§l[Straja] Datoria e achitată! §r§aEști liber.'))
+  }
+  cpRelease(ctx, realName, 0)
+  return 1
+}
+
 function cpSeizeAll(server, player, level, site, pcIdx) {
   var stats = { items: 0, contra: 0, left: 0 }
   var evList = cpSiteEvidenceList(site)
@@ -1113,6 +1480,33 @@ function cpSeizeAll(server, player, level, site, pcIdx) {
       }
     }
   } catch (e) { /* no curios — inventory only */ }
+  // Backpacked: backpacks live outside the inventory AND curios (a synced player data list), so the
+  // loops above never saw them. Flush each backpack's contents into its stack, take them off the
+  // player, and store them like any other item (contraband inside still goes to evidence).
+  try {
+    if ($SP_BackpackHelper !== null) {
+      var bpN = player['backpacked$GetBackpackInventoryCount']()
+      for (var bi = 0; bi < bpN; bi++) {
+        var bpInv = player['backpacked$GetBackpackInventory'](bi)
+        if (bpInv !== null && bpInv !== undefined) {
+          bpInv.saveItemsToStack()
+        }
+      }
+      var bps = $SP_BackpackHelper.removeAllBackpacks(player)
+      for (var bk = 0; bk < bps.size(); bk++) {
+        var bst = bps.get(bk)
+        if (bst === null || bst.isEmpty()) {
+          continue
+        }
+        place(bst)
+        if (!bst.isEmpty()) {
+          $SP_BackpackHelper.equipBackpack(player, bst) // chests full — it stays on them, as with other items
+        }
+      }
+    }
+  } catch (e) {
+    console.error('[Prison] backpack seizure failed for ' + cpPlayerName(player) + ' :: ' + e)
+  }
   if (stats.left > 0) {
     console.warn('[Prison] chests full/missing — ' + stats.left + ' item(s) stayed on ' + cpPlayerName(player))
   }
@@ -1403,13 +1797,7 @@ function cpJailSpot(name) {
 function cpTpJail(server, player) {
   var jt = cpJailSpot(cpPlayerName(player))
   if (jt === null || jt === undefined) {
-    // Safe fallback detention coordinate: player's current location in holding
-    try {
-      var dim = String(player.level.dimension)
-      jt = { dim: dim, x: Math.floor(player.x), y: Math.floor(player.y), z: Math.floor(player.z), yaw: 0 }
-    } catch (e) {
-      return false
-    }
+    return false
   }
   var yaw = jt.yaw === undefined ? 0 : jt.yaw
   server.runCommandSilent(
@@ -1564,27 +1952,22 @@ function cpGiveReport(server, player, name, reason, found, confiscated) {
     when = String(Date.now())
   }
 
-  var isDbg = spIsDebug(server)
   var pages = []
-  pages.push('§0§lGARNIZOANA STRAJA§r\n§8(Pecete din ceară roșie)\n\n§0§lPROCES-VERBAL§r\n§0Învinuit: §4' + name + '\n§0Data: §8' + when + '\n§0Temei: §0' + reason)
+  pages.push('§0§lPROCES-VERBAL DE AREST§r\n§0\nInculpat: ' + name + '\nData: ' + when + '\nMotiv: ' + reason)
 
   var items = []
   for (var id in found) {
-    if (isDbg) {
-      items.push(found[id].count + 'x ' + found[id].name + ' §8[' + id + ']')
-    } else {
-      items.push(found[id].count + 'x ' + found[id].name)
-    }
+    items.push(found[id].count + 'x ' + found[id].name + ' (' + id + ')')
   }
   if (items.length === 0) {
-    items.push('niciunul (ordin direct de interdicție)')
+    items.push('niciunul (interdicție activă)')
   }
   var per = 0
-  var buf = '§0Bunuri reținute ca probă' + (confiscated ? '' : ' §8(nedepuse — lipsă spațiu)') + ':\n\n'
+  var buf = '§0Marfă reținută' + (confiscated ? '' : ' §8(nedepusă — cufăr lipsă)') + ':\n'
   for (var i = 0; i < items.length; i++) {
-    buf += '§8• §0' + items[i] + '\n'
+    buf += '§8- §0' + items[i] + '\n'
     per++
-    if (per === 9) {
+    if (per === 11) {
       pages.push(buf)
       buf = ''
       per = 0
@@ -1594,7 +1977,7 @@ function cpGiveReport(server, player, name, reason, found, confiscated) {
     pages.push(buf)
   }
 
-  pages.push('§0§lDISPOZIȚIE OFICIALĂ:§r\n\n§0Deținutul rămâne sub pază strictă până la examinarea de către ' + SP_JAILERS.join('/') + '.\n\n§8Bunurile permise au fost zăvorâte în lada personală din temniță.')
+  pages.push('§0Dispoziție:\nEliberarea și ștergerea numelui se fac numai de ' + SP_JAILERS.join('/') + '.\nBunurile personale → cufărul personal; contrabanda rămâne probă la Straja.')
 
   var snbt = []
   for (var p = 0; p < pages.length; p++) {
@@ -1603,7 +1986,7 @@ function cpGiveReport(server, player, name, reason, found, confiscated) {
     snbt.push('\'' + JSON.stringify({ text: pages[p] }).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\'')
   }
   var give = 'give ' + cpQuoted(player) +
-    ' minecraft:written_book[minecraft:written_book_content={title:\'Pergament de Arestare\',author:\'Garnizoana Straja\',pages:[' +
+    ' minecraft:written_book[minecraft:written_book_content={title:\'Proces-verbal\',author:\'Straja\',pages:[' +
     snbt.join(',') + ']}]'
   try {
     server.runCommandSilent(give)
@@ -1654,6 +2037,7 @@ function cpFinishArrest(server, name, reason, site) {
     pd.putBoolean('cpJailed', true)
     pd.putBoolean('cpFugitive', false)
     server.runCommandSilent('tag ' + cpQuoted(name) + ' add cp_jailed')
+    spPrisonerTeamApply(server, player)
 
     // custody consumes the hunt — thief/wanted flags clear and the pre-crime
     // rep is restored so guards don't kill a prisoner inside
@@ -1666,12 +2050,8 @@ function cpFinishArrest(server, name, reason, site) {
       console.error('[Prison] no jail spot configured (use `strajaprison pick cell` or `cellhere`/`jailhere`) — ' + name + ' flagged jailed but not moved')
     }
 
-    server.runCommandSilent('playsound minecraft:block.iron_door.close player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 0.7')
-    server.runCommandSilent('playsound minecraft:block.wooden_door.close player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 0.9')
-    player.tell(Text.literal('§8(Ușa grea de fier se trântește în urma ta cu un bubuit ecou în piatră)'))
-    player.tell(Text.literal('§6[Temnicer] §7„Bun venit la răcoare. Până nu vine ' + SP_JAILERS.join('/') + ' cu ordinul de eliberare, aici îți numeri zilele.”'))
-    player.tell(Text.literal('§7(Un pergament cu sigiliu de ceară ți-a fost strecurat pe sub grilaj: Procesul-verbal de arestare.)'))
     cpGiveReport(server, player, name, reason, found, confiscated)
+    player.tell(Text.literal('§cEști în arestul Straja. Numai ' + SP_JAILERS.join('/') + ' te poate elibera.'))
   }
 
   var siteName = site !== null && site !== undefined ? site.name : null
@@ -1685,6 +2065,15 @@ function cpFinishArrest(server, name, reason, site) {
     arrests: (prev !== null && prev.arrests !== undefined ? prev.arrests : 0) + 1,
     pchest: pcIdx,
     jcell: jcIdx
+  }
+  var pend = CP_JAIL.pendingDebt[name]
+  if (pend !== undefined) {
+    var newEntry = CP_JAIL.jailed[name]
+    newEntry.debt = pend.debt
+    newEntry.sentence = pend.total
+    newEntry.paid = pend.paid
+    newEntry.work = true // pe programul de muncă: poate merge la mină până își plătește datoria
+    delete CP_JAIL.pendingDebt[name]
   }
   cpJailSave(server)
   spLogEvent('arrested', name, inv === '' ? '(offline la arest)' : inv, reason + ' | confiscat=' + confiscated + (siteName !== null ? ' | punct=' + siteName : ''))
@@ -1708,7 +2097,7 @@ function cpFinishArrest(server, name, reason, site) {
 // jailed.
 function cpRelease(ctx, name, fine) {
   var src = cpCmdSourcePlayer(ctx)
-  if (src !== null && !ctx.source.hasPermission(2) && SP_JAILERS.indexOf(cpPlayerName(src)) < 0) {
+  if (src !== null && !ctx.source.hasPermission(3) && SP_JAILERS.indexOf(cpPlayerName(src)) < 0) {
     ctx.source.sendSystemMessage(Text.literal('§c[Prison] numai ' + SP_JAILERS.join('/') + ' poate elibera prizonieri.'))
     return 0
   }
@@ -1747,6 +2136,7 @@ function cpRelease(ctx, name, fine) {
     pd.putBoolean('cpJailed', false)
     pd.putBoolean('cpFugitive', false)
     server.runCommandSilent('tag ' + cpQuoted(realName) + ' remove cp_jailed')
+    spPrisonerTeamRestore(server, player)
     // their personal chest pours back — the contraband pile keeps its share
     if (pcIdx >= 0) {
       cpPourPChest(server, player, pcIdx)
@@ -1779,11 +2169,10 @@ function cpRelease(ctx, name, fine) {
       )
     }
     cpTitle(server, player, SP_FREE_TITLE, SP_FREE_SUBTITLE)
-    server.runCommandSilent('playsound minecraft:block.iron_door.open player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 1.0')
-    server.runCommandSilent('playsound minecraft:item.armor.equip_leather player ' + cpQuoted(player) + ' ~ ~ ~ 1.0 1.2')
-    player.tell(Text.literal('§6[Temnicer] §7„Ordinul de grațiere a sosit. Lada ți-a fost deblocată, ia-ți calabalâcul și cară-te înainte să ne răzgândim.”'))
     if (fine > 0) {
-      player.tell(Text.literal('§6[Temnicer] §7„...și vezi că s-a consemnat amenda de ' + fine + ' galbeni la vistierie. Să n-aud de tine!”'))
+      player.tell(Text.literal('§eAi fost eliberat cu o amendă de ' + fine + '. Numele ți-a fost șters.'))
+    } else {
+      player.tell(Text.literal('§aAi fost eliberat și numele ți-a fost șters.'))
     }
   }
 
@@ -1884,7 +2273,7 @@ function cpCmdJailed(ctx) {
   for (var k in CP_JAIL.jailed) {
     var e = CP_JAIL.jailed[k]
     var fine = CP_JAIL.fines[k] || 0
-    names.push(k + ' §7(' + e.status + (fine > 0 ? ', amendă ' + fine : '') + ')')
+    names.push(k + ' §7(' + e.status + (fine > 0 ? ', amendă ' + fine : '') + (e.debt > 0 ? ', datorie ' + e.debt : '') + ')')
   }
   if (names.length === 0) {
     ctx.source.sendSystemMessage(Text.literal('§7[Prison] arestul e gol — niciun prizonier, niciun fugitiv.'))
@@ -1998,25 +2387,23 @@ var SP_CFG_DIRTY = true
 // Every ~2s: enforce adventure on the jailed, reconcile flags against the
 // register, and flag fugitives found beyond the jail radius. The checkpoint
 // cfg view refreshes on the same cadence so site/exempt changes propagate.
-if (typeof ServerEvents !== 'undefined') {
-  ServerEvents.tick(function (event) {
-    if (SP_CFG_DIRTY) {
-      spCfgLoad(event.server)
-      cpJailLoad(event.server)
-      SP_CFG_DIRTY = false
-    }
-    spJailSweepTicks++
-    if (spJailSweepTicks % 40 === 0) {
-      cpSweepJail(event.server)
-    }
-  })
-}
+ServerEvents.tick(function (event) {
+  if (SP_CFG_DIRTY) {
+    spCfgLoad(event.server)
+    cpJailLoad(event.server)
+    SP_CFG_DIRTY = false
+  }
+  spJailSweepTicks++
+  if (spJailSweepTicks % 40 === 0) {
+    spCfgLoad(event.server) // refresh read-only checkpoint view too
+    cpSweepJail(event.server)
+  }
+})
 
 // A prisoner who logs out stays jailed: on the next login they go straight
 // back to the cell, in adventure, with their flags re-applied. A fugitive who
 // relogs is treated as recaptured (they wake up inside the cell anyway).
-if (typeof PlayerEvents !== 'undefined') {
-  PlayerEvents.loggedIn(function (event) {
+PlayerEvents.loggedIn(function (event) {
   var p = event.player
   if (p === null || p === undefined) {
     return
@@ -2063,7 +2450,7 @@ if (typeof PlayerEvents !== 'undefined') {
     cpJailSave(server)
     cpPourPChest(server, p, pendIdx)
     cpFreePChest(server, pendIdx)
-    p.tell(Text.literal('§a[Temnicer] §7„Ți-ai recuperat bunurile din cufărul personal.”'))
+    p.tell(Text.literal('§a[Prison] Bunurile ți-au fost returnate din cufărul personal.'))
   }
 
   var entry = cpJailEntry(name)
@@ -2101,7 +2488,7 @@ if (typeof PlayerEvents !== 'undefined') {
     cpSetGameMode(p, 'adventure')
   }
   cpTpJail(server, p)
-  p.tell(Text.literal('§c[Temnicer] §7„Încă ești sub arestul Garnizoanei. Numai ' + SP_JAILERS.join('/') + ' poate semna ordinul de eliberare.”'))
+  p.tell(Text.literal('§cEști în continuare în arestul Straja. Numai ' + SP_JAILERS.join('/') + ' te poate elibera.'))
 })
 
 // Death: a flag carrier (thief / wanted / fugitive) who dies still gets
@@ -2168,12 +2555,10 @@ PlayerEvents.respawned(function (event) {
   }
   cpTpJail(server, p)
 })
-}
 
 // Pick handler — cell floors + personal chest pairs (the 'spPick' flag can be
 // armed from here OR from `strajacheckpoint pick cell|pchest`, which forwards
 // shared infrastructure picks to this service).
-if (typeof BlockEvents !== 'undefined') {
 BlockEvents.rightClicked(event => {
   var player = event.player
   if (player === null || player === undefined) {
@@ -2306,7 +2691,6 @@ BlockEvents.rightClicked(event => {
 
 
 })
-}
 
 // ============================================================================
 // Command surface — `strajaprison` is THE custody API. Command blocks, NPCs
@@ -2321,15 +2705,9 @@ function spArrestCmd(ctx, reasonArg) {
     ctx.source.sendSystemMessage(Text.literal('§c[Prison] jucătorul nu e online.'))
     return 0
   }
-  var isExemptListed = spIsExemptListed(cpPlayerName(player))
-  if (isExemptListed) {
-    ctx.source.sendSystemMessage(Text.literal('§c[Prison] ' + cpPlayerName(player) + ' este pe lista de scutiri — nu poate fi arestat.'))
+  if (spIsExempt(player)) {
+    ctx.source.sendSystemMessage(Text.literal('§c[Prison] ' + cpPlayerName(player) + ' e exempt — nu poate fi arestat.'))
     return 0
-  }
-  var mode = cpGameModeName(player)
-  if (mode !== 'survival' && mode !== 'adventure') {
-    // Admin explicit arrest or test simulation: switch to survival mode
-    cpSetGameMode(player, 'survival')
   }
   var server = ctx.source.server
   var name = cpPlayerName(player)
@@ -2497,7 +2875,6 @@ function spCmdHelp(ctx, topic) {
   return 1
 }
 
-if (typeof ServerEvents !== 'undefined') {
 ServerEvents.commandRegistry(event => {
   var Commands = event.commands
 
@@ -2510,6 +2887,17 @@ ServerEvents.commandRegistry(event => {
           .executes(ctx => spArrestCmd(ctx, null))
           .then(Commands.argument('reason', $SP_StringArgument.greedyString())
             .executes(ctx => spArrestCmd(ctx, $SP_StringArgument.getString(ctx, 'reason'))))))
+      .then(Commands.literal('sentence')
+        .then(Commands.argument('player', $SP_EntityArgument.player())
+          .then(Commands.argument('amount', $SP_IntegerArgument.integer(1, 100000000))
+            .executes(ctx => spSentenceCmd(ctx, null))
+            .then(Commands.argument('reason', $SP_StringArgument.greedyString())
+              .executes(ctx => spSentenceCmd(ctx, $SP_StringArgument.getString(ctx, 'reason')))))))
+      .then(Commands.literal('paydebt')
+        .requires(src => src.hasPermission(3))
+        .then(Commands.argument('name', $SP_StringArgument.word()).suggests(cpJailedSuggest)
+          .then(Commands.argument('amount', $SP_IntegerArgument.integer(1, 100000000))
+            .executes(ctx => spPayDebtCmd(ctx, $SP_StringArgument.getString(ctx, 'name'), $SP_IntegerArgument.getInteger(ctx, 'amount'))))))
       .then(Commands.literal('release')
         .then(Commands.argument('name', $SP_StringArgument.word()).suggests(cpJailedSuggest)
           .executes(ctx => cpRelease(ctx, $SP_StringArgument.getString(ctx, 'name'), 0))
@@ -2546,12 +2934,10 @@ ServerEvents.loaded(event => {
   spCfgLoad(event.server)
   cpJailLoad(event.server)
   if (SP_CFG.jailTarget === null && SP_CFG.jcells.length === 0) {
-    console.warn('[Prison] no jail spot configured (use `strajaprison pick cell`, `cellhere`, or `jailhere`) — arrests will flag but not move prisoners!')
+    console.error('[Prison] no jail spot configured (use `strajaprison pick cell`, `cellhere`, or `jailhere`) — arrests will flag but not move prisoners!')
   }
   if (SP_CFG.pcells.length === 0) {
     console.info('[Prison] no personal chests configured (`strajaprison pick pchest`) — belongings will be returned/dropped instead.')
   }
   console.info('[Prison] loaded — ' + Object.keys(CP_JAIL.jailed).length + ' in register, ' + SP_CFG.jcells.length + ' cells, ' + SP_CFG.pcells.length + ' personal chests')
 })
-}
-

@@ -73,16 +73,16 @@ Production efficiency scales non-linearly with kinetic and thermal automation:
 
 ---
 
-## 🚀 Installation & Deployment (v1.3.5)
+## 🚀 Installation & Deployment (v1.3.6)
 
 > [!IMPORTANT]
 > **Patch / Expansion Notice**: The Brass Age is an expansion overlay designed to be installed **OVER an existing Rustic Craft II instance** (Minecraft 1.21.1 / NeoForge 21.1.248).  
 > **Do NOT import this release ZIP as a new profile in CurseForge or Prism Launcher!** An empty profile lacks the 150+ base modpack dependencies (`kubejs`, `create`, etc.) and will fail to boot with dependency errors (`tacz_js requires kubejs`, `tacz_c requires create`).
 
-Download the latest packages from [**GitHub Releases (v1.3.5)**](https://github.com/DurdeuVlad/the-brass-age-update/releases/tag/v1.3.5):
-- 📦 **All-In-One Package**: `TheBrassAge-Update-All-In-One-v1.3.5.zip` *(Recommended for Singleplayer & Drop-in modpack updates)*
-- 🖥️ **Client Package**: `TheBrassAge-Update-Client-v1.3.5.zip` *(For players connecting to remote dedicated servers)*
-- 🖧 **Server Package**: `TheBrassAge-Update-Server-v1.3.5.zip` *(For dedicated Linux / Windows server administrators)*
+Download the latest packages from [**GitHub Releases (v1.3.6)**](https://github.com/DurdeuVlad/the-brass-age-update/releases/tag/v1.3.6):
+- 📦 **All-In-One Package**: `TheBrassAge-Update-All-In-One-v1.3.6.zip` *(Recommended for Singleplayer & Drop-in modpack updates)*
+- 🖥️ **Client Package**: `TheBrassAge-Update-Client-v1.3.6.zip` *(For players connecting to remote dedicated servers)*
+- 🖧 **Server Package**: `TheBrassAge-Update-Server-v1.3.6.zip` *(For dedicated Linux / Windows server administrators)*
 
 ---
 
@@ -117,7 +117,7 @@ For standalone Linux systems (Ubuntu, Debian, Fedora, Arch, Alpine), Pterodactyl
 cd /path/to/rusticcraft2/
 
 # 2. Extract the update archive into the instance root
-unzip -o /path/to/TheBrassAge-Update-Server-v1.3.5.zip
+unzip -o /path/to/TheBrassAge-Update-Server-v1.3.6.zip
 
 # 3. Grant execute permissions and run the patcher
 chmod +x install_patch.sh
@@ -127,7 +127,7 @@ chmod +x install_patch.sh
 #### Option B: Headless Server One-Liner (curl / wget)
 ```bash
 # Direct download and silent merge on a remote Linux server
-wget -qO /tmp/brass_age.zip https://github.com/DurdeuVlad/the-brass-age-update/releases/download/v1.3.5/TheBrassAge-Update-Server-v1.3.5.zip \
+wget -qO /tmp/brass_age.zip https://github.com/DurdeuVlad/the-brass-age-update/releases/download/v1.3.6/TheBrassAge-Update-Server-v1.3.6.zip \
   && unzip -qo /tmp/brass_age.zip -d /var/games/minecraft/rusticcraft2/ \
   && chmod +x /var/games/minecraft/rusticcraft2/install_patch.sh \
   && /var/games/minecraft/rusticcraft2/install_patch.sh \
