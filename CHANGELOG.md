@@ -4,6 +4,22 @@ All notable changes to **The Brass Age** modpack expansion for **Rustic Craft II
 
 ---
 
+## [v1.3.7] — 2026-10-18 (Flintlock Ballistics Calibration Fine-Tuning)
+
+This bugfix release fine-tunes the aimed inaccuracy values for flintlock firearms following combat balancing review:
+
+### 🎯 Ballistics Accuracy Recalibration
+1. **FK15 Smoothbore Volley Musket**:
+   - **Aimed Inaccuracy (`aim`)**: Recalibrated from `0.45°` to `0.70°`. Retains reliable center-mass torso hits at 10–25 blocks while re-introducing authentic smoothbore dispersion beyond 30 blocks, preventing excessive long-range sniping.
+   - Retains flat black powder velocity (150 m/s) and reduced gravity drop (0.024).
+2. **FK15P Smoothbore Officer / Dragoon Pistol**:
+   - **Aimed Inaccuracy (`aim`)**: Recalibrated from `0.70°` to `1.40°`. Calibrated for dependable close-quarters defense at 5–15 blocks with authentic sidearm dispersion at medium distances.
+   - Retains velocity (110 m/s) and gravity (0.030).
+3. **Synchronization**:
+   - Both `server/tacz` and `client/tacz` gunpack archives (`ChocolateMan V1.2.6a1-Public Edition+1.21.1.zip`), as well as server & client runtime KubeJS ballistics intercepts (`flintlock_ballistics.js`), updated with 100% parity.
+
+---
+
 ## [v1.3.6] — 2026-10-18 (Ballistics Recalibration, Visible Weapons on Back & Straja Penitentiary Reconciliation)
 
 This release resolves the reticle-to-bullet trajectory mismatch, buffs close/medium-range flintlock accuracy to guarantee reliable chest hits at 10–25 blocks without sniper powercreep, enables visible back-holstered firearms, and fully reconciles the new Straja Penitentiary system:

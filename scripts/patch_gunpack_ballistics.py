@@ -53,7 +53,7 @@ for p in paths:
                     'move': 4.5,
                     'sneak': 0.25,
                     'lie': 0.35,
-                    'aim': 0.45
+                    'aim': 0.7
                 }
                 data['bullet']['speed'] = 150
                 data['bullet']['gravity'] = 0.024
@@ -67,7 +67,7 @@ for p in paths:
                     'move': 3.8,
                     'sneak': 0.45,
                     'lie': 0.50,
-                    'aim': 0.70
+                    'aim': 1.4
                 }
                 data['bullet']['speed'] = 110
                 data['bullet']['gravity'] = 0.030
