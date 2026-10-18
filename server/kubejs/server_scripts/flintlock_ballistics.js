@@ -14,13 +14,13 @@ if (typeof TaCZServerEvents !== 'undefined') {
             data.script = 'qkl:delayshoot_gun_logic'
             data.script_param = { shoot_delay: 0.0 }
             
-            // Calibrated Dispersion: pinpoint ADS torso hits at 10-25m, effective volleys at 30-50m, wide spread past 60m
+            // Calibrated Dispersion: reliable ADS torso hits at 10-25m, effective volleys at 30-50m, wide spread past 60m
             if (data.inaccuracy) {
                 data.inaccuracy.stand = 2.4
                 data.inaccuracy.move = 4.5
                 data.inaccuracy.sneak = 0.25 // Taking a knee/bracing gives razor-sharp hold
                 data.inaccuracy.lie = 0.35
-                data.inaccuracy.aim = 0.45 // Reliable chest hit at 10-25m without becoming a 100m sniper
+                data.inaccuracy.aim = 0.7 // Calibrated chest hit at 10-25m without becoming a modern sniper
             }
             
             // Black Powder External Ballistics: heavy round lead ball trajectory
@@ -55,7 +55,7 @@ if (typeof TaCZServerEvents !== 'undefined') {
                 data.inaccuracy.move = 3.8
                 data.inaccuracy.sneak = 0.45
                 data.inaccuracy.lie = 0.50
-                data.inaccuracy.aim = 0.70 // Reliable torso hit at 10-15m, sidearm scatter past 20m
+                data.inaccuracy.aim = 1.4 // Reliable close-quarters defense at 10-15m, sidearm scatter past 20m
             }
             
             if (data.bullet) {
