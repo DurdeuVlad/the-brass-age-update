@@ -1402,15 +1402,30 @@ function runStrajaAutomatedTests(server, src) {
 
     var foundCount = 0
     var t1Found = 0, t2Found = 0, t3Found = 0
+    var recipesById = {}
     if (rm) {
-        var recipesById = {}
         try {
             if (typeof rm.getRecipes === 'function') {
                 var all = rm.getRecipes()
                 var it = all.iterator()
                 while (it.hasNext()) {
                     var rHolder = it.next()
-                    var idStr = String(rHolder.id ? rHolder.id() : (rHolder.getId ? rHolder.getId() : ''))
+                    var idStr = ''
+                    if (rHolder) {
+                        try {
+                            if (typeof rHolder.id === 'function') {
+                                var rKey = rHolder.id()
+                                idStr = (rKey && typeof rKey.location === 'function') ? String(rKey.location()) : String(rKey)
+                            }
+                        } catch (eId) {}
+                        if (!idStr) {
+                            idStr = String(rHolder)
+                        }
+                        if (idStr.indexOf(' / ') !== -1) {
+                            var parts = idStr.split(' / ')
+                            if (parts.length > 1) idStr = parts[1].replace(']', '').trim()
+                        }
+                    }
                     if (idStr) recipesById[idStr] = true
                 }
             }
@@ -1610,6 +1625,84 @@ function runStrajaAutomatedTests(server, src) {
 
     assertTest('Anti-Dupe Nicovală: Previzualizarea din slotul 2 al nicovalei NU este dropată', droppedItems.length === 0, 'Dropate: ' + droppedItems.length + ' arme (trebuie să fie 0)')
     assertTest('Anti-Dupe Nicovală: Arma din slotul 2 al nicovalei rămâne intactă în slot', !mockAnvilSlot2.getItem().isEmpty(), 'Slot 2 păstrat intact')
+
+    // --- TEST SUITE 9: The Brass Age - Gun Crafting Prohibition & Flintlocks Preservation ---
+    log('§e▶ 9. Verificare Dezactivare Arme Moderne & Păstrare Muschete (The Brass Age)')
+    var prohibitedSample = [
+        'tacz:gun/aa12', 'tacz:gun/ak47', 'tacz:gun/m4a1', 'tacz:gun/glock_17', 'tacz:gun/deagle',
+        'tacz:gun/awp', 'tacz:gun/rpg7', 'tacz:gun/m82a2', 'tacz:gun/hk_g3', 'tacz:gun/p90',
+        'hamster:gun/auto5', 'hamster:gun/colt1873', 'hamster:gun/m1garand', 'hamster:gun/mosin91',
+        'hamster:gun/mp18', 'hamster:gun/win1873', 'hamster:gun/sks', 'hamster:gun/type99',
+        'qkl:gun/1860', 'qkl:gun/cbr11', 'qkl:gun/mg15', 'qkl:gun/mua73', 'qkl:gun/at50',
+        'tacz:ammo/9mm', 'tacz:ammo/556x45', 'tacz:ammo/12g', 'tacz:ammo/50bmg', 'tacz:ammo/rpg_rocket',
+        'tacz:gun_smith_table', 'tacz:ammo_workbench', 'tacz:attachment_workbench',
+        'qkl:cr_workbench', 'hamster:oldworkbench'
+    ]
+
+    var leakedCount = 0
+    var leakedSample = []
+    if (typeof recipesById !== 'undefined' && recipesById) {
+        prohibitedSample.forEach(function(pId) {
+            if (recipesById[pId]) {
+                leakedCount++
+                leakedSample.push(pId)
+            }
+        })
+    }
+
+    assertTest('Arme Moderne & Bancuri Prohibite (33 eșantioane verificate)', leakedCount === 0, leakedCount === 0 ? '0 rețete active (complet eliminate)' : 'Scurgere detectată: ' + leakedSample.join(', '))
+
+    var totalModernGuns = 0
+    var totalModernAmmo = 0
+    var totalGunTables = 0
+    if (typeof recipesById !== 'undefined' && recipesById) {
+        for (var rk in recipesById) {
+            if (rk.indexOf('tacz:gun/') === 0 || rk.indexOf('hamster:gun/') === 0 || (rk.indexOf('qkl:gun/') === 0 && rk !== 'qkl:gun/fk15' && rk !== 'qkl:gun/fk15p')) {
+                totalModernGuns++
+            }
+            if (rk.indexOf('tacz:ammo/') === 0 || rk.indexOf('hamster:ammo/') === 0 || (rk.indexOf('qkl:ammo/') === 0 && rk !== 'qkl:ammo/16mm')) {
+                totalModernAmmo++
+            }
+            if (rk === 'tacz:gun_smith_table' || rk === 'tacz:ammo_workbench' || rk === 'tacz:attachment_workbench' || rk === 'qkl:cr_workbench' || rk === 'hamster:oldworkbench') {
+                totalGunTables++
+            }
+        }
+    }
+
+    assertTest('Rețete Arme Neconforme în RecipeManager: 0', totalModernGuns === 0, totalModernGuns + ' rețete de arme neconforme active')
+    assertTest('Rețete Muniție Modernă în RecipeManager: 0', totalModernAmmo === 0, totalModernAmmo + ' rețete de muniție modernă active')
+    assertTest('Bancuri TacZ / Gunsmithing în RecipeManager: 0', totalGunTables === 0, totalGunTables + ' bancuri de lucru active')
+
+    var brassAgeRecipes = [
+        'kubejs:flintlocks/pistol',
+        'kubejs:flintlocks/rifle',
+        'kubejs:flintlocks/rifle_jaeger',
+        'kubejs:flintlocks/ammo_16mm',
+        'kubejs:flintlocks/flintlock_mechanism',
+        'kubejs:flintlocks/pistol_barrel',
+        'kubejs:flintlocks/rifle_barrel',
+        'kubejs:flintlocks/rifled_barrel',
+        'kubejs:flintlocks/tempered_gun_steel'
+    ]
+    var brassAgeFound = 0
+    var missingBrass = []
+    brassAgeRecipes.forEach(function(bId) {
+        var exists = (typeof recipesById !== 'undefined' && recipesById && !!recipesById[bId])
+        if (!exists && rm) {
+            try {
+                var resLoc = Utils.id(bId)
+                var opt = (typeof rm.byKey === 'function') ? rm.byKey(resLoc) : null
+                if (opt && opt.isPresent && opt.isPresent()) exists = true
+            } catch (e2) {}
+        }
+        if (exists) {
+            brassAgeFound++
+        } else {
+            missingBrass.push(bId)
+        }
+    })
+    assertTest('Rețete Autentice Muschete Create (The Brass Age): active', brassAgeFound === brassAgeRecipes.length, brassAgeFound + '/' + brassAgeRecipes.length + ' rețete prezente')
+
 
     log('§6§l╠════════════════════════════════════════════════════════╣')
     log('§6§l║ REZULTAT FINAL: ' + (passed === total ? '§a§lTOATE TESTELE AU TRECUT (' + passed + '/' + total + ')' : '§c§lEȘECURI DETECTATE (' + passed + '/' + total + ')') + ' §6§l║')

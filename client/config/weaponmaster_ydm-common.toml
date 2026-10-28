@@ -6,9 +6,9 @@
 	#Put in the name, x,y,z, x-y-z rotation values and the slot where to apply the changes 1-9, shield, banner, offhand! Separate items with a space character
 	uniqueitems = "name,0,0,0,0,0,0,0,1"
 	#Whitelists item that are normally not visible
-	whitelist = "empty,totem_of_undying,modern_kinetic_gun,tacz:modern_kinetic_gun"
-	#Blacklists item that are normally visible
-	blacklist = "empty"
+	whitelist = "empty,totem_of_undying"
+	#Blacklists item that are normally visible
+	blacklist = "empty,modern_kinetic_gun,tacz:modern_kinetic_gun"
 	#Slot 1
 	s1 = true
 	#Slot 2

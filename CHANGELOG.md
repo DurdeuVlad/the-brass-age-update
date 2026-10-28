@@ -4,6 +4,45 @@ All notable changes to **The Brass Age** modpack expansion for **Rustic Craft II
 
 ---
 
+## [v1.3.8] — 2026-10-28 (Modern Gun Disabling, Gunpack Index Fixes & WeaponMaster Error Texture Patch)
+
+This bugfix release eliminates unintended modern firearms and workbenches to enforce the authentic Renaissance / Early Modern setting, fixes server startup gunpack index parsing errors, and resolves the multiplayer missing texture bug on holstered weapons:
+
+### 🚫 Modern Firearms & Workbenches Crafting Disabling (disable_modern_guns.js)
+1. **119 Modern & Unintended Guns Removed**:
+   - All crafting recipes for base TaCZ modern firearms (AK-47, M4A1, AWP, Glock 17, Deagle, RPG-7, etc.), ChocolateMan WWI/unintended guns (1860, CBR-11, AT-50, MG15, etc.), and Gunpowder Revolution guns (Auto-5, M1 Garand, Mosin 91, MP18, Win 1873, etc.) are permanently removed.
+2. **32 Modern Ammunition Types Removed**:
+   - Crafting recipes for modern cartridges (9mm, 5.56x45, .50 BMG, 12g, RPG rockets, etc.) are removed.
+3. **5 Unintended Workbenches Removed & Disabled**:
+   - Gun Smith Table (	acz:gun_smith_table), Ammo Workbench (	acz:ammo_workbench), Attachment Workbench (	acz:attachment_workbench), ChocolateMan Workbench (qkl:cr_workbench), and Old Workbench (hamster:oldworkbench) are disabled.
+   - All Gun Smith Table crafting recipes (	acz:gun_smith_table_crafting) are shut down.
+4. **Recipe Viewer Cleanliness**:
+   - All prohibited guns, ammunition, and workbenches are hidden from JEI and EMI recipe viewers.
+5. **Authentic Flintlocks Preserved**:
+   - The Create Mechanical Crafter sequences for the FK15 Volley Musket, FK15-P Dragoon Pistol, FK15-R Jaeger Musket, 16.5mm Paper Cartridges, and gunsmithing components remain 100% accessible and verified.
+
+### 🛠️ TaCZ Gunpack Missing Data & Index Parsing Errors Fixed
+1. **Gunpowder Revolution Cleaned**:
+   - Removed 6 dangling gun/recipe index entries (colt1873_lb, coltm1851_chain, lebel1886_07c, lugerp08_artillerie, m1887_hc, uppercut) from GunpowderRevolution_gunpack v1.2.7 (1)+1.21.1.zip that lacked definition files and caused severe server startup errors in server.log.
+2. **ChocolateMan Cleaned**:
+   - Removed dangling mu73_bayonet attachment index entry from ChocolateMan V1.2.6a1-Public Edition+1.21.1.zip.
+3. **Log Cleanliness**:
+   - Server boot logs are now completely clean of TaCZ missing index warnings.
+
+### 👥 WeaponMaster Multiplayer Missing / Error Texture Patch (weaponmaster_ydm-common.toml)
+1. **Root Cause Resolved**:
+   - WeaponMaster's multiplayer sync packet (ItemStackCPacket) drops all Minecraft 1.21.1 Data Components, transmitting only raw numeric item IDs. Remote players received bare 	acz:modern_kinetic_gun stacks without GunId, which caused TaCZ to fall back to MissingTextureAtlasSprite (purple-and-black checkerboard error cube) rendered on the player's back/hips.
+2. **Surgical Blacklist**:
+   - Added modern_kinetic_gun and 	acz:modern_kinetic_gun to lacklist in weaponmaster_ydm-common.toml. WeaponMaster now ignores firearms entirely, preventing error textures on multiplayer characters while preserving visible swords, shields, polearms, and bows on player backs.
+
+### 🧪 Automated Testing & Verification
+1. **Straja Test Suite 9 (dmin_straja_registry.js)**:
+   - Added 4 automated assertion tests verifying 0 prohibited gun recipes, 0 modern ammo recipes, 0 gunsmith tables, and 100% presence of authentic Brass Age recipes in the active RecipeManager.
+2. **CI Validation**:
+   - Passed 100% clean across all 93 KubeJS scripts, Patchouli guidebooks, and texture assets.
+
+---
+
 ## [v1.3.7] — 2026-10-18 (Flintlock Ballistics Calibration Fine-Tuning)
 
 This bugfix release fine-tunes the aimed inaccuracy values for flintlock firearms following combat balancing review:

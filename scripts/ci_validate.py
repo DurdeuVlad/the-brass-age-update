@@ -93,6 +93,7 @@ def validate_required_scripts():
         "military_logistics_crates.js",
         "vampire_admin.js",
         "admin_straja_registry.js",
+        "disable_modern_guns.js",
         "port_checkpoint.js",
         "straja_prison.js",
     ]
